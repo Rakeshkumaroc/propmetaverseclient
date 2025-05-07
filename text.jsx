@@ -1,0 +1,1 @@
+ `${baseUrl}/uploads/property/${img}`

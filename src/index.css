@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@theme{  
+  --color-logoColor:#64ae37;
+  --color-logoBlue:#1b639f;
+ 
+}
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
