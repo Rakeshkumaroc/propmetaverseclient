@@ -42,26 +42,20 @@ const SellerLoginPage = () => {
     axios
       .post(`${baseUrl}/sign-in-seller`, signInData)
       .then((result) => {
-        localStorage.setItem(
-          "sellerId",
-          (result.data.sellerData.sellerId)
-        );
+        localStorage.setItem("sellerId", result.data.sellerData.sellerId);
         localStorage.setItem(
           "sellerFullName",
-          (result.data.sellerData.sellerFullName)
+          result.data.sellerData.sellerFullName
         );
 
-        localStorage.setItem(
-          "token",
-          (result.data.sellerData.token)
-        );
+        localStorage.setItem("token", result.data.sellerData.token);
 
         setLoading(false);
         toast(result.data.message, {
           position: "top-left",
           type: "success",
         });
-        Navigate("/seller");
+        Navigate("/seller-complete-profile");
         console.log(result);
       })
       .catch((err) => {
