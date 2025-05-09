@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { GoArrowUpRight } from "react-icons/go";
-import PropertyTable from "../property/PropertyTable";
+import PropertyTable from "../../seller/property/PropertyTable";
 import { Link } from "react-router-dom";
 
 const Property = () => {
@@ -30,7 +30,7 @@ const Property = () => {
             />
           </div>
           <Link
-            to={"/admin/add-property"}
+            to={"/seller/add-property"}
             className="text-[15px] px-2 md:px-5 py-4 flex items-center bg-black rounded-lg text-white"
           >
             Add New Property <GoArrowUpRight className="text-xl" />

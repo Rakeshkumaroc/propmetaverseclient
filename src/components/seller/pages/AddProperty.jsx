@@ -3,7 +3,7 @@ import Media from "../AddProperty/Media";
 import Location from "../AddProperty/Location";
 import Amenities from "../AddProperty/Amenities";
 import Keywords from "../AddProperty/Keywords";
-import Details from "../AddProperty/Details"; 
+import Details from "../AddProperty/Details";
 import BasicInformation from "../AddProperty/BasicInformation";
 import { useLocation } from "react-router-dom";
 import { MyContext } from "../../../App";
@@ -20,29 +20,31 @@ const AddProperty = ({ action }) => {
     async function getData() {
       try {
         let result = await fetch(baseUrl + "/single-property/" + id);
-  
+
         if (result.ok) {
           const data = await result.json();
           setFormData({
             ...data,
             galleryImg: data.galleryImg?.map((img) => img) || [],
-            floorPlanImg: data.floorPlanImg?.map((item) => ({
-              file: null,
-              preview: `${baseUrl}/uploads/floor/${item.img}`,
-              info: item.info || "",
-            })) || [],
-            reraImg: data.reraImg?.map((item) => ({
-              file: null,
-              preview: `${baseUrl}/uploads/rera/${item.img}`,
-              no: item.no || "",
-            })) || [],
+            floorPlanImg:
+              data.floorPlanImg?.map((item) => ({
+                file: null,
+                preview: `${baseUrl}/uploads/floor/${item.img}`,
+                info: item.info || "",
+              })) || [],
+            reraImg:
+              data.reraImg?.map((item) => ({
+                file: null,
+                preview: `${baseUrl}/uploads/rera/${item.img}`,
+                no: item.no || "",
+              })) || [],
           });
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-  
+
     if (action === "edit") {
       getData();
     } else {

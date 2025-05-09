@@ -62,9 +62,9 @@ const Amenities = ({ action }) => {
   const id = pathname.split("/").pop();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) {
-      setFormData((prev) => ({ ...prev, createrId: user._id }));
+    const user = (localStorage.getItem("sellerId"));
+    if (user ) {
+      setFormData((prev) => ({ ...prev, createrId: user}));
     }
   }, [setFormData]);
 

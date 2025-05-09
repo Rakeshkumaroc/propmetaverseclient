@@ -6,19 +6,17 @@ import RedirectPage from "../pages/RedirectPage";
 import AdminLogin from "../pages/AdminLogin";
 import Dashboard from "../components/admin/pages/Dashboard";
 import WeEnquiry from "../components/admin/pages/WeEnquiry";
-import User from "../components/admin/pages/User";
 import MyProfile from "../components/admin/pages/MyProfile";
-import AddUser from "../components/admin/pages/AddUser";
 import NotFound from "../pages/NotFound";
 import DamacEnquiry from "../components/admin/pages/DamacEnquiry";
-import AddProperty from "../components/admin/pages/AddProperty";
-import Property from "../components/admin/pages/Property";
+import AddProperty from "../components/seller/pages/AddProperty.jsx";
+import Property from "../components/seller/pages/Property.jsx";
 import Hero from "../components/admin/pages/Hero";
 import AddHero from "../components/admin/pages/AddHero";
 import Projects from "../pages/Projects";
 import PropertyDetailsPage from "../pages/PropertyDetailsPage";
 import Contact from "../pages/Contact";
-import ComparisonList from "../pages/ComparisonList"; 
+import ComparisonList from "../pages/ComparisonList";
 import About from "../pages/About";
 import RefundPolicy from "../pages/RefundPolicy";
 import PricingPolicy from "../pages/PricingPolicy";
@@ -33,7 +31,6 @@ import SellerSignUp from "../pages/SellerSignUp";
 import SellerProfile from "../components/seller/pages/SellerProfile";
 import SellerDashboard from "../components/seller/pages/SellerDashboard";
 import CompleteSellerProfile from "../components/seller/pages/CompleteSellerProfile.jsx";
-
 
 import CustomerSignUp from "../pages/CustomerSignUp";
 import CustomerLogin from "../pages/CustomerLogin";
@@ -68,7 +65,6 @@ const Layout = () => {
         <Route path="/terms-condition" element={<TermsAndCondition />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
         <Route path="/customer-sign-up" element={<CustomerSignUp />} />
         <Route path="/customer-dashboard" element={<CustomerDashboard />} />
         <Route path="/customer-sign-in" element={<CustomerLogin />} />
@@ -99,9 +95,6 @@ const Layout = () => {
           <Route index element={<Dashboard />} />
           <Route path="we-enquiry" element={<WeEnquiry />} />
           <Route path="damac-enquiry" element={<DamacEnquiry />} />
-          <Route path="user" element={<User />} />
-          <Route path="add-user" element={<AddUser />} />
-          <Route path="user/:id" element={<AddUser action={"edit"} />} />
           <Route path="hero" element={<Hero />} />
           <Route path="add-hero" element={<AddHero />} />
           <Route path="hero/:id" element={<AddHero action={"edit"} />} />
@@ -114,10 +107,11 @@ const Layout = () => {
           element={<CompleteSellerProfile />}
         />
         <Route path="/seller" element={<Seller />}>
-          <Route index element={<SellerDashboard />} />
-          <Route path="seller-profile" element={<SellerProfile />} /> 
+          <Route index element={<SellerDashboard/>} />
+         <Route path="seller-dashboard" element={<SellerDashboard/>} />
+          <Route path="seller-profile" element={<SellerProfile />} />
           <Route path="property" element={<Property />} />
-          <Route path="add-property" element={<AddProperty />} />
+          <Route path="add-property" element={<AddProperty/>} />
           <Route
             path="property/:id"
             element={<AddProperty action={"edit"} />}
