@@ -53,7 +53,7 @@ const initialFormData = {
   faqs: [{ question: "", answer: "" }],
   keywords: [{ heading: "", keyword: [] }],
   amenities: [],
-  createrId: "",
+  seller_id: "",
 };
 
 const Amenities = ({ action }) => {
@@ -64,7 +64,7 @@ const Amenities = ({ action }) => {
   useEffect(() => {
     const user = (localStorage.getItem("sellerId"));
     if (user ) {
-      setFormData((prev) => ({ ...prev, createrId: user}));
+      setFormData((prev) => ({ ...prev, seller_id: user}));
     }
   }, [setFormData]);
 
@@ -81,7 +81,7 @@ const Amenities = ({ action }) => {
       };
   
       appendIfValid("title", formData.title);
-      appendIfValid("createrId", formData.createrId);
+      appendIfValid("seller_id", formData.seller_id);
       appendIfValid("description", formData.description);
       appendIfValid("propertyType", formData.propertyType);
       appendIfValid("status", formData.status);
