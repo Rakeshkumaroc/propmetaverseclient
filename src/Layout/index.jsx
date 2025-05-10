@@ -6,9 +6,7 @@ import RedirectPage from "../pages/RedirectPage";
 import AdminLogin from "../pages/AdminLogin";
 import Dashboard from "../components/admin/pages/Dashboard";
 import WeEnquiry from "../components/admin/pages/WeEnquiry";
-import User from "../components/admin/pages/User";
 import MyProfile from "../components/admin/pages/MyProfile";
-import AddUser from "../components/admin/pages/AddUser";
 import NotFound from "../pages/NotFound";
 import DamacEnquiry from "../components/admin/pages/DamacEnquiry";
 import AddProperty from "../components/admin/pages/AddProperty";
@@ -18,7 +16,7 @@ import AddHero from "../components/admin/pages/AddHero";
 import Projects from "../pages/Projects";
 import PropertyDetailsPage from "../pages/PropertyDetailsPage";
 import Contact from "../pages/Contact";
-import ComparisonList from "../pages/ComparisonList"; 
+import ComparisonList from "../pages/ComparisonList";
 import About from "../pages/About";
 import RefundPolicy from "../pages/RefundPolicy";
 import PricingPolicy from "../pages/PricingPolicy";
@@ -32,8 +30,7 @@ import SellerLoginPage from "../pages/SellerLoginPage";
 import SellerSignUp from "../pages/SellerSignUp";
 import SellerProfile from "../components/seller/pages/SellerProfile";
 import SellerDashboard from "../components/seller/pages/SellerDashboard";
-import CompleteSellerProfile from "../components/seller/pages/CompleteSellerProfile.jsx";
-
+import CompleteSellerProfile from "../components/seller/pages/CompleteSellerProfile";
 
 import CustomerSignUp from "../pages/CustomerSignUp";
 import CustomerLogin from "../pages/CustomerLogin";
@@ -41,6 +38,12 @@ import CustomerDashboard from "../components/customer/pages/CustomerDashboard";
 import CustomerForgetPassword from "../pages/CustomerForgetPassword";
 import CustomerResetPassword from "../pages/CustomerResetPassword";
 import Favorites from "../pages/Favorites";
+import ManageSeller from "../components/admin/pages/ManageSeller";
+import SellerDetails from "../components/admin/manageSeller/SellerDetails";
+import CustomerDetails from "../components/admin/customer/CustomerDetails";
+import ViewCustomer from "../components/admin/pages/ViewCustomer";
+import LeadManagement from "../components/admin/pages/LeadManagement";
+import ThankYou from "../pages/ThankYou";
 
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -58,6 +61,7 @@ const Layout = () => {
         <Route path="/projects" element={<Projects />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy-policy" element={<Privacy />} />
+        <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/return-policy" element={<RefundPolicy />} />
         <Route path="/pricing-policy" element={<PricingPolicy />} />
         <Route path="/projects/:title/:id" element={<PropertyDetailsPage />} />
@@ -99,15 +103,20 @@ const Layout = () => {
           <Route index element={<Dashboard />} />
           <Route path="we-enquiry" element={<WeEnquiry />} />
           <Route path="damac-enquiry" element={<DamacEnquiry />} />
-          <Route path="user" element={<User />} />
-          <Route path="add-user" element={<AddUser />} />
-          <Route path="user/:id" element={<AddUser action={"edit"} />} />
+          {/* User Management */}
+          <Route path="manage-sellers" element={<ManageSeller />} />
+          <Route path="seller-details/:id" element={<SellerDetails />} />
+          <Route path="customer-details/:id" element={<CustomerDetails />} />
+          <Route path="view-customers" element={<ViewCustomer />} />
+          {/* lead-management */}
+          <Route path="lead-management" element={<LeadManagement />} />
+
           <Route path="hero" element={<Hero />} />
           <Route path="add-hero" element={<AddHero />} />
           <Route path="hero/:id" element={<AddHero action={"edit"} />} />
           <Route path="my-profile" element={<MyProfile />} />
           <Route path="*" element={<NotFound />} />
-        </Route>{" "}
+        </Route>
         {/* seller dashboard */}
         <Route
           path="/seller-complete-profile"
@@ -115,7 +124,7 @@ const Layout = () => {
         />
         <Route path="/seller" element={<Seller />}>
           <Route index element={<SellerDashboard />} />
-          <Route path="seller-profile" element={<SellerProfile />} /> 
+          <Route path="seller-profile" element={<SellerProfile />} />
           <Route path="property" element={<Property />} />
           <Route path="add-property" element={<AddProperty />} />
           <Route

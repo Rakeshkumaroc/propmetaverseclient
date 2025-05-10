@@ -7,8 +7,7 @@ import { toast } from "react-toastify";
 const SavedPropertiesSection = ({
   savedProperties,
   favoriteDetails,
-  editingPropertyId,
-  setSavedProperties,
+  editingPropertyId, 
   setFavoriteDetails,
   setEditingPropertyId,
   handleRemoveFavorite,

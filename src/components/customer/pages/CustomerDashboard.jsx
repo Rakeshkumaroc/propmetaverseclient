@@ -10,7 +10,7 @@ import PreferencesSection from "../../customerDashboard/PreferencesSection";
 import SavedPropertiesSection from "../../customerDashboard/SavedPropertiesSection";
 import RecentSearchesSection from "../../customerDashboard/RecentSearchesSection";
 import NotificationSection from "../../customerDashboard/NotificationSection";
-import EnquiryStatusSection from "../../customerDashboard/EnquiryStatusSection"; // Added import
+import EnquiryStatusSection from "../../customerDashboard/EnquiryStatusSection";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -20,6 +20,7 @@ const CustomerDashboard = () => {
   const [savedProperties, setSavedProperties] = useState([]);
   const [searchHistory, setSearchHistory] = useState([]);
   const [notifications, setNotifications] = useState([]);
+  const [enquiries, setEnquiries] = useState([]); // Added for enquiries
   const [preferences, setPreferences] = useState({
     propertyType: "",
     minBudget: 0,
@@ -50,6 +51,7 @@ const CustomerDashboard = () => {
         const token = customerAuth.token;
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
+        // Fetch profile
         const profileRes = await axios.get(
           `${baseUrl}/customer-profile`,
           config
@@ -63,6 +65,7 @@ const CustomerDashboard = () => {
           profilePic: null,
         });
 
+        // Fetch saved properties
         const savedRes = await axios.get(
           `${baseUrl}/customer-saved-properties`,
           config
@@ -76,8 +79,8 @@ const CustomerDashboard = () => {
         const storedDetails =
           JSON.parse(localStorage.getItem("favoriteDetails")) || {};
         setFavoriteDetails(storedDetails);
-        console.log("Loaded favoriteDetails:", storedDetails);
 
+        // Fetch search history
         const historyRes = await axios.get(
           `${baseUrl}/customer-search-history`,
           config
@@ -90,11 +93,16 @@ const CustomerDashboard = () => {
           config
         );
         setNotifications(notificationsRes.data.notifications || []);
+
+        // Fetch enquiries
+        const enquiriesRes = await axios.get(
+          `${baseUrl}/customer-enquiries`,
+          config
+        );
+        setEnquiries(enquiriesRes.data.enquiries || []);
+
         setLoading(false);
       } catch (error) {
-        // toast.error(
-        //   error.response?.data?.message || "Failed to load dashboard"
-        // );
         if (error.response?.status === 401 || error.response?.status === 403) {
           localStorage.removeItem("customerAuth");
           localStorage.removeItem("savedProperties");
@@ -106,13 +114,12 @@ const CustomerDashboard = () => {
     fetchData();
   }, [navigate]);
 
-  // Function to refetch notifications
   const fetchNotifications = async () => {
     try {
       const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
       if (!customerAuth || !customerAuth.token) return;
       const config = {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${customerAuth.token}` },
       };
       const res = await axios.get(`${baseUrl}/customer-notifications`, config);
       setNotifications(res.data.notifications || []);
@@ -133,7 +140,6 @@ const CustomerDashboard = () => {
         return;
       }
 
-      // Validate minBudget and maxBudget
       if (preferences.minBudget < 0 || preferences.maxBudget < 0) {
         toast.error("Budgets must be positive numbers", {
           position: "top-left",
@@ -162,11 +168,6 @@ const CustomerDashboard = () => {
         position: "top-left",
       });
     } catch (error) {
-      console.error("Error updating preferences:", {
-        message: error.response?.data?.message || error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
       toast.error(
         error.response?.data?.message || "Failed to update preferences",
         {
@@ -282,10 +283,6 @@ const CustomerDashboard = () => {
         position: "top-left",
       });
     } catch (error) {
-      console.error(
-        "Error removing favorite:",
-        error.response?.data?.message || error.message
-      );
       toast.error("Failed to remove favorite. Please try again.", {
         position: "top-left",
       });
@@ -332,21 +329,11 @@ const CustomerDashboard = () => {
       );
       setEditingPropertyId(null);
     } catch (error) {
-      console.error("Error saving card preferences:", error);
       toast.error("Failed to save preferences. Please try again.", {
         position: "top-left",
       });
     }
   };
-
-  // Loading state
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       Loading...
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -380,8 +367,7 @@ const CustomerDashboard = () => {
           handleProfileUpdate={handleProfileUpdate}
           handleProfileChange={handleProfileChange}
         />
-          <EnquiryStatusSection /> {/* Added EnquiryStatusSection */}
-        
+        <EnquiryStatusSection enquiries={enquiries} /> {/* Pass enquiries */}
         <SavedPropertiesSection
           savedProperties={savedProperties}
           favoriteDetails={favoriteDetails}

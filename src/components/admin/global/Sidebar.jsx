@@ -1,27 +1,22 @@
 import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FiCompass } from "react-icons/fi";
+import { FiCompass, FiUsers } from "react-icons/fi";
 import { IoMenu } from "react-icons/io5";
-import { LuBuilding2, LuUserRoundPlus } from "react-icons/lu";
 import {
   MdContentCopy,
   MdContentPaste,
-  MdOutlineAdminPanelSettings,
   MdOutlineMarkUnreadChatAlt,
 } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
-import { BsBuildingAdd } from "react-icons/bs";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Sidebar = () => {
   const location = useLocation();
-  const lastEndpoint = location.pathname.split("/").pop();
   const navigate = useNavigate();
   const [isAdminNav, setIsAdminNav] = useState(false);
-  const [user, setUser] = useState("");
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const sections = [
@@ -29,49 +24,44 @@ const Sidebar = () => {
       title: "Main",
       items: [
         { icon: <FiCompass />, label: "Dashboard", link: "/" },
-        user?.userType === "Admin" || user?.userType === "Sales"
-          ? {
-              icon: <MdOutlineMarkUnreadChatAlt />,
-              label: "Enquiries",
-              nested: [
-                {
-                  label: "Women’s EPM",
-                  link: "/we-enquiry",
-                },
-                {
-                  label: "DAMAC Property",
-                  link: "/damac-enquiry",
-                },
-              ],
-            }
-          : null,
-        user?.userType === "Admin"
-          ? {
-              icon: <MdOutlineAdminPanelSettings />,
-              label: "Users",
-              link: "/user",
-            }
-          : null,
-        user?.userType === "Admin"
-          ? {
-              icon: <MdContentCopy />,
-              label: "Heros",
-              link: "/hero",
-            }
-          : null,
-          { icon: <LuBuilding2 />, label: "Property", link: "/property" },
+        {
+          icon: <MdOutlineMarkUnreadChatAlt />,
+          label: "Enquiries", // Review relevance
+          nested: [
+            { label: "Women’s EPM", link: "/we-enquiry" },
+            { label: "DAMAC Property", link: "/damac-enquiry" },
+          ],
+        },
+        { icon: <MdContentCopy />, label: "Heros", link: "/hero" }, // Retained
       ].filter(Boolean),
     },
     {
-      title: "Opratations",
+      title: "Administration",
       items: [
-        user?.userType === "Admin"
-          ? { icon: <LuUserRoundPlus />, label: "Add User", link: "/add-user" }
-          : null,
-        user?.userType === "Admin"
-          ? { icon: <MdContentPaste />, label: "Add Hero", link: "/add-hero" }
-          : null,
-        { icon: <BsBuildingAdd />, label: "Add Property", link: "/add-property" },
+        {
+          icon: <FiUsers />,
+          label: "User Management",
+          nested: [
+            { label: "Manage Sellers", link: "/manage-sellers" },
+            { label: "View Customers", link: "/view-customers" },
+          ],
+        },
+        {
+          icon: <FaTasks />,
+          label: "Lead Management",
+          link: "/lead-management",
+        },
+        {
+          icon: <FaMoneyCheckAlt />,
+          label: "Commission Management",
+          link: "/commission-management",
+        },
+      ].filter(Boolean),
+    },
+    {
+      title: "Operations",
+      items: [
+        { icon: <MdContentPaste />, label: "Add Hero", link: "/add-hero" }, // Retained
         { icon: <CgProfile />, label: "My Profile", link: "/my-profile" },
       ].filter(Boolean),
     },
@@ -85,8 +75,6 @@ const Sidebar = () => {
         const response = await fetch(`${baseUrl}/single-user/${user._id}`);
         if (response.ok) {
           const result = await response.json();
-          setUser(result);
-
           if (result.password !== user.password) {
             localStorage.removeItem("user");
             navigate("/");
@@ -102,30 +90,10 @@ const Sidebar = () => {
     fetchUserData();
   }, [navigate]);
 
-  useEffect(() => {
-    if (!user?.userType) return;
-
-    if (
-      user.userType === "Sales" &&
-      ["/user", "/add-user", "/we-enquiry", "/damac-enquiry"].includes(
-        `/${lastEndpoint}`
-      )
-    ) {
-      navigate("/admin");
-    }
-
-    if (
-      user.userType === "Hero" &&
-      !["/my-profile", "/"].includes(`/${lastEndpoint}`)
-    ) {
-      navigate("/admin");
-    }
-  }, [lastEndpoint, user, navigate]);
-
   return (
     <>
-      <div className="thin-scrollbar hidden lg:block w-96 min-h-screen bg-white text-black overflow-auto shadow-lg">
-        <div className="p-7">
+      <div className="thin-scrollbar hidden lg:block w-[490px] min-h-screen bg-white text-black overflow-auto shadow-lg">
+        <div className="p-5">
           <img src={Logo} alt="logo" className="w-40 mb-5" />
           {sections.map((section, index) => (
             <div key={index} className="pb-6">
@@ -243,7 +211,7 @@ const Sidebar = () => {
                             <span>{item.label}</span>
                           </button>
                           {openDropdown === item.label && (
-                            <div className="pl-10 space-y-1 ">
+                            <div className="pl-10 space-y-1">
                               {item.nested.map((nestedItem, nestedIdx) => (
                                 <Link
                                   key={nestedIdx}

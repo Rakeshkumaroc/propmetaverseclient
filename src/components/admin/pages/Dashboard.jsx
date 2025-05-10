@@ -22,7 +22,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 text-black sm:px-8 px-3 2xl:px-16 mt-5 md:mt-36 w-full">
+    <div className="bg-gray-100 overflow-y-auto text-black sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 w-full">
       <div className="space-y-1">
         <p className="text-[30px] font-semibold leading-[45px]">Welcome, {userName}!</p>
         <p className="text-sm leading-[25.9px]">We are glad to see you again!</p>

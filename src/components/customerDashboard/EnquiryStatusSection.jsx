@@ -1,32 +1,6 @@
-import React from "react";
 import { FaClock, FaCog, FaCheckCircle } from "react-icons/fa";
 
-// Dummy data for enquiries
-const dummyEnquiries = [
-  {
-    id: "1",
-    propertyTitle: "Sunset Villa",
-    message: "Can you provide more details about the backyard amenities?",
-    status: "Pending",
-    createdAt: "2025-05-05T10:30:00Z",
-  },
-  {
-    id: "2",
-    propertyTitle: "Downtown Loft",
-    message: "Is the loft available for a viewing this weekend?",
-    status: "In Progress",
-    createdAt: "2025-05-04T14:15:00Z",
-  },
-  {
-    id: "3",
-    propertyTitle: "Greenwood Cottage",
-    message: "What are the HOA fees for this property?",
-    status: "Resolved",
-    createdAt: "2025-05-03T09:00:00Z",
-  },
-];
-
-const EnquiryStatusSection = () => {
+const EnquiryStatusSection = ({enquiries}) => {
   // Map status to icons and colors
   const getStatusIconAndColor = (status) => {
     switch (status) {
@@ -45,14 +19,14 @@ const EnquiryStatusSection = () => {
     <section className="my-8 bg-white shadow rounded p-6">
       <h2 className="text-2xl font-semibold mb-4">Enquiry Status</h2>
       
-      {dummyEnquiries.length === 0 ? (
+      {enquiries.length === 0 ? (
         <div className="flex items-center justify-center py-8 text-gray-500">
           <FaClock className="text-2xl mr-2" aria-hidden="true" />
           <p>No enquiries found.</p>
         </div>
       ) : (
         <ul className="space-y-3" role="list" aria-label="Enquiry status list">
-          {dummyEnquiries.map((enquiry) => {
+          {enquiries.map((enquiry) => {
             const { icon, color } = getStatusIconAndColor(enquiry.status);
             return (
               <li
