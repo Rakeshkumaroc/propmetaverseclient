@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RiDeleteBin2Fill } from "react-icons/ri"; 
+import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import PropertyRow from "./PropertyRow";
@@ -9,7 +9,7 @@ const PropertyTable = ({ searchValue }) => {
   const [filter, setFilter] = useState("Recent");
   const [isPanding, setIsPanding] = useState();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [data, setData] = useState("");
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState();
   const [allSelect, setAllSelect] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -53,7 +53,7 @@ const PropertyTable = ({ searchValue }) => {
       if (result.isConfirmed) {
         try {
           console.log(selectedIds);
-          
+
           const response = await fetch(baseUrl + "/select-property-delete", {
             method: "DELETE",
             headers: {
@@ -81,8 +81,20 @@ const PropertyTable = ({ searchValue }) => {
   useEffect(() => {
     const getFun = async () => {
       try {
-        let result = await fetch(baseUrl + "/property");
-        result = await result.json();
+        const sellerId = localStorage.getItem("sellerId");
+        console.log("seeeeeeeee", sellerId);
+        const response = await fetch(`${baseUrl}/property/${sellerId}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        let result = await response.json();
+
+        if (!Array.isArray(result)) {
+          console.error("Invalid response format:", result);
+          result = [];
+        }
         if (searchValue) {
           let filteredResult = result.filter((item) => {
             return (
@@ -127,6 +139,7 @@ const PropertyTable = ({ searchValue }) => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setData([]);
       }
     };
 
@@ -239,10 +252,10 @@ const PropertyTable = ({ searchValue }) => {
                 </th>
 
                 <th scope="col" className="px-6 py-3">
-                CreatedAt
+                  CreatedAt
                 </th>
                 <th scope="col" className="px-6 py-3">
-                UpdatedAt
+                  UpdatedAt
                 </th>
 
                 <th scope="col" className="px-6 py-3">

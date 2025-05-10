@@ -7,7 +7,12 @@ import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const GoogleButton = ({ endpoint, buttonName, navigatePathSuccess, navigatePathError }) => {
+const GoogleButton = ({
+  endpoint,
+  buttonName,
+  navigatePathSuccess,
+  navigatePathError,
+}) => {
   const navigate = useNavigate();
 
   const responseGoogle = async (authResult) => {
@@ -20,14 +25,25 @@ const GoogleButton = ({ endpoint, buttonName, navigatePathSuccess, navigatePathE
 
         if (result.data.success) {
           // Determine storage key based on endpoint
-          const storageKey = endpoint.includes("customer") ? "customerAuth" : "subBrokerAuth";
+          const storageKey = endpoint.includes("customer")
+            ? "customerAuth"
+            : "subBrokerAuth";
+          if (storageKey === "customerAuth") {
+            // Store credentials in localStorage
+            const authData = {
+              token: result.data.token, // JWT token
+              user: result.data.user, // User details (e.g., _id, email, role)
+            };
+            localStorage.setItem(storageKey, JSON.stringify(authData));
+          } else {
+            localStorage.setItem("sellerId", result.data.sellerData.sellerId);
+            localStorage.setItem(
+              "sellerFullName",
+              result.data.sellerData.sellerFullName
+            );
 
-          // Store credentials in localStorage
-          const authData = {
-            token: result.data.token, // JWT token
-            user: result.data.user,   // User details (e.g., _id, email, role)
-          };
-          localStorage.setItem(storageKey, JSON.stringify(authData));
+            localStorage.setItem("token", result.data.sellerData.token);
+          }
 
           toast(result.data.message, {
             position: "top-left",

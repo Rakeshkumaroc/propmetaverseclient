@@ -11,7 +11,7 @@ const App = () => {
   const enquiryRef = useRef(false);
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [damacIsPopUpOpen, setDamacIsPopUpOpen] = useState(false);
-  const [propertyData, setPropertyData] = useState();
+  const [propertyData, setPropertyData] = useState([]);
   const [siteName, setSiteName] = useState("Prop Metaverse");
   const [formData, setFormData] = useState({
     // Basic Property Information
@@ -47,14 +47,31 @@ const App = () => {
     amenities: [],
   });
 
-  useEffect(() => {
-    const getFun = async () => {
-      let result = await fetch(baseUrl + "/property");
-      result = await result.json();
-      setPropertyData(result.reverse());
-    };
-    getFun();
-  }, []);
+ useEffect(() => {
+  const sellerId = localStorage.getItem("sellerId");
+  const getFun = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/property/${sellerId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (Array.isArray(result)) {
+        setPropertyData(result.reverse());
+      } else {
+        console.error('Invalid response format:', result);
+        setPropertyData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      setPropertyData([]);
+    }
+  };
+  getFun();
+}, []);
 
   return (
     <MyContext.Provider

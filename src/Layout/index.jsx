@@ -9,8 +9,8 @@ import WeEnquiry from "../components/admin/pages/WeEnquiry";
 import MyProfile from "../components/admin/pages/MyProfile";
 import NotFound from "../pages/NotFound";
 import DamacEnquiry from "../components/admin/pages/DamacEnquiry";
-import AddProperty from "../components/admin/pages/AddProperty";
-import Property from "../components/admin/pages/Property";
+import AddProperty from "../components/seller/pages/AddProperty.jsx";
+import Property from "../components/seller/pages/Property.jsx";
 import Hero from "../components/admin/pages/Hero";
 import AddHero from "../components/admin/pages/AddHero";
 import Projects from "../pages/Projects";
@@ -72,7 +72,6 @@ const Layout = () => {
         <Route path="/terms-condition" element={<TermsAndCondition />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
         <Route path="/customer-sign-up" element={<CustomerSignUp />} />
         <Route path="/customer-dashboard" element={<CustomerDashboard />} />
         <Route path="/customer-sign-in" element={<CustomerLogin />} />
@@ -122,11 +121,11 @@ const Layout = () => {
           path="/seller-complete-profile"
           element={<CompleteSellerProfile />}
         />
-        <Route path="/seller" element={<Seller />}>
-          <Route index element={<SellerDashboard />} />
+        <Route path="/seller" element={<Seller />}> 
+         <Route path="seller-dashboard" element={<SellerDashboard/>} />
           <Route path="seller-profile" element={<SellerProfile />} />
           <Route path="property" element={<Property />} />
-          <Route path="add-property" element={<AddProperty />} />
+          <Route path="add-property" element={<AddProperty/>} />
           <Route
             path="property/:id"
             element={<AddProperty action={"edit"} />}

@@ -4,27 +4,119 @@ import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;
 import profilePlaceHolder from "../../../assets/image/prifilePlaceHolder.jpg";
 import axios from "axios";
+import { FiCheckCircle } from "react-icons/fi";
 
-//hhhhhhhhhhhhhhhh
 const SellerProfileFrom = () => {
-  // const [data, setData] = useState(null);
-  const [sellerType, setSellerType] = useState("");
+  // profile state variable start
   const [verifyBtn, setVerifyBtn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initialSellerType, setInitialSellerType] = useState("");
 
-  const [passwordValue, setPasswordValue] = useState({
-    oldpassword: "",
-    newpassword: "",
-    password: "",
-  });
   const [data, setData] = useState({
     fullName: "",
-    number: "",
     bio: "",
+    number: "",
+    fullAddress: "",
+    pincode: "",
+    district: "",
+    state: "",
+    email: "",
+    isGoogleUser: false,
+    sellerType: "",
+  });
+  const [isNumberVerify, setIsNumberVerify] = useState(true);
+
+  // profile state variable start End
+
+  //password start
+
+  const [form, setForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
 
+  // Validate inputs
+  const validate = (name, value) => {
+    const newErrors = { ...errors };
+
+    if (name === "newPassword") {
+      if (!value) newErrors.newPassword = "New password is required.";
+      else if (value.length < 8)
+        newErrors.newPassword = "Must be at least 8 characters.";
+      else delete newErrors.newPassword;
+    }
+
+    if (name === "confirmPassword") {
+      if (value !== form.newPassword)
+        newErrors.confirmPassword = "Passwords do not match.";
+      else delete newErrors.confirmPassword;
+    }
+
+    setErrors(newErrors);
+  };
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    validate(name, value);
+  };
+
+  // Handle form submission password
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // validation check
+    if (
+      Object.keys(errors).length > 0 ||
+      form.newPassword !== form.confirmPassword
+    ) {
+      Swal.fire("Error", "Please fix the form errors", "error");
+      return;
+    }
+
+    try {
+      const sellerId = localStorage.getItem("sellerId");
+      const token = localStorage.getItem("token");
+
+      if (sellerId && token) {
+        const res = await fetch(`${baseUrl}/change-password/${sellerId}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            oldPassword: form.oldPassword,
+            newPassword: form.newPassword,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          Swal.fire("Success", data.message, "success");
+          setForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+          setErrors({});
+        } else {
+          const errorData = await res.json();
+          Swal.fire(
+            "Error",
+            errorData.error || "Failed to update password",
+            "error"
+          );
+        }
+      }
+    } catch (err) {
+      console.error("error", err);
+      Swal.fire("Error", "Server error. Try again.", "error");
+    }
+  };
+  //password end
+
+  //image start
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -33,130 +125,9 @@ const SellerProfileFrom = () => {
     }
   };
 
-  // Handle input change
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordValue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  //image end
 
-    // Validate the input dynamically
-    validateInput(name, value);
-  };
-
-  // Validate inputs
-  const validateInput = (name, value) => {
-    const newErrors = { ...errors };
-
-    if (name === "oldpassword" && value.trim() === "") {
-      newErrors.oldpassword = "Old password is required.";
-    } else if (name === "newpassword") {
-      if (value.trim() === "") {
-        newErrors.newpassword = "New password is required.";
-      } else if (value.trim().length < 8) {
-        newErrors.newpassword = "New password must be at least 8 characters.";
-      } else {
-        delete newErrors.newpassword;
-      }
-    } else if (name === "password") {
-      if (value.trim() !== passwordValue.newpassword) {
-        newErrors.password = "Passwords do not match.";
-      } else if (value.trim().length < 8) {
-        newErrors.password = "Password must be at least 8 characters.";
-      } else {
-        delete newErrors.password;
-      }
-    } else {
-      delete newErrors[name];
-    }
-
-    setErrors(newErrors);
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { oldpassword, newpassword, password } = passwordValue;
-
-    if (Object.keys(errors).length > 0) {
-      alert("Please fix the errors before submitting.");
-      return;
-    }
-
-    if (!data || !data.password) {
-      alert("User data not loaded properly.");
-      return;
-    }
-
-    if (oldpassword === data.password) {
-      if (newpassword === password) {
-        try {
-          const response = await fetch(`${baseUrl}/edit-user/${data._id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ password }),
-          });
-
-          if (response.ok) {
-            setPasswordValue({
-              oldpassword: "",
-              newpassword: "",
-              password: "",
-            });
-            setErrors({});
-            Swal.fire({
-              title: "Success!",
-              text: "Password updated successfully!",
-              confirmButtonColor: "#000",
-              icon: "success",
-              customClass: {
-                confirmButton:
-                  "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
-              },
-              buttonsStyling: false,
-            });
-          } else {
-            console.log("Failed to update password. Please try again.");
-            Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "Failed to update password",
-              customClass: {
-                confirmButton:
-                  "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
-              },
-            });
-          }
-        } catch (error) {
-          console.error("Error updating password:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Error updating password",
-            customClass: {
-              confirmButton:
-                "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
-            },
-          });
-        }
-      }
-    } else {
-      console.error("Wrong password");
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Wrong password!",
-        customClass: {
-          confirmButton:
-            "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
-        },
-      });
-    }
-  };
-
+  //profile  start
   // get data By Id
   const fetchSellerDataById = () => {
     const sellerId = localStorage.getItem("sellerId");
@@ -171,6 +142,7 @@ const SellerProfileFrom = () => {
         .then((result) => {
           // console.log(result.data.sellerData);
           setData(result.data.sellerData);
+          setInitialSellerType(result.data.sellerData.sellerType || "");
           if (result.data.sellerData.number) {
             setVerifyBtn(true);
           } else {
@@ -192,27 +164,24 @@ const SellerProfileFrom = () => {
 
   const profileInputHandler = (e) => {
     const { name, value } = e.target;
-    console.log(name);
-    console.log(value);
+
     setData((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    // Validate the input dynamically
-    validateInput(name, value);
   };
 
   const updateProfileHandler = (e) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
+
     const sellerUpdateData = {
       fullName: data.fullName,
-      sellerType: sellerType,
+      sellerType: data.sellerType,
       bio: data.bio,
       number: data.number,
     };
-    console.log("userdata", sellerType);
+
     const sellerId = localStorage.getItem("sellerId");
     const token = localStorage.getItem("token");
     if (sellerId) {
@@ -248,33 +217,7 @@ const SellerProfileFrom = () => {
       console.log("seller id is not here ");
     }
   };
-
-  // Fetch user data on component mount
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const user = JSON.parse(localStorage.getItem("user"));
-  //       if (!user || !user._id) {
-  //         alert("User not found in localStorage.");
-  //         return;
-  //       }
-
-  //       const response = await fetch(`${baseUrl}/single-user/${user._id}`);
-  //       if (response.ok) {
-  //         const result = await response.json();
-  //         setData(result);
-  //       } else {
-  //         alert("Failed to fetch user data.");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //       alert("An error occurred. Please try again.");
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, [passwordValue]);
-
+  // profile  end
   return (
     <div className="w-full rounded-lg bg-white">
       <div className="p-8 mt-10">
@@ -308,55 +251,47 @@ const SellerProfileFrom = () => {
         <form onSubmit={updateProfileHandler}>
           <div className="space-y-5">
             {/* User Type */}
-
-            {data?.sellerType ? (
+            {/* Seller Type Section */}
+            {initialSellerType ? (
               <div className="flex items-center gap-2">
                 <span className="text-[14px] font-semibold leading-[26px]">
                   Seller Type
                 </span>
                 <span
                   className={`text-sm font-medium px-3 py-0.5 rounded-full ${
-                    data?.sellerType === "subBroker"
+                    initialSellerType === "subBroker"
                       ? "bg-green-100 text-green-600"
                       : "bg-red-100 text-red-600"
                   }`}
                 >
-                  {data?.sellerType}
+                  {initialSellerType}
                 </span>
               </div>
             ) : (
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Choose Seller Type <span className="text-gray-500">*</span>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Seller Type
                 </label>
-                <div className="flex gap-6">
-                  <label className="flex items-center text-sm text-gray-700">
+                <div className="flex flex-col md:flex-row gap-3">
+                  <label className="flex items-center gap-2">
                     <input
-                      type="checkbox"
-                      checked={sellerType === "subBroker"}
-                      onChange={() =>
-                        setSellerType(
-                          sellerType === "subBroker" ? "" : "subBroker"
-                        )
-                      }
-                      className="mr-2 h-4 w-4 accent-green-600"
+                      type="radio"
+                      name="sellerType"
+                      value="subBroker"
+                      onChange={profileInputHandler}
+                      className="w-4 h-4 accent-green-600"
                     />
-                    Sub Broker
+                    <span className="text-sm">Sub Broker</span>
                   </label>
-                  <label className="flex items-center text-sm text-gray-700">
+                  <label className="flex items-center gap-2">
                     <input
-                      type="checkbox"
-                      checked={sellerType === "individualSeller"}
-                      onChange={() =>
-                        setSellerType(
-                          sellerType === "individualSeller"
-                            ? ""
-                            : "individualSeller"
-                        )
-                      }
-                      className="mr-2 h-4 w-4 accent-green-600"
+                      type="radio"
+                      name="sellerType"
+                      value="individualSeller"
+                      onChange={profileInputHandler}
+                      className="w-4 h-4 accent-green-600"
                     />
-                    Individual Seller
+                    <span className="text-sm">Individual Seller</span>
                   </label>
                 </div>
               </div>
@@ -392,13 +327,9 @@ const SellerProfileFrom = () => {
                   placeholder="Your Email"
                   className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
                 />
-                <button
-                  type="button"
-                  onClick={() => handleVerify("email")}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 bg-green-600 text-white text-sm px-4 py-1 rounded-md hover:bg-green-700 transition"
-                >
-                  Verify
-                </button>
+                {data.isGoogleUser && (
+                  <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
+                )}
               </div>
             </div>
 
@@ -417,15 +348,8 @@ const SellerProfileFrom = () => {
                   placeholder="Your Number"
                   className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
                 />
-                {verifyBtn && (
-                  <button
-                    type="button"
-                    // onClick={() => handleVerify("number")}
-
-                    className="absolute top-1/2 right-3 -translate-y-1/2 bg-green-600 text-white text-sm px-4 py-1 rounded-md hover:bg-green-700 transition"
-                  >
-                    Verify
-                  </button>
+                {isNumberVerify && (
+                  <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
                 )}
               </div>
             </div>
@@ -492,53 +416,41 @@ const SellerProfileFrom = () => {
       </div>
 
       {data && !data.isGoogleUser && (
-        <div className="p-8 mt-10">
-          <form onSubmit={handleSubmit}>
-            <div className="mt-10">
-              <p className="text-[17px] text-center font-semibold mb-5 leading-[25.5px]">
-                Change password
-              </p>
-              <div className="space-y-5">
-                {["oldpassword", "newpassword", "password"].map((field) => (
-                  <div key={field} className="flex flex-col gap-2">
-                    <label
-                      htmlFor={field}
-                      className="text-[14px] font-semibold leading-[26px]"
-                    >
-                      {field === "password"
-                        ? "Confirm New Password"
-                        : field.replace(/password/, " Password")}
-                    </label>
-                    <input
-                      type="password"
-                      name={field}
-                      value={passwordValue[field]}
-                      onChange={handleInputChange}
-                      placeholder={
-                        field === "password"
-                          ? "Confirm New Password"
-                          : `${field.replace(/password/, " Password")}`
-                      }
-                      className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
-                    />
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors[field]}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
+        <div className="p-8 mt-1">
+          <form onSubmit={handleSubmit} className="p-8 mt-10">
+            <p className="text-center text-lg font-semibold mb-5">
+              Change Password
+            </p>
+            <div className="space-y-5">
+              {[
+                { label: "Old Password", name: "oldPassword" },
+                { label: "New Password", name: "newPassword" },
+                { label: "Confirm New Password", name: "confirmPassword" },
+              ].map(({ label, name }) => (
+                <div key={name} className="flex flex-col gap-2">
+                  <label htmlFor={name} className="text-sm font-medium">
+                    {label}
+                  </label>
+                  <input
+                    type="password"
+                    name={name}
+                    value={form[name]}
+                    onChange={handleChange}
+                    placeholder={label}
+                    className="border px-3 py-3 rounded-lg text-sm"
+                  />
+                  {errors[name] && (
+                    <p className="text-red-500 text-sm">{errors[name]}</p>
+                  )}
+                </div>
+              ))}
             </div>
-            <div className="flex ">
-              <button
-                type="submit"
-                className="text-[15px] px-2 md:px-5 py-4 flex mt-7 items-center bg-black rounded-lg text-white"
-              >
-                Update Password
-                <GoArrowUpRight className="text-xl" />
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="flex items-center gap-2 mt-6 bg-black text-white px-5 py-3 rounded-lg hover:scale-105 transition"
+            >
+              Update Password <GoArrowUpRight />
+            </button>
           </form>
         </div>
       )}
