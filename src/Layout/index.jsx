@@ -43,6 +43,7 @@ import SellerDetails from "../components/admin/manageSeller/SellerDetails";
 import CustomerDetails from "../components/admin/customer/CustomerDetails";
 import ViewCustomer from "../components/admin/pages/ViewCustomer";
 import LeadManagement from "../components/admin/pages/LeadManagement";
+import CommissionManagement from "../components/admin/pages/CommissionManagement";
 import ThankYou from "../pages/ThankYou";
 
 const Layout = () => {
@@ -109,6 +110,8 @@ const Layout = () => {
           <Route path="view-customers" element={<ViewCustomer />} />
           {/* lead-management */}
           <Route path="lead-management" element={<LeadManagement />} />
+          {/* commission-management */}
+          <Route path="commission-management" element={<CommissionManagement />} />
 
           <Route path="hero" element={<Hero />} />
           <Route path="add-hero" element={<AddHero />} />

@@ -13,8 +13,7 @@ const Enquiry = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
-    date: "",
+    phone: "", 
     message: "",
     customer_id: "",
     property_id: "",
@@ -76,8 +75,7 @@ const Enquiry = () => {
         return value.length < 2
           ? "Name must be at least 2 characters long"
           : "";
-      case "date":
-        return !value ? "Please select a date" : "";
+      
       default:
         return "";
     }
@@ -108,7 +106,7 @@ const Enquiry = () => {
 
     // Validate form
     const newErrors = {};
-    ["name", "email", "phone", "date"].forEach((field) => {
+    ["name", "email", "phone"].forEach((field) => {
       const error = validateField(field, formData[field]);
       if (error) newErrors[field] = error;
     });
@@ -142,8 +140,7 @@ const Enquiry = () => {
       const leadData = {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone,
-        date: new Date(formData.date).toISOString(), // Ensure date is in ISO format
+        phone: formData.phone, 
         message: formData.message,
         customer_id: formData.customer_id,
         property_id: formData.property_id,
@@ -168,8 +165,7 @@ const Enquiry = () => {
         setFormData({
           name: "",
           email: "",
-          phone: "",
-          date: "",
+          phone: "", 
           message: "",
           customer_id: "",
           property_id: "",
@@ -197,22 +193,7 @@ const Enquiry = () => {
       </h3>
       <p className="text-[14px] leading-[25.9px]">Choose your preferred day</p>
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
-          onChange={handleChange}
-          className={`w-full px-3 rounded mt-4 border text-gray-500 border-gray-300 text-sm py-3 ${
-            errors.date ? "border-red-500" : ""
-          }`}
-          required
-        />
-        {errors.date && (
-          <p className="mt-1 text-sm text-red-600 flex items-center">
-            <FaExclamationCircle className="mr-1" />
-            {errors.date}
-          </p>
-        )}
+        
 
         <input
           type="text"

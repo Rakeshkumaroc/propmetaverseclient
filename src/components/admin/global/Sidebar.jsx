@@ -11,6 +11,8 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
+import { FaTasks } from "react-icons/fa"; 
+import { LiaMoneyCheckAltSolid } from "react-icons/lia";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Sidebar = () => {
@@ -51,8 +53,8 @@ const Sidebar = () => {
           label: "Lead Management",
           link: "/lead-management",
         },
-        {
-          icon: <FaMoneyCheckAlt />,
+          {
+          icon: <LiaMoneyCheckAltSolid />,
           label: "Commission Management",
           link: "/commission-management",
         },

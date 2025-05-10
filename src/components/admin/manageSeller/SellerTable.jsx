@@ -3,6 +3,7 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import SellerRow from "./SellerRow";
+import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const SellerTable = ({ searchValue }) => {
@@ -375,9 +376,10 @@ const SellerTable = ({ searchValue }) => {
               </div>
               <p
                 onClick={downloadExcel}
-                className="cursor-pointer bg-black text-white p-1 px-3 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
               >
-                Export <span className="hidden md:inline">to Excel</span>
+                <FaDownload /> Export{" "}
+                <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>

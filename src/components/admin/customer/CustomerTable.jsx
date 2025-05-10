@@ -4,6 +4,7 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import CustomerRow from "./CustomerRow";
+import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const CustomerTable = ({
@@ -11,7 +12,7 @@ const CustomerTable = ({
   viewOnly = false,
   apiUrl = `${baseUrl}/customers`,
 }) => {
-  const [filter, setFilter] = useState("Recent"); 
+  const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -19,16 +20,16 @@ const CustomerTable = ({
   const [selectedIds, setSelectedIds] = useState([]);
 
   const handleDelete = () => {
-       if (!selectedIds.length) return;
-     Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#1b639f",
-          cancelButtonColor: "#000",
-          confirmButtonText: "Yes, delete it!",
-        }).then(async (result) => {
+    if (!selectedIds.length) return;
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1b639f",
+      cancelButtonColor: "#000",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(baseUrl + "/select-customers-delete", {
@@ -123,8 +124,6 @@ const CustomerTable = ({
                 item.email?.toLowerCase().includes(searchValue.toLowerCase())
             )
           : result;
-
-      
 
         // Sort by createdAt
         filteredData = [...filteredData].sort((a, b) => {
@@ -222,9 +221,10 @@ const CustomerTable = ({
               </div>
               <p
                 onClick={downloadExcel}
-                className="cursor-pointer bg-black text-white p-1 px-3 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
               >
-                Export <span className="hidden md:inline">to Excel</span>
+                <FaDownload /> Export{" "}
+                <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>

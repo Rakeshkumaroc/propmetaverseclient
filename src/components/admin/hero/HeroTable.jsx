@@ -3,6 +3,7 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import HeroRow from "./HeroRow";
+import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const HeroTable = ({ searchValue }) => {
@@ -24,21 +25,21 @@ const HeroTable = ({ searchValue }) => {
 
   const handleCheckboxChange = (id) => {
     setAllSelect(false);
-    setSelectedIds(prev => 
-      prev.includes(id) 
-        ? prev.filter(selectedId => selectedId !== id)
+    setSelectedIds((prev) =>
+      prev.includes(id)
+        ? prev.filter((selectedId) => selectedId !== id)
         : [...prev, id]
     );
   };
 
   const downloadExcel = () => {
-    const worksheetData = data.map(item => ({
+    const worksheetData = data.map((item) => ({
       Title: item.title,
       Description: item.description,
       Price: item.price,
       PropertyType: item.property_type,
       CreatedAt: item.createdAt,
-      UpdatedAt: item.updatedAt || 'Not Updated'
+      UpdatedAt: item.updatedAt || "Not Updated",
     }));
     const ws = XLSX.utils.json_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
@@ -48,7 +49,7 @@ const HeroTable = ({ searchValue }) => {
 
   const handleDelete = () => {
     if (!selectedIds.length) return;
-    
+
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -93,13 +94,18 @@ const HeroTable = ({ searchValue }) => {
         setLoading(true);
         const response = await fetch(`${baseUrl}/hero`);
         const result = await response.json();
-        
-        let filteredData = searchValue 
-          ? result.filter(item => 
-              item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.description?.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.price?.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.property_type?.toLowerCase().includes(searchValue.toLowerCase())
+
+        let filteredData = searchValue
+          ? result.filter(
+              (item) =>
+                item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                item.description
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase()) ||
+                item.price?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                item.property_type
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase())
             )
           : result;
 
@@ -115,7 +121,10 @@ const HeroTable = ({ searchValue }) => {
   }, [loading, filter, searchValue]);
 
   return (
-    <div className="w-full bg-mainbg sm:rounded-l-[30px] sm:rounded-r-md backdrop-blur-lg" style={{ overflow: "auto" }}>
+    <div
+      className="w-full bg-mainbg sm:rounded-l-[30px] sm:rounded-r-md backdrop-blur-lg"
+      style={{ overflow: "auto" }}
+    >
       <div className="md:p-4 mt-10">
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <div className="flex items-center justify-between p-3 flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white">
@@ -126,20 +135,65 @@ const HeroTable = ({ searchValue }) => {
                   className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
                 >
                   {filter}
-                  <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
+                  <svg
+                    className="w-2.5 h-2.5 ms-2.5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m1 1 4 4 4-4"
+                    />
                   </svg>
                 </div>
-                <div style={{ display: isFilterOpen ? "" : "none" }} className="z-10 top-[34px] absolute bg-white divide-y divide-gray-100 rounded-lg shadow-md">
-                  <ul className="py-1 text-sm text-gray-700" aria-labelledby="dropdownActionButton">
-                    <li><p onClick={() => { setFilter("Recent"); setIsFilterOpen(false); }} className="block px-4 py-2 cursor-pointer hover:bg-gray-100">Recent</p></li>
-                    <li><p onClick={() => { setFilter("Oldest"); setIsFilterOpen(false); }} className="block px-4 py-2 cursor-pointer hover:bg-gray-100">Oldest</p></li>
+                <div
+                  style={{ display: isFilterOpen ? "" : "none" }}
+                  className="z-10 top-[34px] absolute bg-white divide-y divide-gray-100 rounded-lg shadow-md"
+                >
+                  <ul
+                    className="py-1 text-sm text-gray-700"
+                    aria-labelledby="dropdownActionButton"
+                  >
+                    <li>
+                      <p
+                        onClick={() => {
+                          setFilter("Recent");
+                          setIsFilterOpen(false);
+                        }}
+                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
+                      >
+                        Recent
+                      </p>
+                    </li>
+                    <li>
+                      <p
+                        onClick={() => {
+                          setFilter("Oldest");
+                          setIsFilterOpen(false);
+                        }}
+                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
+                      >
+                        Oldest
+                      </p>
+                    </li>
                   </ul>
                 </div>
-                <RiDeleteBin2Fill onClick={handleDelete} className="text-black font-medium rounded-lg text-md" />
+                <RiDeleteBin2Fill
+                  onClick={handleDelete}
+                  className="text-black font-medium rounded-lg text-md"
+                />
               </div>
-              <p onClick={downloadExcel} className="cursor-pointer bg-black text-white p-1 px-3 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg">
-                Export <span className="hidden md:inline">to Excel</span>
+              <p
+                onClick={downloadExcel}
+                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
+              >
+                <FaDownload /> Export{" "}
+                <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>
@@ -148,18 +202,41 @@ const HeroTable = ({ searchValue }) => {
               <tr>
                 <th scope="col" className="p-4">
                   <div className="flex items-center">
-                    <input onClick={handleAllSelect} id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"/>
-                    <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
+                    <input
+                      onClick={handleAllSelect}
+                      id="checkbox-all-search"
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="checkbox-all-search" className="sr-only">
+                      checkbox
+                    </label>
                   </div>
                 </th>
-                <th scope="col" className="px-6 py-3">Id</th>
-                <th scope="col" className="px-6 py-3">Title</th>
-                <th scope="col" className="px-6 py-3">Description</th>
-                <th scope="col" className="px-6 py-3">Price</th>
-                <th scope="col" className="px-6 py-3">Property Type</th>
-                <th scope="col" className="px-6 py-3">Created At</th>
-                <th scope="col" className="px-6 py-3">Updated At</th>
-                <th scope="col" className="px-6 py-3">Action</th>
+                <th scope="col" className="px-6 py-3">
+                  Id
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Title
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Description
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Price
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Property Type
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Created At
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Updated At
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
