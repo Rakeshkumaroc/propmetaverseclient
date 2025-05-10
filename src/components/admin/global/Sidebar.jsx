@@ -11,6 +11,7 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
+import { FaMoneyCheckAlt, FaTasks } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Sidebar = () => {

@@ -48,10 +48,10 @@ const App = () => {
   });
 
  useEffect(() => {
-  const sellerId = localStorage.getItem("sellerId");
+
   const getFun = async () => {
     try {
-      const response = await fetch(`${baseUrl}/property/${sellerId}`);
+      const response = await fetch(`${baseUrl}/property`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

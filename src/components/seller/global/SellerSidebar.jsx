@@ -48,7 +48,7 @@ const SellerSidebar = () => {
           ? {
               icon: <FaTasks />,
               label: "Lead Management",
-              link: "/leads",
+              link: "/seller-leads",
             }
           : null,
         status === "active"
