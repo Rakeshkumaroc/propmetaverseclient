@@ -47,7 +47,8 @@ const App = () => {
     amenities: [],
   });
 
- useEffect(() => { 
+ useEffect(() => {
+
   const getFun = async () => {
     try {
       const response = await fetch(`${baseUrl}/property`);

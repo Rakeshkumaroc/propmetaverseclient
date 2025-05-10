@@ -46,6 +46,8 @@ import LeadManagement from "../components/admin/pages/LeadManagement";
 import CommissionManagement from "../components/admin/pages/CommissionManagement";
 import ThankYou from "../pages/ThankYou";
 
+import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement.jsx";
+
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -133,6 +135,11 @@ const Layout = () => {
             path="property/:id"
             element={<AddProperty action={"edit"} />}
           />
+          <Route
+            path="seller-leads"
+            element={<SellerLeadManagement/>}
+          />
+          
         </Route>
       </Routes>
     </BrowserRouter>
