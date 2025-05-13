@@ -14,40 +14,11 @@ import {
 } from "react-icons/fi";
 import { GoArrowUpRight } from "react-icons/go";
 import Swal from "sweetalert2";
-
+const baseUrl = import.meta.env.VITE_APP_URL;
 export default function CompleteSellerProfile() {
   const [activeTab, setActiveTab] = useState("basic");
   const [completedSteps, setCompletedSteps] = useState([]);
 
-  //verification code start
-  const [emailOtp, setEmailOtp] = useState("");
-  const [phoneOtp, setPhoneOtp] = useState("");
-  const [emailOtpSent, setEmailOtpSent] = useState(false);
-  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
-  const [emailCountdown, setEmailCountdown] = useState(0);
-  const [phoneCountdown, setPhoneCountdown] = useState(0);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
-
-  useEffect(() => {
-    if (emailCountdown > 0) {
-      const timer = setInterval(() => {
-        setEmailCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [emailCountdown]);
-
-  useEffect(() => {
-    if (phoneCountdown > 0) {
-      const timer = setInterval(() => {
-        setPhoneCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [phoneCountdown]);
-
-  //verification code end
   //  basic form data state variable
   const [formData, setFormData] = useState({
     fullName: "",
@@ -84,10 +55,10 @@ export default function CompleteSellerProfile() {
 
   const currentActiveIndex = tabs.findIndex((t) => t.id === activeTab);
 
-  const handleVerification = (type) => {
-    alert(`${type} verification initiated!`);
-    setCompletedSteps((prev) => [...new Set([...prev, "verification"])]);
-  };
+  // const handleVerification = (type) => {
+  //   alert(`${type} verification initiated!`);
+  //   setCompletedSteps((prev) => [...new Set([...prev, "verification"])]);
+  // };
 
   //basic details section start here
   // basic profile details handler
@@ -98,7 +69,7 @@ export default function CompleteSellerProfile() {
       [name]: value,
     }));
   };
-  const baseUrl = import.meta.env.VITE_APP_URL;
+
   // get data By Id
   const fetchSellerDataById = () => {
     const sellerId = localStorage.getItem("sellerId");
@@ -111,7 +82,7 @@ export default function CompleteSellerProfile() {
           },
         })
         .then((result) => {
-          // console.log(result.data.sellerData);
+          console.log(result.data.sellerData);
           setFormData(result.data.sellerData);
           setInitialSellerType(result.data.sellerData.sellerType || "");
           // console.log("startin 2 form data ", formData);
@@ -246,6 +217,128 @@ export default function CompleteSellerProfile() {
 
   //document section end here
 
+  //verification code start
+  const [emailOtp, setEmailOtp] = useState("");
+  const [phoneOtp, setPhoneOtp] = useState("");
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
+  const [emailCountdown, setEmailCountdown] = useState(0);
+  const [phoneCountdown, setPhoneCountdown] = useState(0);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+
+  useEffect(() => {
+    if (emailCountdown > 0) {
+      const timer = setInterval(() => {
+        setEmailCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [emailCountdown]);
+
+  useEffect(() => {
+    if (phoneCountdown > 0) {
+      const timer = setInterval(() => {
+        setPhoneCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [phoneCountdown]);
+
+  const VerificationSubmitHandler = async (type) => {
+    try {
+      setLoading(true);
+      if (type === "email") {
+        await axios.post(`${baseUrl}/send-otp`, {
+          contact: formData.email,
+          type: "email", // ✅
+        });
+        setLoading(false);
+        setEmailOtpSent(true);
+        setEmailCountdown(60);
+      } else if (type === "phone") {
+        await axios.post(`${baseUrl}/send-otp`, {
+          contact: formData.number,
+          type: "phone", // ✅
+        });
+        setLoading(false);
+        setPhoneOtpSent(true);
+        setPhoneCountdown(60);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error sending OTP:", error);
+      alert("Failed to send OTP");
+    }
+  };
+
+  const handleEmailVerification = async () => {
+    try {
+      const res = await axios.post(`${baseUrl}/verify-otp`, {
+        contact: formData.email,
+        otp: emailOtp,
+        type: "email",
+      });
+
+      if (res.data.success) {
+        fetchSellerDataById();
+        setIsEmailVerified(true);
+        Swal.fire({
+          title: "Success!",
+          text: "Email verified successfully!!",
+          confirmButtonColor: "#000",
+          icon: "success",
+          customClass: {
+            confirmButton:
+              "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+          },
+          buttonsStyling: false,
+        });
+      } else {
+        Swal.fire("Error", "Invalid Email OTP", "error");
+      }
+    } catch (error) {
+      console.error("Email verification failed:", error);
+
+      Swal.fire("Error", "Email OTP verification failed", "error");
+    }
+  };
+
+  const handlePhoneVerification = async () => {
+    try {
+      const res = await axios.post(`${baseUrl}/verify-otp`, {
+        contact: formData.number,
+        otp: phoneOtp,
+        type: "phone",
+      });
+
+      if (res.data.success) {
+        fetchSellerDataById();
+        setIsPhoneVerified(true);
+
+        Swal.fire({
+          title: "Success!",
+          text: "Otp Verify successfully!",
+          confirmButtonColor: "#000",
+          icon: "success",
+          customClass: {
+            confirmButton:
+              "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+          },
+          buttonsStyling: false,
+        });
+      } else {
+        Swal.fire("Error", "Invalid Phone OTP", "error");
+      }
+    } catch (error) {
+      console.error("Phone verification failed:", error);
+
+      Swal.fire("Error", "Phone OTP verification failed", "error");
+    }
+  };
+
+  //verification code end
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "basic":
@@ -255,7 +348,6 @@ export default function CompleteSellerProfile() {
               className="space-y-3 md:space-y-4"
               onSubmit={updateProfileHandler}
             >
-              {/* Seller Type Section */}
               {initialSellerType ? (
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-semibold leading-[26px]">
@@ -319,7 +411,6 @@ export default function CompleteSellerProfile() {
                 <label className="text-[14px] font-semibold leading-[26px]">
                   Email
                 </label>
-
                 <div className="relative">
                   <input
                     type="text"
@@ -341,14 +432,19 @@ export default function CompleteSellerProfile() {
                   Number
                 </label>
                 <input
-                  type="text"
+                  type="tel"
                   name="number"
-                  value={formData.number}
+                  value={formData.number || ""}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
                   placeholder="Enter your Number"
+                  required
+                  minLength={10}
+                  maxLength={10}
+                  pattern="[0-9]*"
                 />
               </div>
+
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Professional Bio
@@ -373,7 +469,7 @@ export default function CompleteSellerProfile() {
                   onChange={handleInputChange}
                   rows="2"
                   className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  placeholder="Enter your complete address (street, locality, etc.)"
+                  placeholder="Enter your complete address"
                 ></textarea>
               </div>
 
@@ -383,12 +479,16 @@ export default function CompleteSellerProfile() {
                     Pincode
                   </label>
                   <input
-                    type="text"
+                    type="tel"
                     name="pincode"
                     value={formData.pincode}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter your area pincode"
+                    placeholder="Enter pincode"
+                    required
+                      minLength={6}
+                  maxLength={6}
+                  pattern="[0-9]*"
                   />
                 </div>
 
@@ -402,7 +502,7 @@ export default function CompleteSellerProfile() {
                     value={formData.district}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter your district"
+                    placeholder="Enter district"
                   />
                 </div>
 
@@ -416,7 +516,7 @@ export default function CompleteSellerProfile() {
                     value={formData.state}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter your state"
+                    placeholder="Enter state"
                   />
                 </div>
               </div>
@@ -437,19 +537,20 @@ export default function CompleteSellerProfile() {
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  disabled={!btnDisable}
-                  onClick={() => {
-                    if (formData.fullName && formData.sellerType) {
-                      setCompletedSteps((prev) => [...prev, "basic"]);
-                      setActiveTab("document");
-                    }
-                  }}
-                  className="text-[15px] px-2 md:px-5 py-2 flex mt-7 items-center bg-black rounded-lg text-white disabled:bg-[#191818d8] disabled:cursor-not-allowed"
-                >
-                  Continue <FiChevronRight className="ml-1" />
-                </button>
+                {btnDisable && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (formData.fullName && formData.sellerType) {
+                        setCompletedSteps((prev) => [...prev, "basic"]);
+                        setActiveTab("document");
+                      }
+                    }}
+                    className="text-[15px] px-2 md:px-5 py-2 flex mt-7 items-center bg-black rounded-lg text-white"
+                  >
+                    Continue <FiChevronRight className="ml-1" />
+                  </button>
+                )}
               </div>
             </form>
           </div>
@@ -464,7 +565,6 @@ export default function CompleteSellerProfile() {
             </h3>
             <form onSubmit={uploadDocuments}>
               <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
-                {/* Aadhar Card Upload */}
                 <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <FiUpload className="w-8 h-8 text-gray-400" />
@@ -472,7 +572,7 @@ export default function CompleteSellerProfile() {
                       <p className="text-sm md:text-base font-medium">
                         {documentFormData.aadhar
                           ? documentFormData.aadhar.name
-                          : "Click to upload Aadhar Card"}
+                          : "Aadhar Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
                         PDF, JPG, up to 10MB
@@ -488,7 +588,6 @@ export default function CompleteSellerProfile() {
                   </div>
                 </label>
 
-                {/* PAN Card Upload */}
                 <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <FiUpload className="w-8 h-8 text-gray-400" />
@@ -496,7 +595,7 @@ export default function CompleteSellerProfile() {
                       <p className="text-sm md:text-base font-medium">
                         {documentFormData.pan
                           ? documentFormData.pan.name
-                          : "Click to upload PAN Card"}
+                          : "PAN Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
                         PDF, JPG, up to 10MB
@@ -512,7 +611,6 @@ export default function CompleteSellerProfile() {
                   </div>
                 </label>
 
-                {/* Address Proof Upload */}
                 <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <FiUpload className="w-8 h-8 text-gray-400" />
@@ -520,7 +618,7 @@ export default function CompleteSellerProfile() {
                       <p className="text-sm md:text-base font-medium">
                         {documentFormData.addressProof
                           ? documentFormData.addressProof.name
-                          : "Click to upload Address Proof"}
+                          : "Address Proof"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
                         PDF, JPG, up to 10MB
@@ -553,22 +651,23 @@ export default function CompleteSellerProfile() {
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  disabled={!btnDisableDoc}
-                  onClick={() => {
-                    if (
-                      documentFormData.aadhar &&
-                      documentFormData.addressProof
-                    ) {
-                      setCompletedSteps((prev) => [...prev, "document"]);
-                      setActiveTab("verification");
-                    }
-                  }}
-                  className="text-[15px] px-2 md:px-5 py-2 flex mt-7 items-center bg-black rounded-lg text-white disabled:bg-[#191818d8] disabled:cursor-not-allowed"
-                >
-                  Continue <FiChevronRight className="ml-1" />
-                </button>
+                {btnDisableDoc && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (
+                        documentFormData.aadhar &&
+                        documentFormData.addressProof
+                      ) {
+                        setCompletedSteps((prev) => [...prev, "document"]);
+                        setActiveTab("verification");
+                      }
+                    }}
+                    className="text-[15px] px-2 md:px-5 py-2 flex mt-7 items-center bg-black rounded-lg text-white"
+                  >
+                    Continue <FiChevronRight className="ml-1" />
+                  </button>
+                )}
               </div>
             </form>
           </div>
@@ -581,42 +680,51 @@ export default function CompleteSellerProfile() {
             </h3>
 
             <div className="space-y-6">
-              {/* Email Verification Section */}
               <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <FiMail className="text-blue-600 w-5 h-5 flex-shrink-0" />
+                      <FiMail className="text-blue-600 w-5 h-5" />
                       <div>
                         <p className="text-sm font-medium text-gray-600">
                           Email Address
                         </p>
                         <p className="text-gray-900 font-medium">
-                          {formData.email || "example@email.com"}
+                          {formData.email}
                         </p>
                       </div>
                     </div>
-
-                    {emailOtpSent ? (
+                    {emailOtpSent && !isEmailVerified && (
                       <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
                         <FiClock className="w-4 h-4" />
                         <span>OTP sent ({emailCountdown}s)</span>
                       </div>
-                    ) : null}
+                    )}
                   </div>
-
-                  <button
-                    onClick={() => handleVerification("email")}
-                    disabled={emailCountdown > 0}
-                    className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
-                                bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors
-                                disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {emailOtpSent ? "Resend OTP" : "Send OTP"}
-                  </button>
+                  {formData.isEmailVerify ? (
+                    <FiCheckCircle className="text-green-600 w-6 h-6" />
+                  ) : (
+                    <button
+                      onClick={() => VerificationSubmitHandler("email")}
+                      disabled={emailCountdown > 0}
+                      className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
+      bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors
+      disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <div className="flex justify-center">
+                          <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
+                        </div>
+                      ) : emailOtpSent ? (
+                        "Resend OTP"
+                      ) : (
+                        "Send OTP"
+                      )}
+                    </button>
+                  )}
                 </div>
 
-                {emailOtpSent && (
+                {emailOtpSent && !isEmailVerified && (
                   <div className="mt-4 space-y-2">
                     <label className="text-sm font-medium text-gray-700">
                       Email OTP
@@ -634,7 +742,7 @@ export default function CompleteSellerProfile() {
                         onClick={handleEmailVerification}
                         disabled={emailOtp.length !== 6}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm
-                                    hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Verify
                       </button>
@@ -643,42 +751,51 @@ export default function CompleteSellerProfile() {
                 )}
               </div>
 
-              {/* Phone Verification Section */}
               <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <FiPhone className="text-green-600 w-5 h-5 flex-shrink-0" />
+                      <FiPhone className="text-green-600 w-5 h-5" />
                       <div>
                         <p className="text-sm font-medium text-gray-600">
                           Phone Number
                         </p>
                         <p className="text-gray-900 font-medium">
-                          {formData.number || "+91 98765 43210"}
+                          {formData.number}
                         </p>
                       </div>
                     </div>
-
-                    {phoneOtpSent ? (
+                    {phoneOtpSent && !isPhoneVerified && (
                       <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
                         <FiClock className="w-4 h-4" />
                         <span>OTP sent ({phoneCountdown}s)</span>
                       </div>
-                    ) : null}
+                    )}
                   </div>
-
-                  <button
-                    onClick={() => handleVerification("phone")}
-                    disabled={phoneCountdown > 0}
-                    className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
-                                bg-green-100 text-green-800 hover:bg-green-200 transition-colors
-                                disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {phoneOtpSent ? "Resend OTP" : "Send OTP"}
-                  </button>
+                  {formData.isNumberVerify ? (
+                    <FiCheckCircle className="text-green-600 w-6 h-6" />
+                  ) : (
+                    <button
+                      onClick={() => VerificationSubmitHandler("phone")}
+                      disabled={phoneCountdown > 0}
+                      className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
+                        bg-green-100 text-green-800 hover:bg-green-200 transition-colors
+                        disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <div className="flex justify-center">
+                          <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
+                        </div>
+                      ) : phoneOtpSent ? (
+                        "Resend OTP"
+                      ) : (
+                        "Send OTP"
+                      )}
+                    </button>
+                  )}
                 </div>
 
-                {phoneOtpSent && (
+                {phoneOtpSent && !isPhoneVerified && (
                   <div className="mt-4 space-y-2">
                     <label className="text-sm font-medium text-gray-700">
                       SMS OTP
@@ -696,7 +813,7 @@ export default function CompleteSellerProfile() {
                         onClick={handlePhoneVerification}
                         disabled={phoneOtp.length !== 6}
                         className="px-4 py-2 bg-green-600 text-white rounded-md text-sm
-                                    hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Verify
                       </button>
@@ -713,9 +830,9 @@ export default function CompleteSellerProfile() {
                   setActiveTab("dashboard");
                 }}
                 className="w-full py-2.5 px-4 bg-black text-white rounded-lg font-medium
-                            hover:bg-gray-800 transition-colors flex items-center justify-center
-                            disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!isEmailVerified || !isPhoneVerified}
+                    hover:bg-gray-800 transition-colors flex items-center justify-center
+                    disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!formData.isEmailVerify || !formData.isNumberVerify}
               >
                 Continue to Dashboard
                 <FiChevronRight className="ml-2" />
@@ -723,26 +840,26 @@ export default function CompleteSellerProfile() {
             </div>
           </div>
         );
-      // case "dashboard":
-      //   return (
-      //     <div className="text-center space-y-4 md:space-y-6 mt-4 md:mt-8">
-      //       <div className="inline-flex bg-green-100 p-3 md:p-4 rounded-full">
-      //         <FiCheck className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
-      //       </div>
-      //       <h3 className="text-lg md:text-xl font-semibold text-gray-900">
-      //         Profile Complete!
-      //       </h3>
-      //       <p className="text-sm md:text-base text-gray-600">
-      //         You can now access your professional dashboard
-      //       </p>
-      //       <button
-      //         className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-medium hover:bg-blue-700 transition text-sm md:text-base"
-      //         onClick={() => alert("Redirecting to dashboard...")}
-      //       >
-      //         Launch Dashboard
-      //       </button>
-      //     </div>
-      //   );
+      case "dashboard":
+        return (
+          <div className="text-center space-y-4 md:space-y-6 mt-4 md:mt-8">
+            <div className="inline-flex bg-green-100 p-3 md:p-4 rounded-full">
+              <FiCheck className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
+            </div>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900">
+              Profile Complete!
+            </h3>
+            <p className="text-sm md:text-base text-gray-600">
+              You can now access your professional dashboard
+            </p>
+            <button
+              className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-medium hover:bg-blue-700 transition text-sm md:text-base"
+              onClick={() => alert("Redirecting to dashboard...")}
+            >
+              Launch Dashboard
+            </button>
+          </div>
+        );
 
       default:
         return null;

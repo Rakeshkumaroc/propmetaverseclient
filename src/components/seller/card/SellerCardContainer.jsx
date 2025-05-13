@@ -7,49 +7,50 @@ import { CiCreditCard1 } from "react-icons/ci";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const SellerCardContainer = () => {
-  const [enquiryData, setEnquiryData] = useState([]);
-  const [adminData, setAdminData] = useState([]);
+  const [TotalLeads , setTotalLeads] = useState([]);
+  const [propertyData, setPropertyData] = useState([]);
   const [heroData, setHeroData] = useState([]);
 
   const dashboardItems = [
     {
-      label: "Admin",
-      link: "/admin/user",
-      value: adminData || 0,
+      label: "Total Leads",
+      link: "/seller/seller-leads",
+      value: TotalLeads || 0,
       icon: (
         <MdOutlineAdminPanelSettings className="text-2xl   transition-all duration-700" />
       ),
     },
     {
-      label: "Total Enquiry",
-      link: "/admin/we-enquiry",
-      value: enquiryData || 0,
+      label: "Total Property",
+      link: "/seller/property",
+      value: propertyData || 0,
       icon: <BsChatDots className="text-2xl   transition-all duration-700" />,
     },
-    {
-      label: "Hero Cards",
-      link: "/admin/hero",
-      value: heroData || 0,
-      icon: <CiCreditCard1 className="text-2xl   transition-all duration-700" />,
-    },
+    // {
+    //   label: "Hero Cards",
+    //   link: "/admin/hero",
+    //   value: heroData || 0,
+    //   icon: <CiCreditCard1 className="text-2xl   transition-all duration-700" />,
+    // },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [adminRes, enquiryRes,heroRes] = await Promise.all([
-          fetch(`${baseUrl}/admin`),
-          fetch(`${baseUrl}/enquiry`),
-          fetch(`${baseUrl}/hero`),
+                const sellerId = localStorage.getItem("sellerId");
+        const [propertyRes, leadRes,heroRes] = await Promise.all([
+          fetch(`${baseUrl}/property/${sellerId}`),
+          fetch(`${baseUrl}/lead/${sellerId}`),
+          // fetch(`${baseUrl}/hero`),
         ]);
-        const [adminResult, enquiryResult,heroResult] = await Promise.all([
-          adminRes.json(),
-          enquiryRes.json(),
-          heroRes.json(),
+        const [propertyResult, leadResult] = await Promise.all([
+          propertyRes.json(),
+          leadRes.json(),
+          // heroRes.json(),
         ]);
-        setAdminData(adminResult.length);
-        setEnquiryData(enquiryResult.length);
-        setHeroData(heroResult.length);
+        setPropertyData(propertyResult.length);
+        setTotalLeads(leadResult.length);
+        // setHeroData(heroResult.length);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

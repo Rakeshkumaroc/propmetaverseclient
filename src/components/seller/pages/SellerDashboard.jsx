@@ -6,7 +6,7 @@ const SellerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
   const [data, setData] = useState();
-  const [status, setStatus] = useState("pending"); // Change to "approved" or "rejected" to test
+  const [status, setStatus] = useState("approved"); // Change to "approved" or "rejected" to test
 
   useEffect(() => {
     const result = localStorage.getItem("sellerFullName");

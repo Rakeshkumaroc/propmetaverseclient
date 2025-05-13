@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
-
 import { MdOutlinePreview } from "react-icons/md";
 import SellerLeadDetails from "./SellerLeadDetails";
 const baseUrl = import.meta.env.VITE_APP_URL;
@@ -88,33 +87,32 @@ const SellerLeadTable = ({ searchValue }) => {
   useEffect(() => {
     const getFun = async () => {
       try {
-      const sellerId = localStorage.getItem("sellerId");
+        const sellerId = localStorage.getItem("sellerId");
         let result = await fetch(`${baseUrl}/lead/${sellerId}`);
         result = await result.json();
-        console.log("result", result);
 
-      if (searchValue) {
-  let filteredResult = result.filter(
-    (item) =>
-      item.name &&
-      item.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+        // Step 1: Filter by status if needed
+        let filteredData = [...result];
+        if (filter === "Closed") {
+          filteredData = filteredData.filter(
+            (item) => item.status === "Closed"
+          );
+        } else if (filter === "Recent") {
+          filteredData = filteredData.reverse();
+        } else if (filter === "Oldest") {
+          // no action needed; keep original order
+        }
 
-  if (filter === "Close") {
-    filteredResult = filteredResult.filter((item) => item.status === "close");
-  }
+        // Step 2: Filter by search value
+        if (searchValue) {
+          filteredData = filteredData.filter(
+            (item) =>
+              item.name &&
+              item.name.toLowerCase().includes(searchValue.toLowerCase())
+          );
+        }
 
-  setData(filter === "Recent" ? filteredResult.reverse() : filteredResult);
-} else {
-  let resultToUse = result;
-
-  if (filter === "Close") {
-    resultToUse = result.filter((item) => item.status === "close");
-  }
-
-  setData(filter === "Recent" ? resultToUse.reverse() : resultToUse);
-}
-
+        setData(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -135,7 +133,7 @@ const SellerLeadTable = ({ searchValue }) => {
                 <div className="flex items-center gap-5">
                   <div
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+                    className="inline-flex items-center text-gray-500 bg-black border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
                   >
                     {filter}
                     <svg
@@ -184,15 +182,16 @@ const SellerLeadTable = ({ searchValue }) => {
                           Oldest
                         </p>
                       </li>
-                       <li>
+
+                      <li>
                         <p
                           onClick={() => {
-                            setFilter("Close");
+                            setFilter("Closed");
                             setIsFilterOpen(!isFilterOpen);
                           }}
                           className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
                         >
-                          Close
+                          Closed
                         </p>
                       </li>
                     </ul>
@@ -322,4 +321,3 @@ const SellerLeadTable = ({ searchValue }) => {
 };
 
 export default SellerLeadTable;
-

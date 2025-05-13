@@ -32,6 +32,7 @@ const SellerLeadDetails = ({ setIsOpenLead, isOpenLead}) => {
           confirmButtonColor: "#1b639f",
         });
         setIsOpenLead(false);
+             window.location.reload();
       } else {
         Swal.fire({
           icon: "error",
