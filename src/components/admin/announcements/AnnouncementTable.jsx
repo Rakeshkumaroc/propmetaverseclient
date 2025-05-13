@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+// components/AnnouncementTable.js
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
-import SellerRow from "./SellerRow";
 import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const SellerTable = ({ searchValue }) => {
+const AnnouncementTable = ({ searchValue }) => {
   const [filter, setFilter] = useState("Recent");
-  const [roleFilter, setRoleFilter] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,38 +34,21 @@ const SellerTable = ({ searchValue }) => {
     );
   };
 
-  // Export seller data to Excel
+  // Export announcements to Excel
   const downloadExcel = () => {
     const worksheetData = data.map((item) => ({
-      FullName: item.fullName || "N/A",
-      Email: item.email || "N/A",
-      Phone: item.number || "N/A",
-      Role:
-        item.sellerType === "subBroker"
-          ? "Sub-Broker"
-          : item.sellerType === "individualSeller"
-          ? "Individual Seller"
-          : "N/A",
-      Status:
-        item.approveStatus === "active"
-          ? "Approved"
-          : item.approveStatus === "pending"
-          ? "Rejected"
-          : "N/A",
-      CreatedAt: item.createdAt
-        ? new Date(item.createdAt).toLocaleDateString()
-        : "N/A",
-      UpdatedAt: item.updatedAt
-        ? new Date(item.updatedAt).toLocaleDateString()
-        : "Not Updated",
+      Title: item.title || "N/A",
+      Content: item.content || "N/A",
+      SentViaEmail: item.sendEmail ? "Yes" : "No",
+      CreatedAt: item.createdAt || "N/A",
     }));
     const ws = XLSX.utils.json_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sellers");
-    XLSX.writeFile(wb, "SellerProfiles.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Announcements");
+    XLSX.writeFile(wb, "Announcements.xlsx");
   };
 
-  // Bulk delete selected sellers
+  // Bulk delete selected announcements
   const handleDelete = () => {
     if (!selectedIds.length) return;
 
@@ -81,7 +63,7 @@ const SellerTable = ({ searchValue }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(`${baseUrl}/select-seller-delete`, {
+          const response = await fetch(`${baseUrl}/select-announcements-delete`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
@@ -96,18 +78,18 @@ const SellerTable = ({ searchValue }) => {
             setSelectedIds([]);
             Swal.fire({
               title: "Deleted!",
-              text: "Selected sellers have been deleted.",
+              text: "Selected announcements have been deleted.",
               icon: "success",
               confirmButtonColor: "#1b639f",
             });
           } else {
-            throw new Error("Failed to delete sellers");
+            throw new Error("Failed to delete announcements");
           }
         } catch (error) {
-          console.error("Error deleting sellers:", error);
+          console.error("Error deleting announcements:", error);
           Swal.fire({
             title: "Error!",
-            text: "Failed to delete sellers. Please try again.",
+            text: "Failed to delete announcements. Please try again.",
             icon: "error",
             confirmButtonColor: "#1b639f",
           });
@@ -116,146 +98,25 @@ const SellerTable = ({ searchValue }) => {
     });
   };
 
-  // Bulk approve selected sellers
-  const handleBulkApprove = () => {
-    if (!selectedIds.length) return;
-
-    Swal.fire({
-      title: "Approve Sellers?",
-      text: "This will approve all selected sellers.",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#1b639f",
-      cancelButtonColor: "#000",
-      confirmButtonText: "Yes, approve them!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${baseUrl}/bulk-approve-sellers`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ids: selectedIds,
-              approveStatus: "approved",
-            }),
-          });
-
-          if (response.ok) {
-            setData((prev) =>
-              prev.map((item) =>
-                selectedIds.includes(item._id)
-                  ? { ...item, approveStatus: "approved" }
-                  : item
-              )
-            );
-            setSelectedIds([]);
-            Swal.fire({
-              title: "Approved!",
-              text: "Selected sellers have been approved.",
-              icon: "success",
-              confirmButtonColor: "#1b639f",
-            });
-          } else {
-            throw new Error("Failed to approve sellers");
-          }
-        } catch (error) {
-          console.error("Error approving sellers:", error);
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to approve sellers. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#1b639f",
-          });
-        }
-      }
-    });
-  };
-
-  // Bulk reject selected sellers
-  const handleBulkReject = () => {
-    if (!selectedIds.length) return;
-
-    Swal.fire({
-      title: "Reject Sellers?",
-      text: "This will reject all selected sellers.",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#1b639f",
-      cancelButtonColor: "#000",
-      confirmButtonText: "Yes, reject them!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${baseUrl}/bulk-approve-sellers`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ids: selectedIds,
-              approveStatus: "rejected",
-            }),
-          });
-
-          if (response.ok) {
-            setData((prev) =>
-              prev.map((item) =>
-                selectedIds.includes(item._id)
-                  ? { ...item, approveStatus: "rejected" }
-                  : item
-              )
-            );
-            setSelectedIds([]);
-            Swal.fire({
-              title: "Rejected!",
-              text: "Selected sellers have been rejected.",
-              icon: "success",
-              confirmButtonColor: "#1b639f",
-            });
-          } else {
-            throw new Error("Failed to reject sellers");
-          }
-        } catch (error) {
-          console.error("Error rejecting sellers:", error);
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to reject sellers. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#1b639f",
-          });
-        }
-      }
-    });
-  };
-
-  // Fetch seller profiles
+  // Fetch announcements
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${baseUrl}/sellers`);
+        const response = await fetch(`${baseUrl}/announcements`);
         if (!response.ok) {
-          throw new Error("Failed to fetch sellers");
+          throw new Error("Failed to fetch announcements");
         }
         const result = await response.json();
 
-        // Apply search and role filters
+        // Apply search filter
         let filteredData = searchValue
           ? result.filter(
               (item) =>
-                item.fullName
-                  ?.toLowerCase()
-                  .includes(searchValue.toLowerCase()) ||
-                item.email?.toLowerCase().includes(searchValue.toLowerCase())
+                item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                item.content?.toLowerCase().includes(searchValue.toLowerCase())
             )
           : result;
-
-        filteredData =
-          roleFilter !== "all"
-            ? filteredData.filter((item) => item.sellerType === roleFilter)
-            : filteredData;
 
         // Sort by createdAt
         filteredData = [...filteredData].sort((a, b) => {
@@ -266,10 +127,10 @@ const SellerTable = ({ searchValue }) => {
 
         setData(filteredData);
       } catch (error) {
-        console.error("Error fetching sellers:", error);
+        console.error("Error fetching announcements:", error);
         Swal.fire({
           title: "Error!",
-          text: "Failed to fetch sellers. Please try again.",
+          text: "Failed to fetch announcements. Please try again.",
           icon: "error",
           confirmButtonColor: "#1b639f",
         });
@@ -279,7 +140,7 @@ const SellerTable = ({ searchValue }) => {
     };
 
     fetchData();
-  }, [filter, roleFilter, searchValue]);
+  }, [filter, searchValue]);
 
   return (
     <div
@@ -346,40 +207,16 @@ const SellerTable = ({ searchValue }) => {
                   </ul>
                 </div>
 
-                {/* Role Filter */}
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="border rounded-lg p-1.5 text-sm text-gray-700"
-                >
-                  <option value="all">All Sellers</option>
-                  <option value="subBroker">Sub-Brokers</option>
-                  <option value="individualSeller">Individual Sellers</option>
-                </select>
-
                 <RiDeleteBin2Fill
                   onClick={handleDelete}
                   className="text-black font-medium rounded-lg text-md cursor-pointer"
                 />
-                <button
-                  onClick={handleBulkApprove}
-                  className="text-green-600 font-medium rounded-lg text-sm px-3 py-1.5 bg-green-100 hover:bg-green-200"
-                >
-                  Bulk Approve
-                </button>
-                <button
-                  onClick={handleBulkReject}
-                  className="text-red-600 font-medium rounded-lg text-sm px-3 py-1.5 bg-red-100 hover:bg-red-200"
-                >
-                  Bulk Reject
-                </button>
               </div>
               <p
                 onClick={downloadExcel}
-                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
               >
-                <FaDownload /> Export{" "}
-                <span className="hidden md:inline">to Excel</span>
+                <FaDownload /> Export <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>
@@ -400,55 +237,66 @@ const SellerTable = ({ searchValue }) => {
                   </div>
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Id
+                  ID
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Full Name
+                  Title
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Email
+                  Content
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Phone
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Role
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Status
+                  Sent via Email
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Created At
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Action
                 </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-4">
+                  <td colSpan="6" className="text-center py-4">
                     Loading...
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-4">
-                    No sellers registered. Invite agents or sellers.
+                  <td colSpan="6" className="text-center py-4">
+                    No announcements found.
                   </td>
                 </tr>
               ) : (
                 data.map((value, index) => (
-                  <SellerRow
+                  <tr
                     key={value._id}
-                    value={value}
-                    index={index}
-                    selectedIds={selectedIds}
-                    handleCheckboxChange={handleCheckboxChange}
-                    setLoading={setLoading}
-                    setData={setData} // Pass setData for state updates
-                  />
+                    className="bg-white border-b hover:bg-gray-50"
+                  >
+                    <td className="w-4 p-4">
+                      <div className="flex items-center">
+                        <input
+                          id={`checkbox-${value._id}`}
+                          type="checkbox"
+                          checked={selectedIds.includes(value._id)}
+                          onChange={() => handleCheckboxChange(value._id)}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label
+                          htmlFor={`checkbox-${value._id}`}
+                          className="sr-only"
+                        >
+                          checkbox
+                        </label>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">{index + 1}</td>
+                    <td className="px-6 py-4">{value.title}</td>
+                    <td className="px-6 py-4">{value.content}</td>
+                    <td className="px-6 py-4 text-center">
+                      {value.sendEmail ? "Yes" : "No"}
+                    </td>
+                    <td className="px-6 py-4 text-center">{value.createdAt}</td>
+                  </tr>
                 ))
               )}
             </tbody>
@@ -459,4 +307,4 @@ const SellerTable = ({ searchValue }) => {
   );
 };
 
-export default SellerTable;
+export default AnnouncementTable;

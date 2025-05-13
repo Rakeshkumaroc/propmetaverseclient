@@ -1,3 +1,4 @@
+// components/TrendingProjects.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For redirection
 import TrendingProjectCard from "../TrendingProjectCard";
@@ -12,7 +13,7 @@ const TrendingProjects = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Hook for navigation
 
-  // Fetch data from API
+  // Fetch data from API (only approved properties)
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -21,7 +22,12 @@ const TrendingProjects = () => {
           throw new Error("Failed to fetch properties");
         }
         const data = await response.json();
-        setProperties(data); // Your duplication logic
+
+        // Filter for approved properties only
+        const approvedProperties = Array.isArray(data)
+          ? data.filter((item) => item.approveStatus === "approved")
+          : [];
+        setProperties(approvedProperties);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -36,7 +42,9 @@ const TrendingProjects = () => {
   const filtered =
     activeCategory === "View All"
       ? properties.slice(0, 6) // Limit to 6 for "View All"
-      : properties.filter((p) => p.propertyType === activeCategory).slice(0, 6); // Limit to 6 for specific categories
+      : properties
+          .filter((p) => p.propertyType === activeCategory)
+          .slice(0, 6); // Limit to 6 for specific categories
 
   const handleExploreMore = () => {
     navigate("/projects"); // Redirect to projects tab
@@ -102,14 +110,14 @@ const TrendingProjects = () => {
               propertyType={proj.propertyType}
               title={proj.title}
               location={`${proj.city}, ${proj.state}`}
-              price={proj.price?`₹${proj.price.toLocaleString()}`:null} // Adjust currency if needed
+              price={proj.price ? `₹${proj.price.toLocaleString()}` : null} // Adjust currency if needed
               date={
                 proj.constructionYear ? proj.constructionYear.toString() : "N/A"
               }
               developer={proj.developer ? proj.developer : "Unknown"}
               image={
                 proj.galleryImg[0]
-                  ? `${baseUrl}/uploads/property/${proj.galleryImg[0]}`
+                  ? `${baseUrl}/Uploads/property/${proj.galleryImg[0]}`
                   : "https://propmetaverse.com/assets/logopng-BXERHkCM.png"
               }
             />
@@ -119,15 +127,15 @@ const TrendingProjects = () => {
       {/* Call to Action */}
       {filtered.length === 0 && (
         <p className="text-center text-gray-500 mt-8 animate-fadeIn">
-          No projects found for this category. Explore other options!
+          No approved projects found for this category. Explore other options!
         </p>
       )}
-      {/* Explore More Button or No Results */}
+      {/* Explore More Button */}
       <div className="text-center mt-10">
-        {filtered.length > 6 && (
+        {filtered.length > 0 && (
           <button
             onClick={handleExploreMore}
-            className=" bg-logoBlue text-white px-5 py-2 rounded hover:logoBlue/90  font-medium transition-all duration-200 transform hover:scale-105"
+            className="bg-logoBlue text-white px-5 py-2 rounded hover:bg-logoBlue/90 font-medium transition-all duration-200 transform hover:scale-105"
           >
             Explore More
           </button>

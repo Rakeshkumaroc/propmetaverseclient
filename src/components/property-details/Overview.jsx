@@ -30,7 +30,7 @@ const Overview = ({propertyType,developer,price}) => {
             <GiPriceTag className="bg-logoBlue/10 group-hover:bg-logoBlue group-hover:text-white text-logoBlue rounded p-2 size-10 transition-all duration-300" />
             <div className="">
               <p className=" text-sm">Price:</p>
-              <p className="text-gray-800 font-semibold text-sm md:text-base">{price}</p>
+              <p className="text-gray-800 font-semibold text-sm md:text-base">₹{price}</p>
             </div>
           </div>
         </div>
