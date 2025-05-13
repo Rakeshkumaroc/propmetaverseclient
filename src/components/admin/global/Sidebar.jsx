@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { FiCompass, FiUsers } from "react-icons/fi";
 import { IoMenu } from "react-icons/io5";
-import {
-  MdContentCopy,
-  MdContentPaste,
-  MdOutlineMarkUnreadChatAlt,
-} from "react-icons/md";
+import { MdContentCopy, MdOutlineMarkUnreadChatAlt } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
-import { FaMoneyCheckAlt, FaTasks } from "react-icons/fa";
+import { FaTasks } from "react-icons/fa";
+import { LiaMoneyCheckAltSolid } from "react-icons/lia";
+import { MdContentPaste } from "react-icons/md"; // Added for new tabs
+import { IoMdNotificationsOutline } from "react-icons/io";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Sidebar = () => {
@@ -25,6 +24,7 @@ const Sidebar = () => {
       title: "Main",
       items: [
         { icon: <FiCompass />, label: "Dashboard", link: "/" },
+
         {
           icon: <MdOutlineMarkUnreadChatAlt />,
           label: "Enquiries", // Review relevance
@@ -34,6 +34,11 @@ const Sidebar = () => {
           ],
         },
         { icon: <MdContentCopy />, label: "Heros", link: "/hero" }, // Retained
+        {
+          icon: <IoMdNotificationsOutline />,
+          label: "Announcements",
+          link: "/announcements",
+        },
       ].filter(Boolean),
     },
     {
@@ -53,16 +58,43 @@ const Sidebar = () => {
           link: "/lead-management",
         },
         {
-          icon: <FaMoneyCheckAlt />,
+          icon: <LiaMoneyCheckAltSolid />,
           label: "Commission Management",
           link: "/commission-management",
+        },
+        {
+          icon: <MdContentPaste />,
+          label: "Listing Management",
+          link: "/listing-management",
+        },
+        // {
+        //   icon: <CgProfile />,
+        //   label: "Document Management",
+        //   link: "/document-management",
+        // },
+        {
+          icon: <FaTasks />,
+          label: "Training & Support",
+          nested: [
+            { label: "Training Materials", link: "/training-materials" },
+            // { label: "Support Tickets", link: "/support-tickets" },
+          ],
         },
       ].filter(Boolean),
     },
     {
-      title: "Operations",
+      title: "Analytics",
       items: [
-        { icon: <MdContentPaste />, label: "Add Hero", link: "/add-hero" }, // Retained
+        {
+          icon: <FiCompass />,
+          label: "Performance Reports",
+          link: "/performance-reports",
+        },
+      ].filter(Boolean),
+    },
+    {
+      title: "Account",
+      items: [
         { icon: <CgProfile />, label: "My Profile", link: "/my-profile" },
       ].filter(Boolean),
     },

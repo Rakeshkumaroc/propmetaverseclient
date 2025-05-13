@@ -234,7 +234,7 @@ const PropertyHeader = ({
         <div className="mt-2 md:mt-0 flex items-end gap-3">
           <p className="text-black font-semibold">Start from:</p>
           <span className="text-2xl md:text-4xl font-semibold text-gray-900">
-            {formatPrice(price)}
+           ₹ {formatPrice(price)}
           </span>
         </div>
       </div>

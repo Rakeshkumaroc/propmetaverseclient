@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 export const MyContext = createContext();
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -47,31 +47,32 @@ const App = () => {
     amenities: [],
   });
 
- useEffect(() => {
+  useEffect(() => {
+    const getFun = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/property`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
 
-  const getFun = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/property`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      
-      if (Array.isArray(result)) {
-        setPropertyData(result.reverse());
-      } else {
-        console.error('Invalid response format:', result);
+        if (Array.isArray(result)) {
+          // Filter for approved properties only
+          const approvedProperties = result.filter(
+            (item) => item.approveStatus === "approved"
+          );
+          setPropertyData(approvedProperties.reverse()); 
+        } else {
+          console.error("Invalid response format:", result);
+          setPropertyData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching properties:", error);
         setPropertyData([]);
       }
-    } catch (error) {
-      console.error('Error fetching properties:', error);
-      setPropertyData([]);
-    }
-  };
-  getFun();
-}, []);
+    };
+    getFun();
+  }, []);
 
   return (
     <MyContext.Provider
@@ -86,11 +87,11 @@ const App = () => {
         setPropertyData,
         siteName,
         setSiteName,
-        enquiryRef
+        enquiryRef,
       }}
     >
       <Layout />
-      <ToastContainer  autoClose={3000} />
+      <ToastContainer autoClose={3000} />
     </MyContext.Provider>
   );
 };

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import EnquiryDetails from "./EnquiryDetails";
 import { MdOutlinePreview } from "react-icons/md";
+import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const EnquiryTable = ({ searchValue }) => {
@@ -33,7 +34,7 @@ const EnquiryTable = ({ searchValue }) => {
     }
   };
 
-  const downloadExcal = () => {
+  const downloadExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "WomensEPM");
@@ -193,10 +194,11 @@ const EnquiryTable = ({ searchValue }) => {
                 </div>
 
                 <p
-                  onClick={downloadExcal}
-                  className="cursor-pointer bg-black  text-white p-1 px-3  rounded-md  hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                  onClick={downloadExcel}
+                  className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
                 >
-                  Export <span className="hidden md:inline"> to Excel</span>
+                  <FaDownload /> Export{" "}
+                  <span className="hidden md:inline">to Excel</span>
                 </p>
               </div>
             </div>
@@ -294,7 +296,7 @@ const EnquiryTable = ({ searchValue }) => {
                           <MdOutlinePreview
                             className="text-2xl text-black"
                             onClick={() => {
-                              setIsOpenEnquiry(value); 
+                              setIsOpenEnquiry(value);
                             }}
                           />
                         </td>

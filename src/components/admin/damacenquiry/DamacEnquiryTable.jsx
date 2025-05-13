@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
-import * as XLSX from "xlsx"; 
+import * as XLSX from "xlsx";
 import { MdOutlinePreview } from "react-icons/md";
 import DamacEnquiryDetails from "./DamacEnquiryDetails";
+import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const DamacEnquiryTable = ({ searchValue }) => {
@@ -33,7 +34,7 @@ const DamacEnquiryTable = ({ searchValue }) => {
     }
   };
 
-  const downloadExcal = () => {
+  const downloadExcel = () => {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "DAMAC");
@@ -52,13 +53,16 @@ const DamacEnquiryTable = ({ searchValue }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await fetch(baseUrl + "/select-damac-enquiry-delete", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ids: selectedIds }),
-          });
+          const response = await fetch(
+            baseUrl + "/select-damac-enquiry-delete",
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ ids: selectedIds }),
+            }
+          );
 
           if (response.ok) {
             Swal.fire({
@@ -193,10 +197,11 @@ const DamacEnquiryTable = ({ searchValue }) => {
                 </div>
 
                 <p
-                  onClick={downloadExcal}
-                  className="cursor-pointer bg-black  text-white p-1 px-3  rounded-md  hover:scale-105 transition-all duration-200 hover:shadow-lg"
+                  onClick={downloadExcel}
+                  className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4  rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
                 >
-                  Export <span className="hidden md:inline"> to Excel</span>
+                  <FaDownload /> Export{" "}
+                  <span className="hidden md:inline">to Excel</span>
                 </p>
               </div>
             </div>
@@ -233,7 +238,7 @@ const DamacEnquiryTable = ({ searchValue }) => {
                     Gender
                   </th>
                   <th scope="col" className="px-6 py-3">
-                  city
+                    city
                   </th>
                   <th scope="col" className="px-6 py-3 ">
                     Action
@@ -274,14 +279,13 @@ const DamacEnquiryTable = ({ searchValue }) => {
                         >
                           {value.name ? value.name : "no name"}
                         </th>
-                        
+
                         <td className="px-6 py-4 text-center">
                           {value.email ? value.email : "no email"}
                         </td>
                         <td className="px-6 py-4 text-center">
                           {value.phone ? value.phone : "no phone"}
                         </td>
-
 
                         <td className="px-6 py-4 text-center ">
                           {value.gender ? value.gender : "no value"}
@@ -293,7 +297,7 @@ const DamacEnquiryTable = ({ searchValue }) => {
                           <MdOutlinePreview
                             className="text-2xl text-black"
                             onClick={() => {
-                              setIsOpenEnquiry(value); 
+                              setIsOpenEnquiry(value);
                             }}
                           />
                         </td>
@@ -317,4 +321,3 @@ const DamacEnquiryTable = ({ searchValue }) => {
 };
 
 export default DamacEnquiryTable;
- 
