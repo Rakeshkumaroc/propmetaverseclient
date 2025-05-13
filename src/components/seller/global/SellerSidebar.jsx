@@ -8,8 +8,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
 import { BsBuildingAdd } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa"; // Icon for Lead Management
-import { FaMoneyCheckAlt } from "react-icons/fa"; // Icon for Commission Management
+import { FaTasks } from "react-icons/fa"; // Icon for Lead Management 
+import { MdOutlineBook } from "react-icons/md";
+import { LiaMoneyCheckSolid } from "react-icons/lia";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -53,7 +54,7 @@ const SellerSidebar = () => {
           : null,
         status === "active"
           ? {
-              icon: <FaMoneyCheckAlt />,
+              icon: <LiaMoneyCheckSolid />,
               label: "Commission Management",
               link: "/commissions",
             }
@@ -68,6 +69,13 @@ const SellerSidebar = () => {
               icon: <BsBuildingAdd />,
               label: "Add Property",
               link: "/add-property",
+            }
+          : null,
+        status === "active"
+          ? {
+              icon: <MdOutlineBook />,
+              label: "Training Resources",
+              link: "/seller-training",
             }
           : null,
         {
