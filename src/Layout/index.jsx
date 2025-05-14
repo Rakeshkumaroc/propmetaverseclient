@@ -49,6 +49,8 @@ import ThankYou from "../pages/ThankYou";
 import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement.jsx";
 import CustomerDashboardd from "../pages/CustomerDashboardd.jsx";
 import ManageAnnouncements from "../components/admin/pages/ManageAnnouncements.jsx";
+import TrainingAndResources from "../components/seller/pages/TrainingAndResources.jsx";
+import AnnouncementsPage from "../components/seller/pages/AnnouncementsPage.jsx";
 
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -141,7 +143,8 @@ const Layout = () => {
           element={<CompleteSellerProfile />}
         />
         <Route path="/seller" element={<Seller />}>
-          <Route path="seller-dashboard" element={<SellerDashboard />} />
+          <Route index element={<SellerDashboard />} />
+
           <Route path="seller-profile" element={<SellerProfile />} />
           <Route path="property" element={<Property />} />
           <Route path="add-property" element={<AddProperty />} />
@@ -150,6 +153,8 @@ const Layout = () => {
             element={<AddProperty action={"edit"} />}
           />
           <Route path="seller-leads" element={<SellerLeadManagement />} />
+          <Route path="seller-training" element={<TrainingAndResources />} />
+          <Route path="seller-notification" element={<AnnouncementsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

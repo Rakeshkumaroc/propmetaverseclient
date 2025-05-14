@@ -8,9 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
 import { BsBuildingAdd } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa"; // Icon for Lead Management 
+import { FaTasks } from "react-icons/fa"; // Icon for Lead Management
 import { MdOutlineBook } from "react-icons/md";
 import { LiaMoneyCheckSolid } from "react-icons/lia";
+import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -19,13 +20,35 @@ const SellerSidebar = () => {
   const navigate = useNavigate();
   const [isAdminNav, setIsAdminNav] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("");
 
+  const fetchSellerDataById = () => {
+    const sellerId = localStorage.getItem("sellerId");
+    const token = localStorage.getItem("token");
+    if (sellerId) {
+      axios
+        .get(`${baseUrl}/get-seller-data/${sellerId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((result) => {
+          console.log(result.data.sellerData);
+          setStatus(result.data.sellerData.approveStatus);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      console.log("seller id is not here ");
+    }
+  };
   useEffect(() => {
     const storedData = localStorage.getItem("sellerId");
     if (storedData) {
       const sellerData = storedData;
       console.log(sellerData, "dd");
+      fetchSellerDataById();
     } else {
       console.warn("No sellerData found in localStorage.");
       navigate("/seller-sign-in");
@@ -36,8 +59,8 @@ const SellerSidebar = () => {
     {
       title: "Main",
       items: [
-        { icon: <FiCompass />, label: "Dashboard", link: "/seller-dashboard" },
-        status === "active"
+        { icon: <FiCompass />, label: "Dashboard", link: "/" },
+        status === "approved"
           ? { icon: <LuBuilding2 />, label: "Property", link: "/property" }
           : null,
       ].filter(Boolean),
@@ -45,14 +68,14 @@ const SellerSidebar = () => {
     {
       title: "Administration",
       items: [
-        status === "active"
+        status === "approved"
           ? {
               icon: <FaTasks />,
               label: "Lead Management",
               link: "/seller-leads",
             }
           : null,
-        status === "active"
+        status === "approved"
           ? {
               icon: <LiaMoneyCheckSolid />,
               label: "Commission Management",
@@ -64,18 +87,25 @@ const SellerSidebar = () => {
     {
       title: "Operations",
       items: [
-        status === "active"
+        status === "approved"
           ? {
               icon: <BsBuildingAdd />,
               label: "Add Property",
               link: "/add-property",
             }
           : null,
-        status === "active"
+        status === "approved"
           ? {
               icon: <MdOutlineBook />,
               label: "Training Resources",
               link: "/seller-training",
+            }
+          : null,
+        status === "approved"
+          ? {
+              icon: <MdOutlineBook />,
+              label: "Notification",
+              link: "/seller-notification",
             }
           : null,
         {
