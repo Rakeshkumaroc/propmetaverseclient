@@ -1,18 +1,41 @@
 import { useEffect, useState } from "react";
 import CardContainer from "../card/SellerCardContainer";
 import { HiClock, HiCheckCircle, HiXCircle } from "react-icons/hi";
-
+import axios from "axios";
+const baseUrl = import.meta.env.VITE_APP_URL;
 const SellerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
   const [data, setData] = useState();
-  const [status, setStatus] = useState("approved"); // Change to "approved" or "rejected" to test
+  const [status, setStatus] = useState(""); // Change to "approved" or "rejected" to test
 
+  const fetchSellerDataById = () => {
+    const sellerId = localStorage.getItem("sellerId");
+    const token = localStorage.getItem("token");
+    if (sellerId) {
+      axios
+        .get(`${baseUrl}/get-seller-data/${sellerId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((result) => {
+          console.log(result.data.sellerData);
+          setStatus(result.data.sellerData.approveStatus);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      console.log("seller id is not here ");
+    }
+  };
   useEffect(() => {
     const result = localStorage.getItem("sellerFullName");
     if (result) {
       let firstName = result.split(" ")[0];
       setUserName(firstName);
+      fetchSellerDataById();
     }
 
     const interval = setInterval(() => {
@@ -81,7 +104,9 @@ const SellerDashboard = () => {
       {status === "approved" ? (
         <CardContainer />
       ) : (
-        <div className={`mt-10 p-6 ${badge.bg} border-l-4 ${badge.border} ${badge.textColor} rounded-md`}>
+        <div
+          className={`mt-10 p-6 ${badge.bg} border-l-4 ${badge.border} ${badge.textColor} rounded-md`}
+        >
           <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
             {badge.icon}
             {badge.text}
@@ -93,7 +118,10 @@ const SellerDashboard = () => {
           </p>
           <p className="mt-1 text-sm text-gray-600">
             Need help?{" "}
-            <a href="/contact-us" className="text-blue-600 underline hover:text-blue-800">
+            <a
+              href="/contact-us"
+              className="text-blue-600 underline hover:text-blue-800"
+            >
               Contact support
             </a>
             .

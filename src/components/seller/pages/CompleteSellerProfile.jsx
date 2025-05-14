@@ -13,12 +13,13 @@ import {
   FiClock,
 } from "react-icons/fi";
 import { GoArrowUpRight } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;
 export default function CompleteSellerProfile() {
   const [activeTab, setActiveTab] = useState("basic");
   const [completedSteps, setCompletedSteps] = useState([]);
-
+const navigate= useNavigate()
   //  basic form data state variable
   const [formData, setFormData] = useState({
     fullName: "",
@@ -854,7 +855,7 @@ export default function CompleteSellerProfile() {
             </p>
             <button
               className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-medium hover:bg-blue-700 transition text-sm md:text-base"
-              onClick={() => alert("Redirecting to dashboard...")}
+              onClick={() => navigate("/seller")}
             >
               Launch Dashboard
             </button>

@@ -8,7 +8,7 @@ import { FiCheckCircle } from "react-icons/fi";
 
 const SellerProfileFrom = () => {
   // profile state variable start
-  const [verifyBtn, setVerifyBtn] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [initialSellerType, setInitialSellerType] = useState("");
 
@@ -24,7 +24,7 @@ const SellerProfileFrom = () => {
     isGoogleUser: false,
     sellerType: "",
   });
-  const [isNumberVerify, setIsNumberVerify] = useState(true);
+ 
 
   // profile state variable start End
 
@@ -143,11 +143,6 @@ const SellerProfileFrom = () => {
           // console.log(result.data.sellerData);
           setData(result.data.sellerData);
           setInitialSellerType(result.data.sellerData.sellerType || "");
-          if (result.data.sellerData.number) {
-            setVerifyBtn(true);
-          } else {
-            setVerifyBtn(false);
-          }
         })
         .catch((err) => {
           console.log(err);
@@ -242,7 +237,7 @@ const SellerProfileFrom = () => {
                   : "bg-yellow-100 text-yellow-600"
               }`}
             >
-              {data?.approveStatus === "active" ? "Active" : "Pending"}
+              {data?.approveStatus }
             </span>
           </div>
         </div>
@@ -327,7 +322,7 @@ const SellerProfileFrom = () => {
                   placeholder="Your Email"
                   className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
                 />
-                {data.isGoogleUser && (
+                {data.isEmailVerify && (
                   <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
                 )}
               </div>
@@ -344,11 +339,11 @@ const SellerProfileFrom = () => {
                   name="number"
                   value={data?.number || ""}
                   onChange={profileInputHandler}
-                  disabled={verifyBtn}
+                  disabled={data.isNumberVerify}
                   placeholder="Your Number"
                   className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
                 />
-                {isNumberVerify && (
+                {data.isNumberVerify && (
                   <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
                 )}
               </div>
