@@ -94,7 +94,7 @@ const Navbar = ({ isGlass }) => {
             <div className="flex items-center gap-1">
               {isAuthenticated ? (
                 <Link
-                  to="/customer-dashboard"
+                  to="/customer"
                   className="hover:text-logoColor flex items-center gap-1"
                 >
                   <RiUserFill /> Profile

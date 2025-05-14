@@ -25,7 +25,7 @@ const CustomerSignUp = () => {
   useEffect(() => {
     const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
     if (customerAuth && customerAuth.token) {
-      navigate("/customer-dashboard");
+      navigate("/customer");
     }
   }, [navigate]); // Dependency array includes navigate
 

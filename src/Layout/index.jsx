@@ -49,6 +49,9 @@ import ThankYou from "../pages/ThankYou";
 import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement.jsx";
 import CustomerDashboardd from "../pages/CustomerDashboardd.jsx";
 import ManageAnnouncements from "../components/admin/pages/ManageAnnouncements.jsx";
+import ProfileSectionPage from "../components/customer/pages/ProfileSectionPage.jsx";
+import SavedPropertiesPage from "../components/customer/pages/SavedPropertiesPage.jsx";
+import Activities from "../components/customer/pages/Activities.jsx";
 
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -79,7 +82,13 @@ const Layout = () => {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/customer-sign-up" element={<CustomerSignUp />} />
-        <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+        <Route path="/customer" element={<CustomerDashboard />} />
+        <Route path="/customer/profile" element={<ProfileSectionPage />} />
+        <Route
+          path="/customer/saved-properties"
+          element={<SavedPropertiesPage />}
+        />
+        <Route path="/customer/activities" element={<Activities />} />
         <Route path="/customer-sign-in" element={<CustomerLogin />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route
@@ -115,7 +124,10 @@ const Layout = () => {
           <Route path="seller-details/:id" element={<SellerDetails />} />
           <Route path="customer-details/:id" element={<CustomerDetails />} />
           <Route path="view-customers" element={<ViewCustomer />} />
-          <Route path="training-materials" element={<ManageTrainingMaterials />} />
+          <Route
+            path="training-materials"
+            element={<ManageTrainingMaterials />}
+          />
           <Route path="support-tickets" element={<SupportTickets />} />
           {/* lead-management */}
           <Route path="lead-management" element={<LeadManagement />} />

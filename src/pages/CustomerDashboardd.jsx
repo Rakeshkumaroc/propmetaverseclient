@@ -1,8 +1,17 @@
-import React from 'react';
-import { FiCompass, FiSearch, FiBell, FiUsers, FiHeart, FiFileText, FiTrendingUp, FiCalendar, FiMessageSquare } from 'react-icons/fi';
-import { MdOutlineDashboard, MdContentPaste } from 'react-icons/md';
-import { CgProfile } from 'react-icons/cg';
-import { FaTasks } from 'react-icons/fa';
+import React from "react";
+import {
+  FiCompass,
+  FiSearch,
+  FiBell,
+  FiUsers,
+  FiHeart,
+  FiFileText,
+  FiTrendingUp,
+  FiCalendar, 
+} from "react-icons/fi";
+import { MdOutlineDashboard, MdContentPaste } from "react-icons/md";
+import { CgProfile } from "react-icons/cg";
+import { FaTasks } from "react-icons/fa";
 
 const CustomerDashboardd = () => {
   return (
@@ -10,7 +19,11 @@ const CustomerDashboardd = () => {
       {/* Header */}
       <header className="bg-white shadow-md p-4 flex items-center justify-between">
         <div className="flex items-center">
-          <img  src="https://propmetaverse.com/assets/logopng-BXERHkCM.png" alt="Logo" className="h-10 " />
+          <img
+            src="https://propmetaverse.com/assets/logopng-BXERHkCM.png"
+            alt="Logo"
+            className="h-10 "
+          />
         </div>
         <div className="flex-1 mx-4">
           <div className="relative">
@@ -40,31 +53,58 @@ const CustomerDashboardd = () => {
         {/* Left Sidebar Navigation */}
         <aside className="w-64 bg-white shadow-md p-4">
           <nav className="space-y-2">
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <MdOutlineDashboard className="mr-2 text-xl" /> Dashboard
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiSearch className="mr-2 text-xl" /> Browse Properties
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <MdContentPaste className="mr-2 text-xl" /> My Listings
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiHeart className="mr-2 text-xl" /> Saved Properties
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiFileText className="mr-2 text-xl" /> My Transactions
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiTrendingUp className="mr-2 text-xl" /> Market Trends
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiCalendar className="mr-2 text-xl" /> Site Visits & Appointments
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <FiUsers className="mr-2 text-xl" /> My Agents / Brokers
             </a>
-            <a href="#" className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md">
+            <a
+              href="#"
+              className="flex items-center p-2 text-gray-700 hover:bg-blue-100 rounded-md"
+            >
               <CgProfile className="mr-2 text-xl" /> Settings & Profile
             </a>
           </nav>
@@ -81,7 +121,12 @@ const CustomerDashboardd = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium">My Listings</h3>
-                  <p>Active Listings: 3 <a href="#" className="text-logoBlue">[View/Edit Listing]</a></p>
+                  <p>
+                    Active Listings: 3{" "}
+                    <a href="#" className="text-logoBlue">
+                      [View/Edit Listing]
+                    </a>
+                  </p>
                   <p>Views Today: 105</p>
                   <p>Leads / Inquiries: 12</p>
                   <p>Scheduled Visits: 2 Today | 4 This Week</p>
@@ -128,7 +173,6 @@ const CustomerDashboardd = () => {
           </div>
 
           {/* Footer Widgets */}
-          
         </main>
       </div>
     </div>

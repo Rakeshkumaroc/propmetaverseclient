@@ -10,9 +10,7 @@ import { useLocation } from "react-router-dom";
 import { BsBuildingAdd } from "react-icons/bs";
 import { FaTasks } from "react-icons/fa"; // Icon for Lead Management 
 import { MdOutlineBook } from "react-icons/md";
-import { LiaMoneyCheckSolid } from "react-icons/lia";
-
-const baseUrl = import.meta.env.VITE_APP_URL;
+import { LiaMoneyCheckSolid } from "react-icons/lia"; 
 
 const SellerSidebar = () => {
   const location = useLocation();

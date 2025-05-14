@@ -23,7 +23,7 @@ const CustomerLogin = () => {
   useEffect(() => {
     const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
     if (customerAuth && customerAuth.token) {
-      navigate("/customer-dashboard");
+      navigate("/customer");
     }
   }, [navigate]); // Dependency array includes navigate to ensure stability
 
@@ -65,7 +65,7 @@ const CustomerLogin = () => {
       });
       // Verify customerAuth is saved
       console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
-      navigate("/customer-dashboard");
+      navigate("/customer");
     } catch (err) {
       setLoading(false);
       toast(err.message || err.response?.data?.message || "An error occurred", {
@@ -176,7 +176,7 @@ const CustomerLogin = () => {
             <GoogleButton
               endpoint="/google-auth-sign-in-customer"
               buttonName="Sign In With Google"
-              navigatePathSuccess="/customer-dashboard"
+              navigatePathSuccess="/customer"
               navigatePathError="/customer-sign-up"
             />
 
