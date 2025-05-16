@@ -210,7 +210,18 @@ const navigate= useNavigate()
       }
     } catch (error) {
       console.error("Document upload failed:", error);
-      Swal.fire("Error", "Document upload failed", "error");
+      Swal.fire({
+          title: "Error!",
+          text: "Document updated Failed!",
+          confirmButtonColor: "#1b639f",
+          icon: "error",
+          customClass: {
+            confirmButton:
+              "bg-[#1b639f] shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+          },
+          buttonsStyling: false,
+        });
+     
       SetBtnDisableDoc(false);
       setLoading(false);
     }
