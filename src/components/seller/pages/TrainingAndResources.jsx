@@ -1,34 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const trainingMaterials = [
-  {
-    title: "React Tu",
-    description: "A complete guide to React basics.",
-    fileName: "react-intro.mp4",
-    filePath: "/assets/react-intro.mp4",
-    sendEmail: true,
-    uploadedBy: "John Doe",
-    createdAt: "5/14/2025, 10:00:00 AM",
-  },
-  {
-    title: "Company Brochure",
-    description: "Our official brochure.",
-    fileName: "brochure.pdf",
-    filePath: "/assets/brochure.pdf",
-    sendEmail: false,
-    uploadedBy: "Jane Smith",
-    createdAt: "5/10/2025, 3:30:00 PM",
-  },
-  {
-    title: "Office Layout",
-    description: "Layout of the office area.",
-    fileName: "layout.jpg",
-    filePath: "/assets/layout.jpg",
-    sendEmail: true,
-    uploadedBy: "Mike Johnson",
-    createdAt: "5/12/2025, 1:15:00 PM",
-  },
-];
+const baseUrl = import.meta.env.VITE_APP_URL; // Ensure this is defined in your .env file
 
 const getFileType = (fileName) => {
   const ext = fileName.split(".").pop().toLowerCase();
@@ -43,12 +16,15 @@ const TrainingMaterialCard = ({ material }) => {
 
   return (
     <div className="bg-white shadow-md rounded-xl p-5 mb-6 w-full">
-      <h2 className="text-xl font-semibold mb-2">{material.title}</h2>
-      <p className="text-gray-700 mb-2">{material.description}</p>
+      <h2 className="text-xl font-semibold mb-2"> Title: {material.title}</h2>
+      <p className="text-gray-700 mt-4"> Description: {material.description}</p>
 
-      <div className="mb-4">
+      <div className="mt-10">
         {type === "video" && (
-          <video controls className="w-full rounded">
+          <video
+            controls
+            className="w-full h-[200px] md:h-[300px] object-cover rounded"
+          >
             <source src={material.filePath} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -57,7 +33,7 @@ const TrainingMaterialCard = ({ material }) => {
           <img
             src={material.filePath}
             alt={material.title}
-            className="w-full h-auto rounded"
+            className="w-full h-[200px] md:h-[300px] object-cover rounded"
           />
         )}
         {type === "pdf" && (
@@ -72,18 +48,19 @@ const TrainingMaterialCard = ({ material }) => {
         )}
       </div>
 
-      <div className="flex justify-between items-center mt-2">
+      <div className="flex justify-between items-center mt-13  flex-wrap gap-2">
         <div className="text-sm text-gray-500">
-          Uploaded by: <strong>{material.uploadedBy}</strong>
-          <br />
-          <span>{material.createdAt}</span>
+          <b>Uploaded by:</b> {material.uploadedBy}
+          <br />  <br />
+          <span className="mt-12"> <b>Date</b> {material.createdAt}</span>
         </div>
         <a
           href={material.filePath}
-          download={material.fileName}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
         >
-          Download
+          View
         </a>
       </div>
     </div>
@@ -91,15 +68,40 @@ const TrainingMaterialCard = ({ material }) => {
 };
 
 const TrainingAndResources = () => {
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMaterials = async () => {
+    try {
+      const res = await axios.get(`${baseUrl}/training-materials`);
+      console.log(res.data);
+      setMaterials(res.data.materials || []);
+    } catch (error) {
+      console.error("Failed to fetch training materials:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
+
   return (
     <div className="bg-gray-100 overflow-y-auto text-black sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 lg:w-full">
-      {trainingMaterials.map((material, index) => (
-        <TrainingMaterialCard key={index} material={material} />
-      ))}
+      {loading ? (
+        <p className="text-center py-10 text-lg">Loading...</p>
+      ) : materials.length === 0 ? (
+        <p className="text-center py-10 text-lg">
+          No training materials found.
+        </p>
+      ) : (
+        materials.map((material, index) => (
+          <TrainingMaterialCard key={index} material={material} />
+        ))
+      )}
     </div>
   );
 };
 
-export default TrainingAndResources
-
-
+export default TrainingAndResources;

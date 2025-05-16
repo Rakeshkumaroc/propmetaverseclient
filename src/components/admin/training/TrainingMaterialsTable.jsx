@@ -66,9 +66,9 @@ const TrainingMaterialsTable = ({ searchValue }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const adminAuth = JSON.parse(localStorage.getItem("adminAuth"));
+          // const adminAuth = JSON.parse(localStorage.getItem("adminAuth"));
           await axios.delete(`${baseUrl}/training-materials`, {
-            headers: { Authorization: `Bearer ${adminAuth.token}` },
+            // headers: { Authorization: `Bearer ${adminAuth.token}` },
             data: { ids: selectedIds },
           });
           setData((prev) => prev.filter((item) => !selectedIds.includes(item._id)));
@@ -97,10 +97,8 @@ const TrainingMaterialsTable = ({ searchValue }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const adminAuth = JSON.parse(localStorage.getItem("adminAuth"));
-        const response = await axios.get(`${baseUrl}/training-materials`, {
-          headers: { Authorization: `Bearer ${adminAuth.token}` },
-        });
+        // const adminAuth = JSON.parse(localStorage.getItem("adminAuth"));
+        const response = await axios.get(`${baseUrl}/training-materials`);
         let filteredData = response.data.materials || [];
 
         // Apply search filter

@@ -90,7 +90,7 @@ const SellerLeadTable = ({ searchValue }) => {
         const sellerId = localStorage.getItem("sellerId");
         let result = await fetch(`${baseUrl}/lead/${sellerId}`);
         result = await result.json();
-
+       console.log(result,"hhhhhhhhhhhhhhhhhhhhhhh")
         // Step 1: Filter by status if needed
         let filteredData = [...result];
         if (filter === "Closed") {
