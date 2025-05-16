@@ -54,7 +54,7 @@ const initialFormData = {
   keywords: [{ heading: "", keyword: [] }],
   amenities: [],
   seller_id: "",
-  sellerType: "subBroker", // Added sellerType with default value
+  // sellerType: "subBroker", // Added sellerType with default value
 };
 
 const Amenities = ({ action }) => {
@@ -68,7 +68,7 @@ const Amenities = ({ action }) => {
       setFormData((prev) => ({
         ...prev,
         seller_id: user,
-        sellerType: "subBroker", // Ensure sellerType is set
+        // sellerType: "subBroker", // Ensure sellerType is set
       }));
     }
   }, [setFormData]);
@@ -87,7 +87,7 @@ const Amenities = ({ action }) => {
 
       appendIfValid("title", formData.title);
       appendIfValid("seller_id", formData.seller_id);
-      appendIfValid("sellerType", formData.sellerType); // Append sellerType
+      // appendIfValid("sellerType", formData.sellerType); // Append sellerType
       appendIfValid("description", formData.description);
       appendIfValid("propertyType", formData.propertyType);
       appendIfValid("status", formData.status);

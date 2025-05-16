@@ -41,12 +41,12 @@ const SellerTable = ({ searchValue }) => {
       FullName: item.fullName || "N/A",
       Email: item.email || "N/A",
       Phone: item.number || "N/A",
-      Role:
-        item.sellerType === "subBroker"
-          ? "Sub-Broker"
-          : item.sellerType === "individualSeller"
-          ? "Individual Seller"
-          : "N/A",
+      // Role:
+      //   item.sellerType === "subBroker"
+      //     ? "Sub-Broker"
+      //     : item.sellerType === "individualSeller"
+      //     ? "Individual Seller"
+      //     : "N/A",
       Status:
         item.approveStatus === "active"
           ? "Approved"
@@ -252,10 +252,10 @@ const SellerTable = ({ searchValue }) => {
             )
           : result;
 
-        filteredData =
-          roleFilter !== "all"
-            ? filteredData.filter((item) => item.sellerType === roleFilter)
-            : filteredData;
+        // filteredData =
+        //   roleFilter !== "all"
+        //     ? filteredData.filter((item) => item.sellerType === roleFilter)
+        //     : filteredData;
 
         // Sort by createdAt
         filteredData = [...filteredData].sort((a, b) => {
