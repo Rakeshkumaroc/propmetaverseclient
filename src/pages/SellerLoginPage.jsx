@@ -74,7 +74,7 @@ const SellerLoginPage = () => {
         <div className="py-4 px-6">
           <h2 className="text-2xl font-semibold  text-center mb-8">
             {" "}
-            Seller Login
+            Sub-Broker Login
           </h2>
         </div>
 

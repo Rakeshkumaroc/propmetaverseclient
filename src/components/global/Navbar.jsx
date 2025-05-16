@@ -63,7 +63,7 @@ const Navbar = ({ isGlass }) => {
       } text-white `}
       >
         {/* Top Bar */}
-        <div className="hidden md:flex justify-between items-center px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 text-sm border-b border-gray-600">
+        <div className="hidden md:flex justify-between items-center px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 text-[18px] border-b border-gray-600">
           <div className="flex items-center space-x-4 py-1">
             <span className="flex items-center space-x-1">
               <FaPhoneAlt />
@@ -102,12 +102,12 @@ const Navbar = ({ isGlass }) => {
               ) : (
                 <>
                   <RiLoginBoxFill />
-                  <Link className="hover:text-logoColor" to="/customer-sign-in">
-                    Login
+                  <Link className="hover:text-logoColor" to="/customer-sign-up">
+                    Client  Register
                   </Link>
                   /
-                  <Link className="hover:text-logoColor" to="/customer-sign-up">
-                    Register
+                  <Link className="hover:text-logoColor" to="/customer-sign-in" >
+                    Login
                   </Link>
                 </>
               )}
@@ -163,7 +163,7 @@ const Navbar = ({ isGlass }) => {
             </li>
             <li>
               <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded w-full md:w-auto">
-                <Link to="/seller-sign-up">Submit Your Property</Link>
+                <Link to="/seller-sign-up">Partner With Us</Link>
               </button>
             </li>
           </ul>

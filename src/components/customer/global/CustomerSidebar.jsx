@@ -13,6 +13,7 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { BsBuildingAdd } from "react-icons/bs";
+import { FaTasks } from "react-icons/fa";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -26,40 +27,47 @@ const CustomerSidebar = () => {
       title: "Main",
       items: [
         { icon: <MdOutlineDashboard />, label: "Dashboard", link: "/customer" },
-        {
-          icon: <FiHeart />,
-          label: "Saved Properties",
-          link: "/customer/saved-properties",
-        },
-        {
-          icon: <FiSearch />,
-          label: "Browse Properties",
-          link: "/customer/browse-properties",
-        },
+
+        // {
+        //   icon: <FiSearch />,
+        //   label: "Browse Properties",
+        //   link: "/projects",
+        // },
         {
           icon: <MdContentPaste />,
           label: "My Listings",
           link: "/customer/my-listings",
         },
-        {
-          icon: <FiFileText />,
-          label: "My Transactions",
-          link: "/customer/transactions",
-        },
+        // {
+        //   icon: <FiFileText />,
+        //   label: "My Transactions",
+        //   link: "/customer/transactions",
+        // },
         {
           icon: <FiTrendingUp />,
           label: "Activities",
           link: "/customer/activities",
         },
+        // {
+        //   icon: <FiCalendar />,
+        //   label: "Site Visits & Appointments",
+        //   link: "/customer/appointments",
+        // },
+        // {
+        //   icon: <FiUsers />,
+        //   label: "My Agents / Brokers",
+        //   link: "/customer/agents",
+        // },
+      ],
+    },
+    {
+      title: "Administration",
+      items: [
+       
         {
-          icon: <FiCalendar />,
-          label: "Site Visits & Appointments",
-          link: "/customer/appointments",
-        },
-        {
-          icon: <FiUsers />,
-          label: "My Agents / Brokers",
-          link: "/customer/agents",
+          icon: <FaTasks />,
+          label: "Lead Management",
+          link: "/customer/lead-management",
         },
       ],
     },
@@ -86,7 +94,7 @@ const CustomerSidebar = () => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem("user allergen");
+    localStorage.removeItem("customerAuth");
     navigate("/");
   };
 

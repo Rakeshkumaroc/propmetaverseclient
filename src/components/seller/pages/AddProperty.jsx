@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Media from "../AddProperty/Media";
 import Location from "../AddProperty/Location";
 import Amenities from "../AddProperty/Amenities";

@@ -13,11 +13,12 @@ const Enquiry = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "", 
+    phone: "",
     message: "",
     customer_id: "",
     property_id: "",
     seller_id: "",
+    sellerType: "", // Added sellerType
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,6 @@ const Enquiry = () => {
           };
           const res = await axios.get(`${baseUrl}/customer-profile`, config);
           const user = res.data.user;
-          console.log(user);
 
           setFormData((prev) => ({
             ...prev,
@@ -50,6 +50,8 @@ const Enquiry = () => {
           toast.error("Failed to fetch customer details", {
             position: "top-left",
           });
+          console.log('Failed to fetch customer details');
+          
         }
       };
       fetchCustomerData();
@@ -75,7 +77,6 @@ const Enquiry = () => {
         return value.length < 2
           ? "Name must be at least 2 characters long"
           : "";
-      
       default:
         return "";
     }
@@ -130,21 +131,28 @@ const Enquiry = () => {
         `${baseUrl}/single-property/${propertyId}`
       );
 
-      // Check if seller_id exists in the response
+      // Check if seller_id and sellerType exist in the response
       if (!propertyRes.data || !propertyRes.data.seller_id) {
         throw new Error("Seller information not found for this property");
       }
       const sellerId = propertyRes.data.seller_id;
+      const sellerType = propertyRes.data.sellerType; // Fetch sellerType
+
+      // Validate sellerType
+      if (!["subBroker", "individualSeller"].includes(sellerType)) {
+        throw new Error("Invalid seller type");
+      }
 
       // Prepare lead data
       const leadData = {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone, 
+        phone: formData.phone,
         message: formData.message,
         customer_id: formData.customer_id,
         property_id: formData.property_id,
         seller_id: sellerId,
+        sellerType: sellerType, // Include sellerType
         status: "pending",
       };
 
@@ -165,11 +173,12 @@ const Enquiry = () => {
         setFormData({
           name: "",
           email: "",
-          phone: "", 
+          phone: "",
           message: "",
           customer_id: "",
           property_id: "",
           seller_id: "",
+          sellerType: "", // Reset sellerType
         });
         navigate("/thank-you");
       }
@@ -193,8 +202,6 @@ const Enquiry = () => {
       </h3>
       <p className="text-[14px] leading-[25.9px]">Choose your preferred day</p>
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        
-
         <input
           type="text"
           name="name"

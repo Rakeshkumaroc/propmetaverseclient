@@ -237,7 +237,9 @@ const PropertyTable = ({ searchValue }) => {
           ? result.filter(
               (item) =>
                 item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-                item.description?.toLowerCase().includes(searchValue.toLowerCase())
+                item.description
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase())
             )
           : result;
 
@@ -251,12 +253,6 @@ const PropertyTable = ({ searchValue }) => {
         setData(filteredData);
       } catch (error) {
         console.error("Error fetching properties:", error);
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to fetch properties. Please try again.",
-          icon: "error",
-          confirmButtonColor: "#1b639f",
-        });
       } finally {
         setLoading(false);
       }
@@ -364,7 +360,8 @@ const PropertyTable = ({ searchValue }) => {
                 onClick={downloadExcel}
                 className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
               >
-                <FaDownload /> Export <span className="hidden md:inline">to Excel</span>
+                <FaDownload /> Export{" "}
+                <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>

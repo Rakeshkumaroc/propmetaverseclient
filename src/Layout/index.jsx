@@ -9,8 +9,8 @@ import WeEnquiry from "../components/admin/pages/WeEnquiry";
 import MyProfile from "../components/admin/pages/MyProfile";
 import NotFound from "../pages/NotFound";
 import DamacEnquiry from "../components/admin/pages/DamacEnquiry";
-import AddProperty from "../components/seller/pages/AddProperty.jsx";
-import Property from "../components/seller/pages/Property.jsx";
+import AddProperty from "../components/seller/pages/AddProperty";
+import Property from "../components/seller/pages/Property";
 import Hero from "../components/admin/pages/Hero";
 import AddHero from "../components/admin/pages/AddHero";
 import Projects from "../pages/Projects";
@@ -41,20 +41,22 @@ import SellerDetails from "../components/admin/manageSeller/SellerDetails";
 import CustomerDetails from "../components/admin/customer/CustomerDetails";
 import ViewCustomer from "../components/admin/pages/ViewCustomer";
 import ManageTrainingMaterials from "../components/admin/pages/ManageTrainingMaterials";
-import SupportTickets from "../components/admin/pages/SupportTickets.jsx";
+import SupportTickets from "../components/admin/pages/SupportTickets";
 import LeadManagement from "../components/admin/pages/LeadManagement";
 import CommissionManagement from "../components/admin/pages/CommissionManagement";
 import ListingManagement from "../components/admin/pages/ListingManagement";
 import ThankYou from "../pages/ThankYou";
-import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement.jsx";
-import CustomerDashboardd from "../pages/CustomerDashboardd.jsx";
-import ManageAnnouncements from "../components/admin/pages/ManageAnnouncements.jsx";
-import ProfileSectionPage from "../components/customer/pages/ProfileSectionPage.jsx";
-import SavedPropertiesPage from "../components/customer/pages/SavedPropertiesPage.jsx";
-import Activities from "../components/customer/pages/Activities.jsx";
-import TrainingAndResources from "../components/seller/pages/TrainingAndResources.jsx";
-import AnnouncementsPage from "../components/seller/pages/AnnouncementsPage.jsx";
-
+import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement";
+import CustomerDashboardd from "../pages/CustomerDashboardd";
+import ManageAnnouncements from "../components/admin/pages/ManageAnnouncements";
+import ProfileSectionPage from "../components/customer/pages/ProfileSectionPage";
+import SavedPropertiesPage from "../components/customer/pages/SavedPropertiesPage";
+import Activities from "../components/customer/pages/Activities";
+import TrainingAndResources from "../components/seller/pages/TrainingAndResources";
+import AnnouncementsPage from "../components/seller/pages/AnnouncementsPage";
+import MyListing from "../components/customer/pages/MyListing";
+import CustomerAddProperty from "../components/customer/pages/CustomerAddProperty";
+import CustomerLeadManagement from "../components/customer/pages/CustomerLeadManagement";
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -83,6 +85,7 @@ const Layout = () => {
         <Route path="/terms-condition" element={<TermsAndCondition />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/customer-sign-up" element={<CustomerSignUp />} />
         <Route path="/customer" element={<CustomerDashboard />} />
         <Route path="/customer/profile" element={<ProfileSectionPage />} />
@@ -90,9 +93,21 @@ const Layout = () => {
           path="/customer/saved-properties"
           element={<SavedPropertiesPage />}
         />
+        <Route
+          path="customer/lead-management"
+          element={<CustomerLeadManagement />}
+        />
+        <Route path="/customer/my-listings" element={<MyListing />} />
+        <Route
+          path="/customer/add-property"
+          element={<CustomerAddProperty />}
+        />
+        <Route
+          path="/customer/edit-property/:id"
+          element={<CustomerAddProperty action={"edit"} />}
+        />
         <Route path="/customer/activities" element={<Activities />} />
         <Route path="/customer-sign-in" element={<CustomerLogin />} />
-        <Route path="/favorites" element={<Favorites />} />
         <Route
           path="/customer-forgot-password"
           element={<CustomerForgetPassword />}

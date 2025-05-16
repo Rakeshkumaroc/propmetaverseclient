@@ -3,7 +3,6 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import PropertyTable from "../property/PropertyTable";
 
-
 const ListingManagement = () => {
   const [search, setSearch] = useState("");
 

@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CustomerNavbar from "../global/CustomerNavbar";
-import CustomerSidebar from "../global/CustomerSidebar";
-import Footer from "../../global/Footer";
+import CustomerSidebar from "../global/CustomerSidebar"; 
 import RecentSearchesSection from "../../customerDashboard/RecentSearchesSection";
 import EnquiryStatusSection from "../../customerDashboard/EnquiryStatusSection";
 
@@ -28,14 +27,14 @@ const Activities = () => {
     const fetchData = async () => {
       try {
         const token = customerAuth.token;
-        const config = { headers: { Authorization: `Bearer ${token}` } };
+         
 
         // Fetch search history
         const historyRes = await axios.get(`${baseUrl}/customer-search-history`, config);
         setSearchHistory(historyRes.data.searchHistory || []);
 
         // Fetch enquiries
-        const enquiriesRes = await axios.get(`${baseUrl}/customer-enquiries`, config);
+        const enquiriesRes = await axios.get(`${baseUrl}/customer-enquiries`);
         setEnquiries(enquiriesRes.data.enquiries || []);
 
         setLoading(false);

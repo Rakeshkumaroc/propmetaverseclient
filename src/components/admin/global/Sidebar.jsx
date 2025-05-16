@@ -57,11 +57,11 @@ const Sidebar = () => {
           label: "Lead Management",
           link: "/lead-management",
         },
-        {
-          icon: <LiaMoneyCheckAltSolid />,
-          label: "Commission Management",
-          link: "/commission-management",
-        },
+        // {
+        //   icon: <LiaMoneyCheckAltSolid />,
+        //   label: "Commission Management",
+        //   link: "/commission-management",
+        // },
         {
           icon: <MdContentPaste />,
           label: "Listing Management",
@@ -82,16 +82,16 @@ const Sidebar = () => {
         },
       ].filter(Boolean),
     },
-    {
-      title: "Analytics",
-      items: [
-        {
-          icon: <FiCompass />,
-          label: "Performance Reports",
-          link: "/performance-reports",
-        },
-      ].filter(Boolean),
-    },
+    // {
+    //   title: "Analytics",
+    //   items: [
+    //     {
+    //       icon: <FiCompass />,
+    //       label: "Performance Reports",
+    //       link: "/performance-reports",
+    //     },
+    //   ].filter(Boolean),
+    // },
     {
       title: "Account",
       items: [
