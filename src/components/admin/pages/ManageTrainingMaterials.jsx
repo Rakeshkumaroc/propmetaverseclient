@@ -39,7 +39,7 @@ const ManageTrainingMaterials = () => {
     formData.append("file", file);
     formData.append("title", newMaterial.title);
     formData.append("description", newMaterial.description);
-    // formData.append("sendEmail", newMaterial.sendEmail);
+    formData.append("sendEmail", newMaterial.sendEmail);
 
     setUploading(true);
     try {

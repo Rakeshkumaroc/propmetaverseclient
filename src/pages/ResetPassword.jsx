@@ -19,12 +19,12 @@ const ResetPassword = () => {
       .patch(`${baseUrl}/reset-password/${token}`, { password })
       .then((res) => {
         setLoading(false);
-        console.log(res);
+        // console.log(res,"dddddcccccccccccccccc");
         toast(res.data.message, {
           position: "top-left",
           type: "success",
         });
-        Navigate("/sign-in");
+        Navigate("/seller-sign-in");
       })
       .catch((err) => {
         setLoading(false);
@@ -96,7 +96,7 @@ const ResetPassword = () => {
           <div className="text-center text-sm text-gray-600">
             Remember your password?{" "}
             <Link
-              to="/sign-in"
+              to="/seller-sign-in"
               className="text-blue-600 hover:text-[#64AE37] font-medium"
             >
               Go to Login
