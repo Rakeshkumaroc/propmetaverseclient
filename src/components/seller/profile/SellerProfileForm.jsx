@@ -4,13 +4,13 @@ import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;
 import profilePlaceHolder from "../../../assets/image/prifilePlaceHolder.jpg";
 import axios from "axios";
-import { FiCheckCircle } from "react-icons/fi";
+import { FiCheckCircle, FiEye, FiEyeOff } from "react-icons/fi";
 
 const SellerProfileFrom = () => {
   // profile state variable start
 
   const [loading, setLoading] = useState(false);
-  const [initialSellerType, setInitialSellerType] = useState("");
+  const [profilePic, setProfilePic] = useState("");
 
   const [data, setData] = useState({
     fullName: "",
@@ -22,9 +22,8 @@ const SellerProfileFrom = () => {
     state: "",
     email: "",
     isGoogleUser: false,
-    sellerType: "",
+    // sellerType: "",
   });
- 
 
   // profile state variable start End
 
@@ -36,6 +35,11 @@ const SellerProfileFrom = () => {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  });
   const [errors, setErrors] = useState({});
 
   // Validate inputs
@@ -65,6 +69,9 @@ const SellerProfileFrom = () => {
     validate(name, value);
   };
 
+  const togglePasswordVisibility = (field) => {
+    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
   // Handle form submission password
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,7 +128,7 @@ const SellerProfileFrom = () => {
     const file = e.target.files[0];
     if (file) {
       // Upload logic here (Cloudinary or server API)
-      console.log("Selected File:", file);
+      setProfilePic(file);
     }
   };
 
@@ -142,7 +149,7 @@ const SellerProfileFrom = () => {
         .then((result) => {
           // console.log(result.data.sellerData);
           setData(result.data.sellerData);
-          setInitialSellerType(result.data.sellerData.sellerType || "");
+          // setInitialSellerType(result.data.sellerData.sellerType || "");
         })
         .catch((err) => {
           console.log(err);
@@ -170,20 +177,27 @@ const SellerProfileFrom = () => {
     e.preventDefault();
     setLoading(true);
 
-    const sellerUpdateData = {
-      fullName: data.fullName,
-      sellerType: data.sellerType,
-      bio: data.bio,
-      number: data.number,
-    };
+    const formData = new FormData();
+    formData.append("fullName", data.fullName);
+    formData.append("bio", data.bio);
+    formData.append("fullAddress", data.fullAddress);
+    formData.append("pincode", data.pincode);
+    formData.append("district", data.district);
+    formData.append("state", data.state);
+    formData.append("number", data.number);
+
+    if (profilePic) {
+      formData.append("profilePic", profilePic);
+    }
 
     const sellerId = localStorage.getItem("sellerId");
     const token = localStorage.getItem("token");
     if (sellerId) {
       axios
-        .put(`${baseUrl}/update-seller/${sellerId}`, sellerUpdateData, {
+        .put(`${baseUrl}/update-seller/${sellerId}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         })
         .then((result) => {
@@ -213,6 +227,7 @@ const SellerProfileFrom = () => {
     }
   };
   // profile  end
+  console.log("fle",profilePic)
   return (
     <div className="w-full rounded-lg bg-white">
       <div className="p-8 mt-10">
@@ -231,13 +246,13 @@ const SellerProfileFrom = () => {
               Status:
             </span>
             <span
-              className={`text-sm font-medium px-3 py-0.5 rounded-full ${
-                data?.approveStatus === "active"
+              className={`text-sm font-medium px-3 py-0.5 rounded-lg capitalize ${
+                data?.approveStatus === "approved"
                   ? "bg-green-100 text-green-600"
                   : "bg-yellow-100 text-yellow-600"
               }`}
             >
-              {data?.approveStatus }
+              {data?.approveStatus}
             </span>
           </div>
         </div>
@@ -247,7 +262,7 @@ const SellerProfileFrom = () => {
           <div className="space-y-5">
             {/* User Type */}
             {/* Seller Type Section */}
-            {initialSellerType ? (
+            {/* {initialSellerType ? (
               <div className="flex items-center gap-2">
                 <span className="text-[14px] font-semibold leading-[26px]">
                   Seller Type
@@ -263,7 +278,7 @@ const SellerProfileFrom = () => {
                 </span>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Seller Type
                 </label>
@@ -290,7 +305,7 @@ const SellerProfileFrom = () => {
                   </label>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Username */}
             <div className="flex flex-col gap-2">
@@ -373,7 +388,6 @@ const SellerProfileFrom = () => {
               <input
                 type="file"
                 accept="image/*"
-                disabled
                 onChange={handleProfileImageChange}
                 className="border px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
               />
@@ -389,6 +403,67 @@ const SellerProfileFrom = () => {
                   ? new Date(data.approvedAt).toLocaleDateString()
                   : "Not approved yet"}
               </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-semibold leading-[26px]">
+                Full Address
+              </label>
+              <textarea
+                name="fullAddress"
+                value={data.fullAddress}
+                onChange={profileInputHandler}
+                rows="2"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                placeholder="Enter your complete address"
+              ></textarea>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-semibold leading-[26px]">
+                  Pincode
+                </label>
+                <input
+                  type="tel"
+                  name="pincode"
+                  value={data.pincode}
+                  onChange={profileInputHandler}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                  placeholder="Enter pincode"
+                  required
+                  minLength={6}
+                  maxLength={6}
+                  pattern="[0-9]*"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-semibold leading-[26px]">
+                  District
+                </label>
+                <input
+                  type="text"
+                  name="district"
+                  value={data.district}
+                  onChange={profileInputHandler}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                  placeholder="Enter district"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-semibold leading-[26px]">
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={data.state}
+                  onChange={profileInputHandler}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                  placeholder="Enter state"
+                />
+              </div>
             </div>
           </div>
           <div className="flex ">
@@ -411,7 +486,7 @@ const SellerProfileFrom = () => {
       </div>
 
       {data && !data.isGoogleUser && (
-        <div className="p-8 mt-1">
+        <div className="md:p-8 p-1 mt-1 ">
           <form onSubmit={handleSubmit} className="p-8 mt-10">
             <p className="text-center text-lg font-semibold mb-5">
               Change Password
@@ -426,14 +501,23 @@ const SellerProfileFrom = () => {
                   <label htmlFor={name} className="text-sm font-medium">
                     {label}
                   </label>
-                  <input
-                    type="password"
-                    name={name}
-                    value={form[name]}
-                    onChange={handleChange}
-                    placeholder={label}
-                    className="border px-3 py-3 rounded-lg text-sm"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword[name] ? "text" : "password"}
+                      name={name}
+                      value={form[name]}
+                      onChange={handleChange}
+                      placeholder={label}
+                      className="border px-3 py-3 rounded-lg text-sm w-full pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility(name)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword[name] ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
                   {errors[name] && (
                     <p className="text-red-500 text-sm">{errors[name]}</p>
                   )}

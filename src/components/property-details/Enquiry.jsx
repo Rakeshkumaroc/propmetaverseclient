@@ -18,7 +18,7 @@ const Enquiry = () => {
     customer_id: "",
     property_id: "",
     seller_id: "",
-    sellerType: "", // Added sellerType
+    // sellerType: "", // Added sellerType
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -136,12 +136,12 @@ const Enquiry = () => {
         throw new Error("Seller information not found for this property");
       }
       const sellerId = propertyRes.data.seller_id;
-      const sellerType = propertyRes.data.sellerType; // Fetch sellerType
+      // const sellerType = propertyRes.data.sellerType; // Fetch sellerType
 
       // Validate sellerType
-      if (!["subBroker", "individualSeller"].includes(sellerType)) {
-        throw new Error("Invalid seller type");
-      }
+      // if (!["subBroker", "individualSeller"].includes(sellerType)) {
+      //   throw new Error("Invalid seller type");
+      // }
 
       // Prepare lead data
       const leadData = {
@@ -152,7 +152,7 @@ const Enquiry = () => {
         customer_id: formData.customer_id,
         property_id: formData.property_id,
         seller_id: sellerId,
-        sellerType: sellerType, // Include sellerType
+        // sellerType: sellerType, // Include sellerType
         status: "pending",
       };
 
@@ -178,7 +178,7 @@ const Enquiry = () => {
           customer_id: "",
           property_id: "",
           seller_id: "",
-          sellerType: "", // Reset sellerType
+          // sellerType: "", // Reset sellerType
         });
         navigate("/thank-you");
       }

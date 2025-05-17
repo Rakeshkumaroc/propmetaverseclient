@@ -151,14 +151,14 @@ const SellerDetails = () => {
                     </strong>{" "}
                     {seller.number || "N/A"}
                   </p>
-                  <p>
+                  {/* <p>
                     <strong className="font-medium text-gray-800">Role:</strong>{" "}
                     {seller.sellerType === "subBroker"
                       ? "Sub-Broker"
                       : seller.sellerType === "individualSeller"
                       ? "Individual Seller"
                       : "N/A"}
-                  </p>
+                  </p> */}
                   <p className="flex items-center gap-4">
                     <span>
                       <strong className="font-medium text-gray-800">

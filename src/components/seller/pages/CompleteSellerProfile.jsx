@@ -31,9 +31,9 @@ const navigate= useNavigate()
     state: "",
     email: "",
     isGoogleUser: false,
-    sellerType: "",
+    // sellerType: "",
   });
-  const [initialSellerType, setInitialSellerType] = useState("");
+  // const [initialSellerType, setInitialSellerType] = useState("");
   // Update the document form data state
   const [documentFormData, setDocumentFormData] = useState({
     aadhar: null,
@@ -47,6 +47,8 @@ const navigate= useNavigate()
   const [btnDisable, SetBtnDisable] = useState(false);
   const [btnDisableDoc, SetBtnDisableDoc] = useState(false);
   const [loading, setLoading] = useState(false);
+   const [emailLoading, setEmailLoading] = useState(false);
+ const [phoneLoading, setPhoneLoading] = useState(false);
   const tabs = [
     { id: "basic", label: "Basic Details", icon: <FiUser /> },
     { id: "document", label: "Documents", icon: <FiFile /> },
@@ -85,7 +87,7 @@ const navigate= useNavigate()
         .then((result) => {
           console.log(result.data.sellerData);
           setFormData(result.data.sellerData);
-          setInitialSellerType(result.data.sellerData.sellerType || "");
+          // setInitialSellerType(result.data.sellerData.sellerType || "");
           // console.log("startin 2 form data ", formData);
         })
         .catch((err) => {
@@ -105,7 +107,7 @@ const navigate= useNavigate()
     setLoading(true);
     const sellerUpdateData = {
       fullName: formData.fullName,
-      sellerType: formData.sellerType,
+      // sellerType: formData.sellerType,
       bio: formData.bio,
       number: formData.number,
       fullAddress: formData.fullAddress,
@@ -259,26 +261,35 @@ const navigate= useNavigate()
 
   const VerificationSubmitHandler = async (type) => {
     try {
-      setLoading(true);
+      // setLoading(true);
       if (type === "email") {
+          setEmailLoading(true);
         await axios.post(`${baseUrl}/send-otp`, {
           contact: formData.email,
           type: "email", // ✅
         });
-        setLoading(false);
+        // setLoading(false);
+         setEmailLoading(false);
         setEmailOtpSent(true);
         setEmailCountdown(60);
       } else if (type === "phone") {
+        setPhoneLoading(true);
         await axios.post(`${baseUrl}/send-otp`, {
           contact: formData.number,
           type: "phone", // ✅
         });
-        setLoading(false);
+        // setLoading(false);
+        setPhoneLoading(false);
         setPhoneOtpSent(true);
         setPhoneCountdown(60);
       }
     } catch (error) {
-      setLoading(false);
+      // setLoading(false);
+      if (type === "email") {
+     setEmailLoading(false);
+    } else {
+     setPhoneLoading(false);
+   }
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP");
     }
@@ -360,7 +371,7 @@ const navigate= useNavigate()
               className="space-y-3 md:space-y-4"
               onSubmit={updateProfileHandler}
             >
-              {initialSellerType ? (
+              {/* {initialSellerType ? (
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-semibold leading-[26px]">
                     Seller Type
@@ -403,7 +414,7 @@ const navigate= useNavigate()
                     </label>
                   </div>
                 </div>
-              )}
+              )} */}
 
               <div className="space-y-2">
                 <label className="text-[14px] font-semibold leading-[26px]">
@@ -423,7 +434,8 @@ const navigate= useNavigate()
                 <label className="text-[14px] font-semibold leading-[26px]">
                   Email
                 </label>
-                <div className="relative">
+                {/* relative */}
+                <div className="space-y-2">  
                   <input
                     type="text"
                     name="email"
@@ -433,9 +445,9 @@ const navigate= useNavigate()
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm pr-10"
                     placeholder="Enter your email"
                   />
-                  {formData.isGoogleUser && (
+                  {/* {formData.isGoogleUser && (
                     <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -553,7 +565,7 @@ const navigate= useNavigate()
                   <button
                     type="button"
                     onClick={() => {
-                      if (formData.fullName && formData.sellerType) {
+                      if (formData.fullName && formData.number) {
                         setCompletedSteps((prev) => [...prev, "basic"]);
                         setActiveTab("document");
                       }
@@ -718,12 +730,12 @@ const navigate= useNavigate()
                   ) : (
                     <button
                       onClick={() => VerificationSubmitHandler("email")}
-                      disabled={emailCountdown > 0}
+                     disabled={emailCountdown > 0 || emailLoading}
                       className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
       bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors
       disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? (
+                      {emailLoading ? (
                         <div className="flex justify-center">
                           <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
                         </div>
@@ -789,12 +801,12 @@ const navigate= useNavigate()
                   ) : (
                     <button
                       onClick={() => VerificationSubmitHandler("phone")}
-                      disabled={phoneCountdown > 0}
+                      disabled={phoneCountdown > 0 || phoneLoading}
                       className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
                         bg-green-100 text-green-800 hover:bg-green-200 transition-colors
                         disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? (
+                      {phoneLoading ? (
                         <div className="flex justify-center">
                           <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
                         </div>

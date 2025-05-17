@@ -141,7 +141,7 @@ const ManageTrainingMaterials = () => {
                 </label>
                 <input
                   type="file"
-                  accept=".mp4,.pdf,.webm,.jpg ,.png "
+                  accept=".mp4,.webm,.jpg ,.png "
                   onChange={(e) => setFile(e.target.files[0])}
                   className="w-full px-3 py-2 border rounded-lg"
                   required

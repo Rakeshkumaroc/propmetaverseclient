@@ -54,7 +54,7 @@ const initialFormData = {
   keywords: [{ heading: "", keyword: [] }],
   amenities: [],
   seller_id: "",
-  sellerType: "individualSeller", // Added sellerType with default value
+  // sellerType: "individualSeller", // Added sellerType with default value
 };
 
 const Amenities = ({ action }) => {
@@ -71,7 +71,7 @@ const Amenities = ({ action }) => {
       setFormData((prev) => ({
         ...prev,
         seller_id: customerAuth.user._id,
-        sellerType: "individualSeller", // Ensure sellerType is set
+        // sellerType: "individualSeller", // Ensure sellerType is set
       }));
     }
   }, [setFormData]);
@@ -90,7 +90,7 @@ const Amenities = ({ action }) => {
 
       appendIfValid("title", formData.title);
       appendIfValid("seller_id", formData.seller_id);
-      appendIfValid("sellerType", formData.sellerType); // Append sellerType
+      // appendIfValid("sellerType", formData.sellerType); // Append sellerType
       appendIfValid("description", formData.description);
       appendIfValid("propertyType", formData.propertyType);
       appendIfValid("status", formData.status);
