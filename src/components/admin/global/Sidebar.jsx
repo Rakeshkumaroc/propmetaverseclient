@@ -33,7 +33,14 @@ const Sidebar = () => {
             { label: "DAMAC Property", link: "/damac-enquiry" },
           ],
         },
-        { icon: <MdContentCopy />, label: "Heros", link: "/hero" }, // Retained
+        {
+          icon: <MdContentCopy />,
+          label: "Hero Section",
+          nested: [
+            { label: "Heros", link: "/hero" },
+            { label: "Add Heros", link: "/add-hero" },
+          ],
+        },
         {
           icon: <IoMdNotificationsOutline />,
           label: "Announcements",
@@ -57,11 +64,11 @@ const Sidebar = () => {
           label: "Lead Management",
           link: "/lead-management",
         },
-        // {
-        //   icon: <LiaMoneyCheckAltSolid />,
-        //   label: "Commission Management",
-        //   link: "/commission-management",
-        // },
+        {
+          icon: <LiaMoneyCheckAltSolid />,
+          label: "Commission Management",
+          link: "/commission-management",
+        },
         {
           icon: <MdContentPaste />,
           label: "Listing Management",
