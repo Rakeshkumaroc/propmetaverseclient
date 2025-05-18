@@ -3,53 +3,66 @@ import { FileText, Video, ImageIcon, Mail } from "lucide-react";
 
 const getFileType = (fileName) => {
   const ext = fileName.split(".").pop().toLowerCase();
-  if (["mp4", "webm"].includes(ext)) return "video";
+  if (["mp4", "webm", "ogg"].includes(ext)) return "video";
   if (["jpg", "jpeg", "png", "gif"].includes(ext)) return "image";
-  if (["pdf"].includes(ext)) return "pdf";
-  return "unknown";
+  if (ext === "pdf") return "pdf";
+  return "other";
 };
 
-const TrainingMaterialCard = ({ data }) => {
-  const fileType = getFileType(data.fileName);
+const TrainingMaterialCard = ({ material }) => {
+  const type = getFileType(material.filePath);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-3">
-      <div className="h-48 overflow-hidden flex items-center justify-center rounded-md border">
-        {fileType === "video" ? (
-          <video src={data.filePath} controls className="h-full w-full object-cover" />
-        ) : fileType === "image" ? (
-          <img src={data.filePath} alt={data.title} className="h-full w-full object-cover" />
-        ) : fileType === "pdf" ? (
-          <div className="flex flex-col items-center">
-            <img src="/assets/pdf-icon.png" alt="PDF" className="h-16 mb-2" />
-            <FileText size={32} />
+    <div className="bg-white shadow-md rounded-xl p-5 mb-6 w-full">
+      <h2 className="text-xl font-semibold mb-2"> Title: {material.title}</h2>
+      <p className="text-gray-700 mt-4"> Description: {material.description}</p>
+
+      <div className="mt-10">
+        {type === "video" && (
+          <video
+            controls
+            className="w-full h-[200px] md:h-[300px] object-cover rounded"
+          >
+            <source src={material.filePath} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        {type === "image" && (
+          <img
+            src={material.filePath}
+            alt={material.title}
+            className="w-full h-[200px] md:h-[300px] object-cover rounded"
+          />
+        )}
+        {type === "pdf" && (
+          <div className="flex items-center space-x-4">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
+              alt="PDF Icon"
+              className="w-12 h-12"
+            />
+            <p>{material.fileName}</p>
           </div>
-        ) : (
-          <p className="text-gray-500">Preview not available</p>
         )}
       </div>
 
-      <h2 className="text-xl font-semibold">{data.title}</h2>
-      {data.description && <p className="text-gray-600">{data.description}</p>}
-      <p className="text-sm text-gray-500">Uploaded by: {data.uploadedBy}</p>
-      <p className="text-sm text-gray-400">Date: {data.createdAt}</p>
-
-      <div className="flex items-center justify-between mt-2">
+      <div className="flex justify-between items-center mt-13  flex-wrap gap-2">
+        <div className="text-sm text-gray-500">
+          <b>Uploaded by:</b> {material.uploadedBy}
+          <br /> <br />
+          <span className="mt-12">
+            {" "}
+            <b>Date</b> {material.createdAt}
+          </span>
+        </div>
         <a
-          href={data.filePath}
+          href={material.filePath}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
         >
-          View / Download
+          View
         </a>
-
-        {data.sendEmail && (
-          <div className="flex items-center gap-1 text-sm text-green-600">
-            <Mail size={16} />
-            Emailed
-          </div>
-        )}
       </div>
     </div>
   );

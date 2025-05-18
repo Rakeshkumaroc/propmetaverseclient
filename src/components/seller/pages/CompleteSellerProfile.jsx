@@ -19,11 +19,11 @@ const baseUrl = import.meta.env.VITE_APP_URL;
 export default function CompleteSellerProfile() {
   const [activeTab, setActiveTab] = useState("basic");
   const [completedSteps, setCompletedSteps] = useState([]);
-const navigate= useNavigate()
+  const navigate = useNavigate();
   //  basic form data state variable
   const [formData, setFormData] = useState({
     fullName: "",
-    bio: "",
+    bio: "",                     //ggggggggggggggggggggg ffffffff
     number: "",
     fullAddress: "",
     pincode: "",
@@ -47,8 +47,8 @@ const navigate= useNavigate()
   const [btnDisable, SetBtnDisable] = useState(false);
   const [btnDisableDoc, SetBtnDisableDoc] = useState(false);
   const [loading, setLoading] = useState(false);
-   const [emailLoading, setEmailLoading] = useState(false);
- const [phoneLoading, setPhoneLoading] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [phoneLoading, setPhoneLoading] = useState(false);
   const tabs = [
     { id: "basic", label: "Basic Details", icon: <FiUser /> },
     { id: "document", label: "Documents", icon: <FiFile /> },
@@ -172,17 +172,20 @@ const navigate= useNavigate()
     setLoading(true);
     const sellerId = localStorage.getItem("sellerId");
     const token = localStorage.getItem("token");
-
+    console.log(sellerId, token, "jjjjjjjjjjj");
     const formData = new FormData();
     if (documentFormData.aadhar)
-      formData.append("documents", documentFormData.aadhar);
+      // formData.append("documents", documentFormData.aadhar);
+      formData.append("aadhar", documentFormData.aadhar);
     if (documentFormData.pan)
-      formData.append("documents", documentFormData.pan);
+      // formData.append("documents", documentFormData.pan);
+      formData.append("pan", documentFormData.pan);
     if (documentFormData.addressProof)
-      formData.append("documents", documentFormData.addressProof);
-    // for (let [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
+      // formData.append("documents", documentFormData.addressProof);
+      formData.append("addressProof", documentFormData.addressProof);
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
     try {
       const response = await axios.post(
         `${baseUrl}/upload-seller-doc/${sellerId}`,
@@ -213,17 +216,17 @@ const navigate= useNavigate()
     } catch (error) {
       console.error("Document upload failed:", error);
       Swal.fire({
-          title: "Error!",
-          text: "Document updated Failed!",
-          confirmButtonColor: "#1b639f",
-          icon: "error",
-          customClass: {
-            confirmButton:
-              "bg-[#1b639f] shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
-          },
-          buttonsStyling: false,
-        });
-     
+        title: "Error!",
+        text: "Document updated Failed!",
+        confirmButtonColor: "#1b639f",
+        icon: "error",
+        customClass: {
+          confirmButton:
+            "bg-[#1b639f] shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+        },
+        buttonsStyling: false,
+      });
+
       SetBtnDisableDoc(false);
       setLoading(false);
     }
@@ -263,13 +266,13 @@ const navigate= useNavigate()
     try {
       // setLoading(true);
       if (type === "email") {
-          setEmailLoading(true);
+        setEmailLoading(true);
         await axios.post(`${baseUrl}/send-otp`, {
           contact: formData.email,
           type: "email", // ✅
         });
         // setLoading(false);
-         setEmailLoading(false);
+        setEmailLoading(false);
         setEmailOtpSent(true);
         setEmailCountdown(60);
       } else if (type === "phone") {
@@ -286,10 +289,10 @@ const navigate= useNavigate()
     } catch (error) {
       // setLoading(false);
       if (type === "email") {
-     setEmailLoading(false);
-    } else {
-     setPhoneLoading(false);
-   }
+        setEmailLoading(false);
+      } else {
+        setPhoneLoading(false);
+      }
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP");
     }
@@ -435,7 +438,7 @@ const navigate= useNavigate()
                   Email
                 </label>
                 {/* relative */}
-                <div className="space-y-2">  
+                <div className="space-y-2">
                   <input
                     type="text"
                     name="email"
@@ -505,14 +508,14 @@ const navigate= useNavigate()
                   <input
                     type="tel"
                     name="pincode"
-                    value={formData.pincode}
+                    value={formData.pincode || ""}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
                     placeholder="Enter pincode"
                     required
-                      minLength={6}
-                  maxLength={6}
-                  pattern="[0-9]*"
+                    minLength={6}
+                    maxLength={6}
+                    pattern="[0-9]*"
                   />
                 </div>
 
@@ -730,7 +733,7 @@ const navigate= useNavigate()
                   ) : (
                     <button
                       onClick={() => VerificationSubmitHandler("email")}
-                     disabled={emailCountdown > 0 || emailLoading}
+                      disabled={emailCountdown > 0 || emailLoading}
                       className="w-full md:w-auto px-4 py-2 text-sm font-medium rounded-lg 
       bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors
       disabled:opacity-50 disabled:cursor-not-allowed"

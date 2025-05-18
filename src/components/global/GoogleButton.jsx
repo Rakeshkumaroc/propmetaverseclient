@@ -36,6 +36,7 @@ const GoogleButton = ({
             };
             localStorage.setItem(storageKey, JSON.stringify(authData));
           } else {
+            console.log(result,"kkkkkkkkkkkkkkkkkkkk")
             localStorage.setItem("sellerId", result.data.sellerData.sellerId);
             localStorage.setItem(
               "sellerFullName",

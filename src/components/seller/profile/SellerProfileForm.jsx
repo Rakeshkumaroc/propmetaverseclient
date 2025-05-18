@@ -227,7 +227,7 @@ const SellerProfileFrom = () => {
     }
   };
   // profile  end
-  console.log("fle",profilePic)
+  console.log("fle",data.profilePic)
   return (
     <div className="w-full rounded-lg bg-white">
       <div className="p-8 mt-10">
