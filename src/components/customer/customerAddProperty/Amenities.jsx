@@ -33,28 +33,39 @@ const amenitiesData = [
 ];
 
 const initialFormData = {
-  title: "",
-  description: "",
-  propertyType: "",
-  status: "",
-  developer: "",
-  aboutDeveloper: "",
-  constructionYear: "",
-  price: "",
-  discount: "",
-  galleryImg: [],
-  floorPlanImg: [],
-  reraImg: [],
-  address: "",
-  state: "",
-  city: "",
-  googleMap: "",
-  floorPlan: [{ type: "", carpetArea: "", price: "" }],
-  faqs: [{ question: "", answer: "" }],
-  keywords: [{ heading: "", keyword: [] }],
-  amenities: [],
-  seller_id: "",
-  // sellerType: "individualSeller", // Added sellerType with default value
+    // Basic Property Information
+    title: "",
+    description: "",
+    propertyType: "",
+    status: "",
+    purpose: "",
+    developer: "",
+    aboutDeveloper: "",
+    constructionYear: "",
+    price: "",
+    discount: "",
+    reraNumber: "",
+
+    // Media
+    galleryImg: [],
+    floorPlanImg: [],
+    reraImg: [],
+
+    // Location Details
+    address: "",
+    state: "",
+    city: "",
+    googleMap: "",
+
+    //Details
+    floorPlan: [{ type: "", carpetArea: "",parking:"", price: "" }],
+    faqs: [{ question: "", answer: "" }],
+
+    // keyword
+    keywords: [{ heading: "", keyword: [] }],
+
+    // amenities
+    amenities: [],
 };
 
 const Amenities = ({ action }) => {

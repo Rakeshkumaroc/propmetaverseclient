@@ -14,36 +14,35 @@ const App = () => {
   const [propertyData, setPropertyData] = useState([]);
   const [siteName, setSiteName] = useState("Prop Metaverse");
   const [formData, setFormData] = useState({
-    // Basic Property Information
     title: "",
     description: "",
     propertyType: "",
     status: "",
-    developer: "",
-    aboutDeveloper: "",
+    purpose: "", // Add purpose
     constructionYear: "",
     price: "",
     discount: "",
-
-    // Media
+    address: "",
+    country: "",
+    state: "",
+    city: "",
+    pinCode: "",
+    googleMap: "",
     galleryImg: [],
     floorPlanImg: [],
     reraImg: [],
-
-    // Location Details
-    address: "",
-    state: "",
-    city: "",
-    googleMap: "",
-
-    //Details
-    floorPlan: [{ type: "", carpetArea: "", price: "" }],
+    floorPlan: [
+      {
+        type: "",
+        carpetArea: "",
+        parking: 0,
+        balcony: 0,
+        price: "",
+        sellingArea: "",
+      },
+    ], // Include sellingArea and parking
     faqs: [{ question: "", answer: "" }],
-
-    // keyword
     keywords: [{ heading: "", keyword: [] }],
-
-    // amenities
     amenities: [],
   });
 
@@ -61,7 +60,7 @@ const App = () => {
           const approvedProperties = result.filter(
             (item) => item.approveStatus === "approved"
           );
-          setPropertyData(approvedProperties.reverse()); 
+          setPropertyData(approvedProperties.reverse());
         } else {
           console.error("Invalid response format:", result);
           setPropertyData([]);

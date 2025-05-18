@@ -8,6 +8,7 @@ const BasicInformation = ({ setIsActive }) => {
   const handleChange = (e) => {
     const { id, value } = e.target;
     const specialCharRegex = /[^a-zA-Z0-9\s]/;
+    const reraRegex = /[^a-zA-Z0-9]/; // For RERA number, allow alphanumeric only
 
     // Handle numeric fields
     if (["price", "discount", "constructionYear"].includes(id)) {
@@ -19,17 +20,22 @@ const BasicInformation = ({ setIsActive }) => {
     }
 
     // Handle validation for specific fields
-    const fieldsToValidate = ["title"];
+    const fieldsToValidate = ["title", "reraNumber"];
     if (fieldsToValidate.includes(id)) {
       setFormData((prevData) => ({
         ...prevData,
         [id]: value,
-        [`${id}Error`]: specialCharRegex.test(value)
-          ? `Special characters are not allowed in ${id.replace(
-              /([A-Z])/g,
-              " $1"
-            )}.`
-          : "",
+        [`${id}Error`]:
+          id === "reraNumber"
+            ? reraRegex.test(value)
+              ? "Special characters are not allowed in RERA number."
+              : ""
+            : specialCharRegex.test(value)
+            ? `Special characters are not allowed in ${id.replace(
+                /([A-Z])/g,
+                " $1"
+              )}.`
+            : "",
       }));
       return;
     }
@@ -43,8 +49,27 @@ const BasicInformation = ({ setIsActive }) => {
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    // If propertyType is changed, reset status if it's not valid for the new property type
+    if (name === "propertyType") {
+      const validStatuses =
+        value === "Plot or Land"
+          ? ["Pre-launched", "Developed", "Under construction"]
+          : ["Pre-launched", "Under construction", "Ready Possession"];
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+        status: validStatuses.includes(prevData.status) ? prevData.status : "",
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
+
+  // Define status options based on property type
+  const statusOptions =
+    formData.propertyType === "Plot or Land"
+      ? ["Pre-launched", "Developed", "Under construction"]
+      : ["Pre-launched", "Under construction", "Ready Possession"];
 
   return (
     <div className="space-y-5">
@@ -57,7 +82,7 @@ const BasicInformation = ({ setIsActive }) => {
             htmlFor="title"
             className="text-[14px] font-semibold leading-[26px]"
           >
-            Title
+            Title/Project Name
           </label>
           <input
             type="text"
@@ -129,32 +154,65 @@ const BasicInformation = ({ setIsActive }) => {
             Status
           </label>
           <ul className="items-center w-full text-sm text-gray-700 border border-gray-200 rounded-lg md:flex">
-            {["Available", "Sold", "Rented", "Under Construction"].map(
-              (status) => (
-                <li
-                  key={status}
-                  className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r"
-                >
-                  <div className="flex items-center ps-3">
-                    <input
-                      value={status}
-                      id={status}
-                      type="radio"
-                      name="status"
-                      checked={formData.status === status}
-                      onChange={handleRadioChange}
-                      className="w-4 h-4 text-black border-gray-300 focus:ring-black"
-                    />
-                    <label
-                      htmlFor={status}
-                      className="w-full py-3 ms-2 text-sm text-gray-700"
-                    >
-                      {status}
-                    </label>
-                  </div>
-                </li>
-              )
-            )}
+            {statusOptions.map((status) => (
+              <li
+                key={status}
+                className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r"
+              >
+                <div className="flex items-center ps-3">
+                  <input
+                    value={status}
+                    id={status}
+                    type="radio"
+                    name="status"
+                    checked={formData.status === status}
+                    onChange={handleRadioChange}
+                    className="w-4 h-4 text-black border-gray-300 focus:ring-black"
+                  />
+                  <label
+                    htmlFor={status}
+                    className="w-full py-3 ms-2 text-sm text-gray-700"
+                  >
+                    {status}
+                  </label>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="purpose"
+            className="text-[14px] font-semibold leading-[26px]"
+          >
+            Purpose
+          </label>
+          <ul className="items-center w-full text-sm text-gray-700 border border-gray-200 rounded-lg md:flex">
+            {["Rent", "Sell"].map((purpose) => (
+              <li
+                key={purpose}
+                className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r"
+              >
+                <div className="flex items-center ps-3">
+                  <input
+                    value={purpose}
+                    id={purpose}
+                    type="radio"
+                    name="purpose"
+                    checked={formData.purpose === purpose}
+                    onChange={handleRadioChange}
+                    className="w-4 h-4 text-black border-gray-300 focus:ring-black"
+                  />
+                  <label
+                    htmlFor={purpose}
+                    className="w-full py-3 ms-2 text-sm text-gray-700"
+                  >
+                    {purpose}
+                  </label>
+                </div>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -166,7 +224,7 @@ const BasicInformation = ({ setIsActive }) => {
             Developer
           </label>
           <input
-            type="text" // Changed to number input
+            type="text"
             id="developer"
             value={formData.developer || ""}
             onChange={handleChange}
@@ -194,10 +252,10 @@ const BasicInformation = ({ setIsActive }) => {
             htmlFor="constructionYear"
             className="text-[14px] font-semibold leading-[26px]"
           >
-            Construction Year
+            Construction/Plotting Year
           </label>
           <input
-            type="number" // Changed to number input
+            type="number"
             id="constructionYear"
             value={formData.constructionYear || ""}
             onChange={handleChange}
@@ -214,7 +272,7 @@ const BasicInformation = ({ setIsActive }) => {
             Price
           </label>
           <input
-            type="number" // Changed to number input
+            type="number"
             id="price"
             value={formData.price || ""}
             onChange={handleChange}
@@ -234,7 +292,7 @@ const BasicInformation = ({ setIsActive }) => {
             Discount
           </label>
           <input
-            type="number" // Changed to number input
+            type="number"
             id="discount"
             value={formData.discount || ""}
             onChange={handleChange}
@@ -244,6 +302,28 @@ const BasicInformation = ({ setIsActive }) => {
           {formData.discountError && (
             <p className="text-red-500 text-xs mt-1">
               {formData.discountError}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="reraNumber"
+            className="text-[14px] font-semibold leading-[26px]"
+          >
+            RERA Number
+          </label>
+          <input
+            type="text"
+            id="reraNumber"
+            value={formData.reraNumber || ""}
+            onChange={handleChange}
+            placeholder="RERA Number"
+            className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
+          />
+          {formData.reraNumberError && (
+            <p className="text-red-500 text-xs mt-1">
+              {formData.reraNumberError}
             </p>
           )}
         </div>

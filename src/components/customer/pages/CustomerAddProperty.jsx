@@ -3,18 +3,21 @@ import { useLocation } from "react-router-dom";
 import { MyContext } from "../../../App";
 import CustomerNavbar from "../global/CustomerNavbar";
 import CustomerSidebar from "../global/CustomerSidebar";
-import BasicInformation from "../customerAddProperty/BasicInformation";
-import Media from "../customerAddProperty/Media";
-import Location from "../customerAddProperty/Location";
-import Details from "../customerAddProperty/Details";
-import Keywords from "../customerAddProperty/Keywords";
-import Amenities from "../customerAddProperty/Amenities";
+// import Amenities from "../customerAddProperty/Amenities";
+import BasicInformation from "../../seller/AddProperty/BasicInformation";
+import Media from "../../seller/AddProperty/Media";
+import Location from "../../seller/AddProperty/Location";
+import Configuration from "../../seller/AddProperty/Configuration";
+import Keywords from "../../seller/AddProperty/Keywords";
+import Amenities from "../../seller/AddProperty/Amenities";
+import Faq from "../../seller/AddProperty/Faq";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const dummyPropertyData = {
   _id: "dummy_1",
   title: "Sample Oceanview Condo",
-  description: "A luxurious condo with stunning ocean views and modern amenities.",
+  description:
+    "A luxurious condo with stunning ocean views and modern amenities.",
   propertyType: "Condo",
   status: "Available",
   constructionYear: "2023",
@@ -141,20 +144,24 @@ const CustomerAddProperty = ({ action }) => {
       getData();
     } else {
       setFormData({
-        title: "",
+          title: "",
         description: "",
         propertyType: "",
         status: "",
+        purpose: "", // Add purpose
         constructionYear: "",
         price: "",
         discount: "",
+        address: "",
+        country: "",
+        state: "",
+        city: "",
+        pinCode: "",
+        googleMap: "",
         galleryImg: [],
         floorPlanImg: [],
         reraImg: [],
-        address: "",
-        state: "",
-        city: "",
-        floorPlan: [{ type: "", carpetArea: "", price: "" }],
+        floorPlan: [{ type: "", carpetArea: "", parking: 0,balcony:0, price: "", sellingArea: "" }], // Include sellingArea and parking
         faqs: [{ question: "", answer: "" }],
         keywords: [{ heading: "", keyword: [] }],
         amenities: [],
@@ -183,11 +190,12 @@ const CustomerAddProperty = ({ action }) => {
             <ul className="flex flex-wrap gap-4 md:gap-6 border-b border-gray-200 mb-6">
               {[
                 "1. Basic",
-                "2. Media",
+                "2. Configuration",
                 "3. Location",
-                "4. Detail",
+                "4. Media",
                 "5. Keywords",
-                "6. Amenities",
+                "6. Faq",
+                "7. Amenities",
               ].map((tab, index) => (
                 <li
                   key={index}
@@ -204,11 +212,12 @@ const CustomerAddProperty = ({ action }) => {
             </ul>
             <div className="mt-6">
               {isActive === 1 && <BasicInformation setIsActive={setIsActive} />}
-              {isActive === 2 && <Media setIsActive={setIsActive} />}
+              {isActive === 2 && <Configuration setIsActive={setIsActive} />}
               {isActive === 3 && <Location setIsActive={setIsActive} />}
-              {isActive === 4 && <Details setIsActive={setIsActive} />}
+              {isActive === 4 && <Media setIsActive={setIsActive} />}
               {isActive === 5 && <Keywords setIsActive={setIsActive} />}
-              {isActive === 6 && (
+              {isActive === 6 && <Faq setIsActive={setIsActive} />}
+              {isActive === 7 && (
                 <Amenities action={action} setIsActive={setIsActive} />
               )}
             </div>

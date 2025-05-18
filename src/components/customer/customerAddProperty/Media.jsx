@@ -6,57 +6,70 @@ import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
+// Dummy floor plan data
+const floorPlan = [
+  { type: "2 BHK", carpetArea: "750 sq.ft", parking: "1 Covered", price: "₹60 Lakh" },
+  { type: "3 BHK", carpetArea: "1100 sq.ft", parking: "1 Covered, 1 Open", price: "₹85 Lakh" },
+  { type: "4 BHK", carpetArea: "1600 sq.ft", parking: "2 Covered", price: "₹1.25 Cr" },
+  { type: "Penthouse", carpetArea: "2200 sq.ft", parking: "3 Covered", price: "₹2 Cr" },
+];
+
 const Media = ({ setIsActive }) => {
   const { formData, setFormData } = useContext(MyContext);
   const MAX_IMAGES = 5; // Maximum allowed images for galleryImg, floorPlanImg, and reraImg
   const MAX_FILE_SIZE = 500 * 1024; // 500KB in bytes
 
-  // Handle file, info, and no changes for galleryImg, floorPlanImg, and reraImg
- // Handle file, info, and no changes for galleryImg, floorPlanImg, and reraImg
-const handleChange = useCallback(
-  (e, index, field, type) => {
-    if (type === "file") {
-      const file = e.target.files[0];
-      console.log(`Selected file for ${field} index ${index}:`, file);
-      if (!file) {
-        console.warn(`No file selected for ${field} index ${index}`);
-        return;
-      }
+  // Handle file, info, no, and floorPlanType changes
+  const handleChange = useCallback(
+    (e, index, field, type) => {
+      if (type === "file") {
+        const file = e.target.files[0];
+        console.log(`Selected file for ${field} index ${index}:`, file);
+        if (!file) {
+          console.warn(`No file selected for ${field} index ${index}`);
+          return;
+        }
 
-      // Validate file size
-      if (file.size > MAX_FILE_SIZE) {
-        toast.error("File size exceeds 500KB limit");
-        e.target.value = "";
-        return;
-      }
+        // Validate file size
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error("File size exceeds 500KB limit");
+          e.target.value = "";
+          return;
+        }
 
-      // Validate file type
-      const allowedTypes = /\.(jpeg|jpg|png|gif)$/i; // Regular expression for allowed types
-      if (!allowedTypes.test(file.name)) {
-        toast.error("Only JPEG, JPG, PNG, or GIF files are allowed");
-        e.target.value = "";
-        return;
-      }
+        // Validate file type
+        const allowedTypes = /\.(jpeg|jpg|png|gif)$/i; // Regular expression for allowed types
+        if (!allowedTypes.test(file.name)) {
+          toast.error("Only JPEG, JPG, PNG, or GIF files are allowed");
+          e.target.value = "";
+          return;
+        }
 
-      const fileURL = URL.createObjectURL(file);
-      setFormData((prevData) => { 
-        const newImages = [...(prevData[field] || [])];
-        newImages[index] = { ...newImages[index], file, preview: fileURL };
-        console.log(`Updated ${field}:`, newImages);
-        return { ...prevData, [field]: newImages };
-      });
-    } else if (type === "info" || type === "no") {
-      const value = e.target.value;
-      setFormData((prevData) => {
-        const newImages = [...(prevData[field] || [])];
-        newImages[index] = { ...newImages[index], [type]: value };
-        console.log(`Updated ${field} ${type}:`, newImages);
-        return { ...prevData, [field]: newImages };
-      });
-    }
-  },
-  [setFormData]
-);
+        const fileURL = URL.createObjectURL(file);
+        setFormData((prevData) => {
+          const newImages = [...(prevData[field] || [])];
+          newImages[index] = { ...newImages[index], file, preview: fileURL };
+          console.log(`Updated ${field}:`, newImages);
+          return { ...prevData, [field]: newImages };
+        });
+      } else if (type === "info" || type === "no") {
+        const value = e.target.value;
+        setFormData((prevData) => {
+          const newImages = [...(prevData[field] || [])];
+          newImages[index] = { ...newImages[index], [type]: value };
+          console.log(`Updated ${field} ${type}:`, newImages);
+          return { ...prevData, [field]: newImages };
+        });
+      } else if (type === "floorPlanType") {
+        const value = e.target.value;
+        setFormData((prevData) => {
+          console.log(`Updated floorPlanType:`, value);
+          return { ...prevData, floorPlanType: value };
+        });
+      }
+    },
+    [setFormData]
+  );
 
   // Add new image field with limit check
   const addImage = useCallback(
@@ -97,6 +110,31 @@ const handleChange = useCallback(
 
   return (
     <div className="space-y-5">
+      {/* Floor Plan Type Dropdown */}
+      <div className="mb-4">
+        <label
+          htmlFor="floorPlanType"
+          className="text-[17px] leading-[25.5px] font-semibold text-gray-800"
+        >
+          Select Floor Plan Type
+        </label>
+        <select
+          id="floorPlanType"
+          value={formData.floorPlanType || ""}
+          onChange={(e) => handleChange(e, null, null, "floorPlanType")}
+          className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+        >
+          <option value="" disabled>
+            Select Floor Plan Type
+          </option>
+          {floorPlan.map((plan, idx) => (
+            <option key={`floor-plan-${idx}`} value={plan.type}>
+              {plan.type}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Gallery Images Section */}
       <div className="flex items-center justify-between">
         <p className="text-[17px] leading-[25.5px] font-semibold text-gray-800">
@@ -225,7 +263,7 @@ const handleChange = useCallback(
                     type="file"
                     id={`floorPlanImg${index}`}
                     onChange={(e) => handleChange(e, index, "floorPlanImg", "file")}
-                     accept=".jpeg,.jpg,.png,.gif"
+                    accept=".jpeg,.jpg,.png,.gif"
                     className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                   />
                   <input
@@ -318,7 +356,7 @@ const handleChange = useCallback(
                     type="file"
                     id={`reraImg${index}`}
                     onChange={(e) => handleChange(e, index, "reraImg", "file")}
-                     accept=".jpeg,.jpg,.png,.gif"
+                    accept=".jpeg,.jpg,.png,.gif"
                     className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                   />
                   <input
@@ -370,7 +408,7 @@ const handleChange = useCallback(
 
       <div className="flex justify-start">
         <button
-          onClick={() => setIsActive(3)}
+          onClick={() => setIsActive(5)}
           className="text-[15px] px-2 md:px-5 py-4 flex mt-5 items-center bg-black rounded-lg text-white"
         >
           Next

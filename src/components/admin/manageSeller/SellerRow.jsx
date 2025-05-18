@@ -143,13 +143,13 @@ const handleToggleStatus = async () => {
       </td>
       <td className="px-6 py-4 text-center">{value.email || "N/A"}</td>
       <td className="px-6 py-4 text-center">{value.number || "N/A"}</td>
-      {/* <td className="px-6 py-4 text-center">
+      <td className="px-6 py-4 text-center">
         {value.sellerType === "subBroker"
           ? "Sub-Broker"
           : value.sellerType === "individualSeller"
           ? "Individual Seller"
           : "N/A"}
-      </td> */}
+      </td>
       <td
         className={`px-6 py-4 text-cente ${
           displayStatus === "approved"

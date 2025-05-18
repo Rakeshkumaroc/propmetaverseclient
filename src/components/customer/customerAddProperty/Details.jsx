@@ -6,7 +6,7 @@ import { MyContext } from "../../../App";
 const Details = ({ setIsActive }) => {
   const { formData, setFormData } = useContext(MyContext);
   const [floorPlan, setFloorPlan] = useState(
-    formData.floorPlan || [{ type: "", carpetArea: "", price: "" }]
+    formData.floorPlan || [{ type: "", carpetArea: "", price: "", parking: "" }]
   );
   const [faqs, setFaqs] = useState(
     formData.faqs || [{ question: "", answer: "" }]
@@ -32,7 +32,7 @@ const Details = ({ setIsActive }) => {
     setFaqs(updatedFaq);
   };
 
-  // Remove specific floor plan entry
+  // Remove specific Pricing entry
   const removeFloorPlan = (index) => {
     if (floorPlan.length > 1) {
       setFloorPlan(floorPlan.filter((_, i) => i !== index));
@@ -52,10 +52,10 @@ const Details = ({ setIsActive }) => {
         Listing Details
       </p>
 
-      {/* Floor Plan Section */}
+      {/* Pricing Section */}
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-all hover:border-gray-400">
         <div className="flex items-center justify-between">
-          <p className="text-lg font-semibold leading-[26px]">Floor Plan</p>
+          <p className="text-lg font-semibold leading-[26px]">Pricing</p>
           <span className="text-sm text-gray-500">
             {floorPlan.length} Plan(s)
           </span>
@@ -64,16 +64,15 @@ const Details = ({ setIsActive }) => {
         {floorPlan.map((plan, index) => (
           <div
             key={index}
-            className="grid mt-5 md:grid-cols-3 grid-cols-1 gap-4 animate-fadeIn"
+            className="grid mt-5 md:grid-cols-4 grid-cols-1 gap-4 animate-fadeIn"
           >
             <div className="flex flex-col gap-2">
               <label
                 htmlFor={`type-${index}`}
                 className="text-[14px] font-semibold leading-[26px]"
               >
-                Type
+                 Configuration
               </label>
-
               <input
                 type="text"
                 placeholder="type"
@@ -99,6 +98,24 @@ const Details = ({ setIsActive }) => {
                 value={plan.carpetArea || ""}
                 onChange={(e) =>
                   handleProductChange(index, "carpetArea", e.target.value)
+                }
+                className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3 w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor={`parking-${index}`}
+                className="text-[14px] font-semibold leading-[26px]"
+              >
+                No. of Parking
+              </label>
+              <input
+                type="number"
+                placeholder="parking"
+                id={`parking-${index}`}
+                value={plan.parking || ""}
+                onChange={(e) =>
+                  handleProductChange(index, "parking", e.target.value)
                 }
                 className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3 w-full"
               />
@@ -139,7 +156,7 @@ const Details = ({ setIsActive }) => {
             onClick={() =>
               setFloorPlan([
                 ...floorPlan,
-                { type: "", carpetArea: "", price: "" },
+                { type: "", carpetArea: "", price: "", parking: "" },
               ])
             }
             className="text-black rounded-full w-10 h-10 cursor-pointer hover:scale-110 transition-transform"
@@ -168,7 +185,6 @@ const Details = ({ setIsActive }) => {
               >
                 Question
               </label>
-
               <input
                 type="text"
                 placeholder="question"
@@ -223,7 +239,7 @@ const Details = ({ setIsActive }) => {
       <div className="flex justify-start">
         <button
           onClick={() => {
-            setIsActive(5);
+            setIsActive(3);
           }}
           type="submit"
           className="text-[15px] px-2 md:px-5 py-4 flex mt-5 items-center bg-black rounded-lg text-white"

@@ -12,6 +12,7 @@ import { TbMichelinStarGreen } from "react-icons/tb";
 import { MyContext } from "../../../App";
 import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -37,24 +38,26 @@ const initialFormData = {
   description: "",
   propertyType: "",
   status: "",
+  purpose: "",
   developer: "",
   aboutDeveloper: "",
   constructionYear: "",
   price: "",
   discount: "",
+  reraNumber: "",
+  address: "",
+  country: "",
+  state: "",
+  city: "",
+  pinCode: "",
+  googleMap: "",
   galleryImg: [],
   floorPlanImg: [],
   reraImg: [],
-  address: "",
-  state: "",
-  city: "",
-  googleMap: "",
-  floorPlan: [{ type: "", carpetArea: "", price: "" }],
+  floorPlan: [{ type: "", carpetArea: "", parking: 0, price: "", sellingArea: "", balcony:0 }], // Added balcony
   faqs: [{ question: "", answer: "" }],
   keywords: [{ heading: "", keyword: [] }],
   amenities: [],
-  seller_id: "",
-  // sellerType: "subBroker", // Added sellerType with default value
 };
 
 const Amenities = ({ action }) => {
@@ -68,7 +71,6 @@ const Amenities = ({ action }) => {
       setFormData((prev) => ({
         ...prev,
         seller_id: user,
-        // sellerType: "subBroker", // Ensure sellerType is set
       }));
     }
   }, [setFormData]);
@@ -76,9 +78,43 @@ const Amenities = ({ action }) => {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+
+      // Validate required fields
+      const requiredFields = [
+        { key: "title", label: "Title" },
+        { key: "description", label: "Description" },
+        { key: "propertyType", label: "Property Type" },
+        { key: "status", label: "Status" },
+        { key: "purpose", label: "Purpose" },
+        { key: "developer", label: "Developer" },
+        { key: "constructionYear", label: "Construction Year" },
+        { key: "address", label: "Address" },
+        { key: "country", label: "Country" },
+        { key: "state", label: "State" },
+        { key: "city", label: "City" },
+        { key: "pinCode", label: "Pin Code" },
+      ];
+      const missingFields = requiredFields.filter(({ key }) => !formData[key]);
+      const invalidFloorPlan = formData.floorPlan.some(
+        (plan) =>
+          !plan.type || !plan.carpetArea || !plan.parking || !plan.price || !plan.sellingArea
+      );
+
+      if (missingFields.length > 0) {
+        toast.error(
+          `Please fill the following required fields: ${missingFields.map((f) => f.label).join(", ")}`
+        );
+        return;
+      }
+      if (invalidFloorPlan) {
+        toast.error(
+          "Please fill all required fields in each floor plan: Type, Carpet Area, Parking, Price, Selling Area"
+        );
+        return;
+      }
+
       const formDataToSend = new FormData();
 
-      // Helper function to append only valid values
       const appendIfValid = (key, value) => {
         if (value !== undefined && value !== null && value !== "") {
           formDataToSend.append(key, value);
@@ -87,68 +123,53 @@ const Amenities = ({ action }) => {
 
       appendIfValid("title", formData.title);
       appendIfValid("seller_id", formData.seller_id);
-      // appendIfValid("sellerType", formData.sellerType); // Append sellerType
       appendIfValid("description", formData.description);
       appendIfValid("propertyType", formData.propertyType);
       appendIfValid("status", formData.status);
+      appendIfValid("purpose", formData.purpose);
       appendIfValid("developer", formData.developer);
       appendIfValid("aboutDeveloper", formData.aboutDeveloper);
       appendIfValid("constructionYear", formData.constructionYear);
       appendIfValid("price", formData.price);
       appendIfValid("discount", formData.discount);
       appendIfValid("address", formData.address);
+      appendIfValid("country", formData.country);
       appendIfValid("state", formData.state);
       appendIfValid("city", formData.city);
+      appendIfValid("pinCode", formData.pinCode);
       appendIfValid("googleMap", formData.googleMap);
 
-      // Handle galleryImg as file objects with better logging
-      console.log("galleryImg before submission:", formData.galleryImg);
       formData.galleryImg.forEach((img, index) => {
         if (img?.file) {
-          console.log(`Appending galleryImg[${index}]:`, img.file);
           formDataToSend.append("galleryImg", img.file);
-        } else {
-          console.log(`No file at galleryImg[${index}]`);
         }
       });
 
-      // Handle floorPlanImg as file objects with logging
-      console.log("floorPlanImg before submission:", formData.floorPlanImg);
       formData.floorPlanImg.forEach((img, index) => {
         if (img?.file) {
-          console.log(`Appending floorPlanImg[${index}]:`, img.file);
           formDataToSend.append("floorPlanImg", img.file);
-        } else {
-          console.log(`No file at floorPlanImg[${index}]`);
         }
-        // Append floorPlanImgInfo
         if (img?.info) {
-          console.log(`Appending floorPlanImgInfo[${index}]:`, img.info);
           formDataToSend.append(`floorPlanImgInfo[${index}]`, img.info);
         }
       });
 
-      // Handle reraImg as file objects with logging
-      console.log("reraImg before submission:", formData.reraImg);
       formData.reraImg.forEach((img, index) => {
         if (img?.file) {
-          console.log(`Appending reraImg[${index}]:`, img.file);
           formDataToSend.append("reraImg", img.file);
-        } else {
-          console.log(`No file at reraImg[${index}]`);
         }
-        // Append reraImgNo
         if (img?.no) {
-          console.log(`Appending reraImgNo[${index}]:`, img.no);
           formDataToSend.append(`reraImgNo[${index}]`, img.no);
         }
       });
 
-      // Handle floorPlan with validation
       formData.floorPlan.forEach((plan, index) => {
         appendIfValid(`floorPlan[${index}][type]`, plan.type);
         appendIfValid(`floorPlan[${index}][carpetArea]`, plan.carpetArea);
+        appendIfValid(`floorPlan[${index}][parking]`, plan.parking);
         appendIfValid(`floorPlan[${index}][price]`, plan.price);
+        appendIfValid(`floorPlan[${index}][sellingArea]`, plan.sellingArea);
+        appendIfValid(`floorPlan[${index}][balcony]`, plan.balcony); // Added balcony
       });
 
       formData.faqs.forEach((faq, index) => {
@@ -167,21 +188,6 @@ const Amenities = ({ action }) => {
         appendIfValid(`amenities[${index}]`, amenity);
       });
 
-      // Log FormData for debugging
-      const formDataObj = {};
-      for (const [key, value] of formDataToSend.entries()) {
-        if (formDataObj[key]) {
-          if (Array.isArray(formDataObj[key])) {
-            formDataObj[key].push(value);
-          } else {
-            formDataObj[key] = [formDataObj[key], value];
-          }
-        } else {
-          formDataObj[key] = value;
-        }
-      }
-      console.log("FormData Object:", formDataObj);
-
       const apiUrl =
         action === "edit"
           ? `${baseUrl}/edit-property/${id}`
@@ -199,12 +205,7 @@ const Amenities = ({ action }) => {
             action === "edit"
               ? "Property edited successfully"
               : "Property added successfully";
-          if (action !== "edit") {
-            const result = await response.json();
-            console.log("Property added successfully:", result);
-          }
-
-          setFormData(initialFormData); // Reset to initial state
+          setFormData(initialFormData);
           Swal.fire({
             title: "Success!",
             text: successMessage,
@@ -218,14 +219,10 @@ const Amenities = ({ action }) => {
           });
         } else {
           const errorData = await response.json();
-          console.error(
-            `Error ${action === "edit" ? "editing" : "adding"} property:`,
-            errorData
-          );
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: `Failed to ${action === "edit" ? "edit" : "add"} property`,
+            text: `Failed to ${action === "edit" ? "edit" : "add"} property: ${errorData.details || "Unknown error"}`,
             confirmButtonColor: "#000",
             customClass: {
               confirmButton:
@@ -234,11 +231,10 @@ const Amenities = ({ action }) => {
           });
         }
       } catch (error) {
-        console.error("Network error:", error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: `Failed to ${action === "edit" ? "edit" : "add"} property`,
+          text: `Network error: ${error.message}`,
           confirmButtonColor: "#000",
           customClass: {
             confirmButton:
