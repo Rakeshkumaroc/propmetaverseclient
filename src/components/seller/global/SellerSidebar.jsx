@@ -75,13 +75,13 @@ const SellerSidebar = () => {
               link: "/seller-leads",
             }
           : null,
-        status === "approved"
-          ? {
-              icon: <LiaMoneyCheckSolid />,
-              label: "Commission Management",
-              link: "/commissions",
-            }
-          : null,
+        // status === "approved"
+        //   ? {
+        //       icon: <LiaMoneyCheckSolid />,
+        //       label: "Commission Management",
+        //       link: "/commissions",
+        //     }
+        //   : null,
       ].filter(Boolean),
     },
     {

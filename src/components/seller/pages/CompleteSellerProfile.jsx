@@ -23,7 +23,7 @@ export default function CompleteSellerProfile() {
   //  basic form data state variable
   const [formData, setFormData] = useState({
     fullName: "",
-    bio: "",                     //ggggggggggggggggggggg ffffffff
+    bio: "", //ggggggggggggggggggggg ffffffff
     number: "",
     fullAddress: "",
     pincode: "",
@@ -38,7 +38,7 @@ export default function CompleteSellerProfile() {
   const [documentFormData, setDocumentFormData] = useState({
     aadhar: null,
     pan: null,
-    addressProof: null,
+    // addressProof: null,
   });
 
   // console.log("startin form data ", formData);
@@ -174,15 +174,14 @@ export default function CompleteSellerProfile() {
     const token = localStorage.getItem("token");
     console.log(sellerId, token, "jjjjjjjjjjj");
     const formData = new FormData();
-    if (documentFormData.aadhar)
-      // formData.append("documents", documentFormData.aadhar);
+    if (documentFormData.aadhar) {
       formData.append("aadhar", documentFormData.aadhar);
-    if (documentFormData.pan)
-      // formData.append("documents", documentFormData.pan);
+    }
+
+    if (documentFormData.pan) {
       formData.append("pan", documentFormData.pan);
-    if (documentFormData.addressProof)
-      // formData.append("documents", documentFormData.addressProof);
-      formData.append("addressProof", documentFormData.addressProof);
+    }
+
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }
@@ -591,7 +590,7 @@ export default function CompleteSellerProfile() {
               Upload Documents
             </h3>
             <form onSubmit={uploadDocuments}>
-              <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                 <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <FiUpload className="w-8 h-8 text-gray-400" />
@@ -602,7 +601,7 @@ export default function CompleteSellerProfile() {
                           : "Aadhar Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PDF, JPG, up to 10MB
+                        PNG, JPEG, JPG, MAX 2MB
                       </p>
                     </div>
                     <input
@@ -610,7 +609,7 @@ export default function CompleteSellerProfile() {
                       name="aadhar"
                       onChange={handleFileChange}
                       className="hidden"
-                      accept=".pdf,.jpg,.jpeg"
+                      accept=".jpg,.jpeg,.png"
                     />
                   </div>
                 </label>
@@ -625,7 +624,7 @@ export default function CompleteSellerProfile() {
                           : "PAN Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PDF, JPG, up to 10MB
+                        PNG, JPEG, JPG, MAX 2MB
                       </p>
                     </div>
                     <input
@@ -633,12 +632,12 @@ export default function CompleteSellerProfile() {
                       name="pan"
                       onChange={handleFileChange}
                       className="hidden"
-                      accept=".pdf,.jpg,.jpeg"
+                      accept=".jpg,.jpeg,.png"
                     />
                   </div>
                 </label>
 
-                <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
+                {/* <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
                   <div className="flex flex-col items-center justify-center h-full space-y-3">
                     <FiUpload className="w-8 h-8 text-gray-400" />
                     <div className="text-center">
@@ -648,7 +647,7 @@ export default function CompleteSellerProfile() {
                           : "Address Proof"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PDF, JPG, up to 10MB
+                        PNG, JPEG, JPG, MAX 2MB
                       </p>
                     </div>
                     <input
@@ -656,10 +655,10 @@ export default function CompleteSellerProfile() {
                       name="addressProof"
                       onChange={handleFileChange}
                       className="hidden"
-                      accept=".pdf,.jpg,.jpeg"
+                      accept=".jpg,.jpeg,.png"
                     />
                   </div>
-                </label>
+                </label> */}
               </div>
 
               <div className="flex justify-between">
@@ -684,7 +683,7 @@ export default function CompleteSellerProfile() {
                     onClick={() => {
                       if (
                         documentFormData.aadhar &&
-                        documentFormData.addressProof
+                        documentFormData.pan
                       ) {
                         setCompletedSteps((prev) => [...prev, "document"]);
                         setActiveTab("verification");

@@ -134,6 +134,7 @@ const PropertyRow = ({
       <td className="px-6 py-4 text-center">{value.createdAt}</td>
       <td className="px-6 py-4 text-center">{value.updatedAt?value.updatedAt:'Not Update'}</td>
       <td className="px-6 py-4 text-center">{value.propertyType}</td>
+         <td className="px-6 py-4 text-center capitalize">{value.approveStatus}</td>
       <td className="flex items-center gap-2 text-center px-6 py-4">
         <Link
           to={value._id}
