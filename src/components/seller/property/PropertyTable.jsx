@@ -261,9 +261,13 @@ const PropertyTable = ({ searchValue }) => {
                 <th scope="col" className="px-6 py-3">
                   Property Type
                 </th>
+                 <th scope="col" className="px-6 py-3">
+                  Approval Status
+                </th>
                 <th scope="col" className="px-6 py-3">
                   Action
                 </th>
+                
               </tr>
             </thead>
             <tbody>
