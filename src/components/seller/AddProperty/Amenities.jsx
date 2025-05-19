@@ -41,7 +41,7 @@ const initialFormData = {
   purpose: "",
   developer: "",
   aboutDeveloper: "",
-  constructionYear: "", 
+  constructionYear: "",
   discount: "",
   reraNumber: "",
   address: "",
@@ -53,7 +53,16 @@ const initialFormData = {
   galleryImg: [],
   floorPlanImg: [],
   reraImg: [],
-  floorPlan: [{ type: "", carpetArea: "", parking: 0, price: "", sellingArea: "", balcony:0 }], // Added balcony
+  floorPlan: [
+    {
+      type: "",
+      carpetArea: "",
+      parking: 0,
+      price: "",
+      sellingArea: "",
+      balcony: 0,
+    },
+  ], // Added balcony
   faqs: [{ question: "", answer: "" }],
   keywords: [{ heading: "", keyword: [] }],
   amenities: [],
@@ -64,15 +73,27 @@ const Amenities = ({ action }) => {
   const { pathname } = useLocation();
   const id = pathname.split("/").pop();
 
-  useEffect(() => {
-    const user = localStorage.getItem("sellerId");
-    if (user) {
+useEffect(() => {
+  const user = localStorage.getItem("sellerId");
+  console.log(user);
+
+  if (user) {
+    setFormData((prev) => ({
+      ...prev,
+      seller_id: user,
+    }));
+  } else {
+    const customerAuth = localStorage.getItem("customerAuth");
+    if (customerAuth) {
+      console.log(customerAuth);
+      const parsedCustomerAuth = JSON.parse(customerAuth); // Parse the JSON string
       setFormData((prev) => ({
         ...prev,
-        seller_id: user,
+        seller_id: parsedCustomerAuth.user._id, // Access user after parsing
       }));
     }
-  }, [setFormData]);
+  }
+}, [setFormData]);
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -96,12 +117,18 @@ const Amenities = ({ action }) => {
       const missingFields = requiredFields.filter(({ key }) => !formData[key]);
       const invalidFloorPlan = formData.floorPlan.some(
         (plan) =>
-          !plan.type || !plan.carpetArea || !plan.parking || !plan.price || !plan.sellingArea
+          !plan.type ||
+          !plan.carpetArea ||
+          !plan.parking ||
+          !plan.price ||
+          !plan.sellingArea
       );
 
       if (missingFields.length > 0) {
         toast.error(
-          `Please fill the following required fields: ${missingFields.map((f) => f.label).join(", ")}`
+          `Please fill the following required fields: ${missingFields
+            .map((f) => f.label)
+            .join(", ")}`
         );
         return;
       }
@@ -128,7 +155,7 @@ const Amenities = ({ action }) => {
       appendIfValid("purpose", formData.purpose);
       appendIfValid("developer", formData.developer);
       appendIfValid("aboutDeveloper", formData.aboutDeveloper);
-      appendIfValid("constructionYear", formData.constructionYear); 
+      appendIfValid("constructionYear", formData.constructionYear);
       appendIfValid("discount", formData.discount);
       appendIfValid("address", formData.address);
       appendIfValid("country", formData.country);
@@ -136,6 +163,7 @@ const Amenities = ({ action }) => {
       appendIfValid("city", formData.city);
       appendIfValid("pinCode", formData.pinCode);
       appendIfValid("googleMap", formData.googleMap);
+      console.log(formData.seller_id);
 
       formData.galleryImg.forEach((img, index) => {
         if (img?.file) {
@@ -220,7 +248,9 @@ const Amenities = ({ action }) => {
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: `Failed to ${action === "edit" ? "edit" : "add"} property: ${errorData.details || "Unknown error"}`,
+            text: `Failed to ${action === "edit" ? "edit" : "add"} property: ${
+              errorData.details || "Unknown error"
+            }`,
             confirmButtonColor: "#000",
             customClass: {
               confirmButton:

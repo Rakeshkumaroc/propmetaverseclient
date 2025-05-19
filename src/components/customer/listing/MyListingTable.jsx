@@ -5,49 +5,12 @@ import * as XLSX from "xlsx";
 import MyListingRow from "./MyListingRow";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const dummyData = [
-  {
-    _id: "1",
-    title: "Sunset Villa",
-    developer: "Prime Estates",
-    district: "Downtown",
-    possessionDate: "2024-12-01",
-    status: "Available",
-    propertyType: "Villa",
-    createdAt: "2024-01-15T10:00:00Z",
-    updatedAt: "2024-02-20T12:00:00Z",
-  },
-  {
-    _id: "2",
-    title: "Urban Apartment",
-    developer: "City Builders",
-    district: "Midtown",
-    possessionDate: "2025-06-01",
-    status: "Under Construction",
-    propertyType: "Apartment",
-    createdAt: "2024-03-10T09:00:00Z",
-    updatedAt: null,
-  },
-  {
-    _id: "3",
-    title: "Greenwood Cottage",
-    developer: "Eco Homes",
-    district: "Suburbs",
-    possessionDate: "2024-09-01",
-    status: "Sold",
-    propertyType: "Cottage",
-    createdAt: "2024-02-05T11:00:00Z",
-    updatedAt: "2024-03-15T14:00:00Z",
-  },
-];
-
 const MyListingTable = ({ searchValue }) => {
   const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [isDummyData, setIsDummyData] = useState(false);
 
   const handleCheckboxChange = (id) => {
     if (selectedIds.includes(id)) {
@@ -64,7 +27,7 @@ const MyListingTable = ({ searchValue }) => {
     XLSX.writeFile(wb, "PropertyData.xlsx");
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedIds.length === 0) {
       Swal.fire({
         title: "No properties selected",
@@ -85,46 +48,34 @@ const MyListingTable = ({ searchValue }) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (isDummyData) {
-          // Simulate deletion for dummy data
-          setData(data.filter((item) => !selectedIds.includes(item._id)));
-          setSelectedIds([]);
-          Swal.fire({
-            title: "Deleted!",
-            text: "Selected properties have been deleted.",
-            icon: "success",
-            confirmButtonColor: "#1b639f",
+        try {
+          const response = await fetch(`${baseUrl}/select-property-delete`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ids: selectedIds }),
           });
-        } else {
-          try {
-            const response = await fetch(`${baseUrl}/select-property-delete`, {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ ids: selectedIds }),
-            });
 
-            if (response.ok) {
-              setData(data.filter((item) => !selectedIds.includes(item._id)));
-              setSelectedIds([]);
-              Swal.fire({
-                title: "Deleted!",
-                text: "Selected properties have been deleted.",
-                icon: "success",
-                confirmButtonColor: "#1b639f",
-              });
-            } else {
-              throw new Error("Failed to delete properties");
-            }
-          } catch (error) {
+          if (response.ok) {
+            setData(data.filter((item) => !selectedIds.includes(item._id)));
+            setSelectedIds([]);
             Swal.fire({
-              title: "Error",
-              text: "Failed to delete properties. Please try again.",
-              icon: "error",
+              title: "Deleted!",
+              text: "Selected properties have been deleted.",
+              icon: "success",
               confirmButtonColor: "#1b639f",
             });
+          } else {
+            throw new Error("Failed to delete properties");
           }
+        } catch (error) {
+          Swal.fire({
+            title: "Error",
+            text: "Failed to delete properties. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#1b639f",
+          });
         }
       }
     });
@@ -142,8 +93,7 @@ const MyListingTable = ({ searchValue }) => {
             icon: "error",
             confirmButtonColor: "#1b639f",
           });
-          setData(dummyData);
-          setIsDummyData(true);
+          setData([]);
           return;
         }
 
@@ -153,11 +103,8 @@ const MyListingTable = ({ searchValue }) => {
         }
 
         let result = await response.json();
-        if (!Array.isArray(result) || result.length === 0) {
-          result = dummyData;
-          setIsDummyData(true);
-        } else {
-          setIsDummyData(false);
+        if (!Array.isArray(result)) {
+          result = [];
         }
 
         if (searchValue) {
@@ -180,8 +127,8 @@ const MyListingTable = ({ searchValue }) => {
         setData(filter === "Recent" ? result : result.reverse());
       } catch (error) {
         console.error("Error fetching data:", error);
-        setData(dummyData);
-        setIsDummyData(true);
+        setData([]);
+        
       } finally {
         setLoading(false);
       }
@@ -262,11 +209,6 @@ const MyListingTable = ({ searchValue }) => {
           </button>
         </div>
       </div>
-      {isDummyData && (
-        <div className="text-center text-sm text-gray-500 mb-4">
-          Showing sample data for demonstration purposes.
-        </div>
-      )}
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">

@@ -17,11 +17,13 @@ const GoogleButton = ({
 
   const responseGoogle = async (authResult) => {
     try {
-      console.log(authResult, "resultsss");
+      console.log("Google Auth Result:", authResult);
       if (authResult?.code) {
         const result = await axios.post(`${baseUrl}${endpoint}`, {
           code: authResult.code,
         });
+
+        console.log("Full API Response:", JSON.stringify(result.data, null, 2));
 
         if (result.data.success) {
           // Determine storage key based on endpoint
@@ -29,38 +31,67 @@ const GoogleButton = ({
             ? "customerAuth"
             : "subBrokerAuth";
           if (storageKey === "customerAuth") {
-            // Store credentials in localStorage
             const authData = {
-              token: result.data.token, // JWT token
-              user: result.data.user, // User details (e.g., _id, email, role)
+              token: result.data.token,
+              user: result.data.user,
             };
             localStorage.setItem(storageKey, JSON.stringify(authData));
+            console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
+            toast(result.data.message, {
+              position: "top-left",
+              type: "success",
+            });
+            navigate(navigatePathSuccess); // Explicitly navigate for customers
           } else {
-            console.log(result,"kkkkkkkkkkkkkkkkkkkk")
+            // Store seller credentials in localStorage
             localStorage.setItem("sellerId", result.data.sellerData.sellerId);
             localStorage.setItem(
               "sellerFullName",
               result.data.sellerData.sellerFullName
             );
-
             localStorage.setItem("token", result.data.sellerData.token);
-          }
 
-          toast(result.data.message, {
+            // Ensure verification fields are booleans
+            const isEmailVerified = result.data.sellerData.sellerIsEmailVerify === true;
+            const isNumberVerified = result.data.sellerData.sellerIsNumberVerify === true;
+
+            console.log("Verification Status:", {
+              sellerIsEmailVerify: isEmailVerified,
+              sellerIsNumberVerify: isNumberVerified,
+              rawEmailVerify: result.data.sellerData.sellerIsEmailVerify,
+              rawNumberVerify: result.data.sellerData.sellerIsNumberVerify,
+            });
+
+            // Strict redirect logic for sellers
+            if (isEmailVerified && isNumberVerified) {
+              console.log("Both verified, redirecting to /seller");
+              navigate("/seller");
+            } else {
+              console.log("Verification incomplete, redirecting to", navigatePathSuccess);
+              navigate(navigatePathSuccess);
+            }
+
+            toast(result.data.message, {
+              position: "top-left",
+              type: "success",
+            });
+          }
+        } else {
+          console.log("API success false:", result.data);
+          toast("Login failed: " + result.data.message, {
             position: "top-left",
-            type: "success",
+            type: "error",
           });
-          navigate(navigatePathSuccess);
-          console.log(result, "result");
+          navigate(navigatePathError);
         }
       }
     } catch (error) {
+      console.error("Google Login Error:", error.response?.data || error);
       toast(error.response?.data?.message || "Google login failed", {
         position: "top-left",
         type: "error",
       });
       navigate(navigatePathError);
-      console.log(error, "errorffff");
     }
   };
 

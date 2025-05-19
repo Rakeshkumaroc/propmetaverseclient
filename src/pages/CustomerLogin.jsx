@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Added useEffect
+import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,11 +21,20 @@ const CustomerLogin = () => {
 
   // Check for customerAuth on mount and redirect if present
   useEffect(() => {
-    const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
-    if (customerAuth && customerAuth.token) {
-      navigate("/customer");
+    try {
+      const customerAuthRaw = localStorage.getItem("customerAuth");
+      console.log("customerAuthRaw on mount:", customerAuthRaw);
+      if (customerAuthRaw) {
+        const customerAuth = JSON.parse(customerAuthRaw);
+        if (customerAuth && customerAuth.token) {
+          console.log("Redirecting to /customer from useEffect");
+          navigate("/customer");
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing customerAuth:", error);
     }
-  }, [navigate]); // Dependency array includes navigate to ensure stability
+  }, [navigate]);
 
   const inputHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,14 +50,9 @@ const CustomerLogin = () => {
     };
 
     try {
-      const result = await axios.post(
-        `${baseUrl}/sign-in-customer`,
-        signInData
-      );
+      const result = await axios.post(`${baseUrl}/sign-in-customer`, signInData);
       setLoading(false);
-      // Log response for debugging
       console.log("Login response:", result.data);
-      // Save customerAuth to localStorage
       if (!result.data.token) {
         throw new Error("No token received from server");
       }
@@ -59,12 +63,11 @@ const CustomerLogin = () => {
           user: result.data.user,
         })
       );
+      console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
       toast(result.data.message, {
         position: "top-left",
         type: "success",
       });
-      // Verify customerAuth is saved
-      console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
       navigate("/customer");
     } catch (err) {
       setLoading(false);
@@ -82,7 +85,7 @@ const CustomerLogin = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mt-20">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
           <div className="py-4 px-6">
-            <h2 className="text-2xl font-semibold text-center text-gray-800  ">
+            <h2 className="text-2xl font-semibold text-center text-gray-800">
               Customer Login
             </h2>
           </div>
