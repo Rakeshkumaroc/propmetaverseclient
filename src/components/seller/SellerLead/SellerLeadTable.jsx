@@ -235,9 +235,9 @@ const SellerLeadTable = ({ searchValue }) => {
                   <th scope="col" className="px-6 py-3">
                     Phone
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  {/* <th scope="col" className="px-6 py-3">
                     Email
-                  </th>
+                  </th> */}
                   <th scope="col" className="px-6 py-3">
                     En Date
                   </th>
@@ -285,15 +285,15 @@ const SellerLeadTable = ({ searchValue }) => {
                       <td className="px-6 py-4 text-center">
                         {value.phone || "No phone"}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      {/* <td className="px-6 py-4 text-center">
                         {value.email || "No email"}
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 text-center">
                         {value.created_at
                           ? new Date(value.created_at).toLocaleDateString()
                           : "No date"}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center capitalize">
                         {value.status || "No status"}
                       </td>
                       <td className="px-6 py-4 text-center flex items-center justify-center">
