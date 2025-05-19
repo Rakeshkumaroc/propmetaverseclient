@@ -20,8 +20,7 @@ const dummyPropertyData = {
     "A luxurious condo with stunning ocean views and modern amenities.",
   propertyType: "Condo",
   status: "Available",
-  constructionYear: "2023",
-  price: "500000",
+  constructionYear: "2023", 
   discount: "5",
   galleryImg: [
     `${baseUrl}/uploads/gallery/sample1.jpg`,
@@ -149,8 +148,7 @@ const CustomerAddProperty = ({ action }) => {
         propertyType: "",
         status: "",
         purpose: "", // Add purpose
-        constructionYear: "",
-        price: "",
+        constructionYear: "", 
         discount: "",
         address: "",
         country: "",

@@ -351,22 +351,7 @@ const BasicInformation = ({ setIsActive }) => {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="price"
-            className="text-[14px] font-semibold leading-[26px]"
-          >
-            Price
-          </label>
-          <input
-            type="number"
-            id="price"
-            value={formData.price || ""}
-            onChange={(e) => handleChange(e)}
-            placeholder="Property price"
-            className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
-          />
-        </div>
+        
 
         <div className="flex flex-col gap-2 mb-3">
           <label

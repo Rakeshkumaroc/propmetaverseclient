@@ -41,8 +41,7 @@ const initialFormData = {
   purpose: "",
   developer: "",
   aboutDeveloper: "",
-  constructionYear: "",
-  price: "",
+  constructionYear: "", 
   discount: "",
   reraNumber: "",
   address: "",
@@ -129,8 +128,7 @@ const Amenities = ({ action }) => {
       appendIfValid("purpose", formData.purpose);
       appendIfValid("developer", formData.developer);
       appendIfValid("aboutDeveloper", formData.aboutDeveloper);
-      appendIfValid("constructionYear", formData.constructionYear);
-      appendIfValid("price", formData.price);
+      appendIfValid("constructionYear", formData.constructionYear); 
       appendIfValid("discount", formData.discount);
       appendIfValid("address", formData.address);
       appendIfValid("country", formData.country);
