@@ -55,8 +55,17 @@ const SellerLoginPage = () => {
           position: "top-left",
           type: "success",
         });
-        Navigate("/seller-complete-profile");
-        console.log(result);
+
+        if (
+          result.data.sellerData.sellerIsEmailVerify &&
+          result.data.sellerData.sellerIsNumberVerify
+        ) {
+          Navigate("/seller");
+        } else {
+          Navigate("/seller-complete-profile");
+        }
+
+        console.log(result, "result ffffffffffffffffffffffffffffffff");
       })
       .catch((err) => {
         setLoading(false);
