@@ -5,24 +5,25 @@ const baseUrl = import.meta.env.VITE_APP_URL;
 import profilePlaceHolder from "../../../assets/image/prifilePlaceHolder.jpg";
 import axios from "axios";
 import { FiCheckCircle, FiEye, FiEyeOff } from "react-icons/fi";
-
+import LocationDropdowns from "../global/LocationDropdowns";
+import countries from "../../../utils/country.json";
 const SellerProfileFrom = () => {
   // profile state variable start
 
   const [loading, setLoading] = useState(false);
   const [profilePic, setProfilePic] = useState("");
 
-  const [data, setData] = useState({
+  const [formData, setFormData] = useState({
     fullName: "",
     bio: "",
     number: "",
-    fullAddress: "",
     pincode: "",
-    district: "",
+    country: "",
     state: "",
+    city: "",
     email: "",
     isGoogleUser: false,
-    // sellerType: "",
+    phonecode: "",
   });
 
   // profile state variable start End
@@ -148,7 +149,7 @@ const SellerProfileFrom = () => {
         })
         .then((result) => {
           // console.log(result.data.sellerData);
-          setData(result.data.sellerData);
+          setFormData(result.data.sellerData);
           // setInitialSellerType(result.data.sellerData.sellerType || "");
         })
         .catch((err) => {
@@ -167,7 +168,7 @@ const SellerProfileFrom = () => {
   const profileInputHandler = (e) => {
     const { name, value } = e.target;
 
-    setData((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -177,14 +178,15 @@ const SellerProfileFrom = () => {
     e.preventDefault();
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("fullName", data.fullName);
-    formData.append("bio", data.bio);
-    formData.append("fullAddress", data.fullAddress);
-    formData.append("pincode", data.pincode);
-    formData.append("district", data.district);
-    formData.append("state", data.state);
-    formData.append("number", data.number);
+    const UpdateFormData = new FormData();
+    UpdateFormData.append("fullName", formData.fullName);
+    UpdateFormData.append("bio", formData.bio);
+    UpdateFormData.append("phonecode", formData.phonecode);
+    UpdateFormData.append("pincode", formData.pincode);
+    UpdateFormData.append("state", formData.state);
+    UpdateFormData.append("number", formData.number);
+    UpdateFormData.append("country", formData.country);
+    UpdateFormData.append("city", formData.city);
 
     if (profilePic) {
       formData.append("profilePic", profilePic);
@@ -194,7 +196,7 @@ const SellerProfileFrom = () => {
     const token = localStorage.getItem("token");
     if (sellerId) {
       axios
-        .put(`${baseUrl}/update-seller/${sellerId}`, formData, {
+        .put(`${baseUrl}/update-seller/${sellerId}`, UpdateFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
@@ -227,7 +229,7 @@ const SellerProfileFrom = () => {
     }
   };
   // profile  end
-  console.log("fle",data.profilePic)
+  console.log("fle", formData);
   return (
     <div className="w-full rounded-lg bg-white">
       <div className="p-8 mt-10">
@@ -235,7 +237,7 @@ const SellerProfileFrom = () => {
         <div className="flex items-center justify-between mb-8 px-4">
           {/* Profile Image */}
           <img
-            src={data?.profilePic || profilePlaceHolder}
+            src={formData?.profilePic || profilePlaceHolder}
             alt="Profile"
             className="w-16 h-16 rounded-full object-cover border border-gray-300"
           />
@@ -247,12 +249,12 @@ const SellerProfileFrom = () => {
             </span>
             <span
               className={`text-sm font-medium px-3 py-0.5 rounded-lg capitalize ${
-                data?.approveStatus === "approved"
+                formData?.approveStatus === "approved"
                   ? "bg-green-100 text-green-600"
                   : "bg-yellow-100 text-yellow-600"
               }`}
             >
-              {data?.approveStatus}
+              {formData?.approveStatus}
             </span>
           </div>
         </div>
@@ -260,53 +262,6 @@ const SellerProfileFrom = () => {
         {/* Form Start */}
         <form onSubmit={updateProfileHandler}>
           <div className="space-y-5">
-            {/* User Type */}
-            {/* Seller Type Section */}
-            {/* {initialSellerType ? (
-              <div className="flex items-center gap-2">
-                <span className="text-[14px] font-semibold leading-[26px]">
-                  Seller Type
-                </span>
-                <span
-                  className={`text-sm font-medium px-3 py-0.5 rounded-full ${
-                    initialSellerType === "subBroker"
-                      ? "bg-green-100 text-green-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {initialSellerType}
-                </span>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Seller Type
-                </label>
-                <div className="flex flex-col md:flex-row gap-3">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="sellerType"
-                      value="subBroker"
-                      onChange={profileInputHandler}
-                      className="w-4 h-4 accent-green-600"
-                    />
-                    <span className="text-sm">Sub Broker</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="sellerType"
-                      value="individualSeller"
-                      onChange={profileInputHandler}
-                      className="w-4 h-4 accent-green-600"
-                    />
-                    <span className="text-sm">Individual Seller</span>
-                  </label>
-                </div>
-              </div>
-            )} */}
-
             {/* Username */}
             <div className="flex flex-col gap-2">
               <label className="text-[14px] font-semibold leading-[26px]">
@@ -316,7 +271,7 @@ const SellerProfileFrom = () => {
                 type="text"
                 name="fullName"
                 onChange={profileInputHandler}
-                value={data?.fullName || ""}
+                value={formData?.fullName || ""}
                 // disabled
                 placeholder="Your Name"
                 className="border px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
@@ -332,34 +287,58 @@ const SellerProfileFrom = () => {
                 <input
                   type="text"
                   name="email"
-                  value={data?.email || ""}
+                  value={formData?.email || ""}
                   disabled
                   placeholder="Your Email"
                   className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
                 />
-                {data.isEmailVerify && (
+                {formData.isEmailVerify && (
                   <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
                 )}
               </div>
             </div>
 
             {/* Number */}
-            <div className="flex flex-col gap-2">
+            <div className="space-y-2">
               <label className="text-[14px] font-semibold leading-[26px]">
                 Number
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  name="number"
-                  value={data?.number || ""}
+              <div className="relative flex gap-2">
+                {/* Country Code Selector */}
+                <select
+                  name="phonecode"
+                  value={formData.phonecode}
                   onChange={profileInputHandler}
-                  disabled={data.isNumberVerify}
-                  placeholder="Your Number"
-                  className="w-full border px-2 rounded-lg h-14 border-gray-300 text-sm py-3 pr-24"
+                  className="w-[30%] px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                  disabled={formData.isNumberVerify} // Optional: disable if verified
+                >
+                  <option value="" disabled>
+                    {formData.phonecode ? formData.phonecode : "country code"}
+                  </option>
+                  {countries.map((country) => (
+                    <option key={country.id} value={country.phonecode}>
+                      +{country.phonecode} ({country.sortname})
+                    </option>
+                  ))}
+                </select>
+
+                {/* Phone Number Input */}
+                <input
+                  type="tel"
+                  name="number"
+                  value={formData.number || ""}
+                  onChange={profileInputHandler}
+                  className="w-[70%] px-3 py-2 rounded-lg border border-gray-300 text-sm pr-10"
+                  placeholder="Enter your number"
+                  minLength={10}
+                  maxLength={10}
+                  pattern="[0-9]*"
+                  disabled={formData.isNumberVerify}
                 />
-                {data.isNumberVerify && (
-                  <FiCheckCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
+
+                {/* Verified Tick Icon */}
+                {formData.isNumberVerify && (
+                  <FiCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-600 text-xl" />
                 )}
               </div>
             </div>
@@ -373,7 +352,7 @@ const SellerProfileFrom = () => {
                 type="text"
                 name="bio"
                 onChange={profileInputHandler}
-                value={data?.bio || ""}
+                value={formData?.bio || ""}
                 // disabled
                 placeholder="Your Bio"
                 className="border px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
@@ -399,71 +378,29 @@ const SellerProfileFrom = () => {
                 Approved At
               </label>
               <p className="text-sm text-gray-600">
-                {data?.approvedAt
-                  ? new Date(data.approvedAt).toLocaleDateString()
+                {formData?.approvedAt
+                  ? new Date(formData.approvedAt).toLocaleDateString()
                   : "Not approved yet"}
               </p>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <LocationDropdowns formData={formData} setFormData={setFormData} />
+            <div className="space-y-2">
               <label className="text-[14px] font-semibold leading-[26px]">
-                Full Address
+                Pincode
               </label>
-              <textarea
-                name="fullAddress"
-                value={data.fullAddress}
+              <input
+                type="tel"
+                name="pincode"
+                value={formData.pincode || ""}
                 onChange={profileInputHandler}
-                rows="2"
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                placeholder="Enter your complete address"
-              ></textarea>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-semibold leading-[26px]">
-                  Pincode
-                </label>
-                <input
-                  type="tel"
-                  name="pincode"
-                  value={data.pincode}
-                  onChange={profileInputHandler}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  placeholder="Enter pincode"
-                  required
-                  minLength={6}
-                  maxLength={6}
-                  pattern="[0-9]*"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-semibold leading-[26px]">
-                  District
-                </label>
-                <input
-                  type="text"
-                  name="district"
-                  value={data.district}
-                  onChange={profileInputHandler}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  placeholder="Enter district"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-semibold leading-[26px]">
-                  State
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={data.state}
-                  onChange={profileInputHandler}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  placeholder="Enter state"
-                />
-              </div>
+                placeholder="Enter pincode"
+                required
+                minLength={6}
+                maxLength={6}
+                pattern="[0-9]*"
+              />
             </div>
           </div>
           <div className="flex ">
@@ -485,7 +422,7 @@ const SellerProfileFrom = () => {
         </form>
       </div>
 
-      {data && !data.isGoogleUser && (
+      {formData && !formData.isGoogleUser && (
         <div className="md:p-8 p-1 mt-1 ">
           <form onSubmit={handleSubmit} className="p-8 mt-10">
             <p className="text-center text-lg font-semibold mb-5">
