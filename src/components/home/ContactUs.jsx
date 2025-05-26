@@ -1,10 +1,12 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import HeaderText from "../HeaderText";
 import { MyContext } from "../../App";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const ContactUs = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false); // Track submission
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission status
   const { enquiryRef } = useContext(MyContext);
   const [formData, setFormData] = useState({
     name: "",
@@ -14,62 +16,86 @@ const ContactUs = () => {
     city: "",
     pincode: "",
     dob: "",
-    workExperience: "",
+    message: "", // Renamed from workExperience for clarity
   });
 
   // Handle input change
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const result = await fetch(baseUrl + "/add-enquiry", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    if (result.ok) {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        gender: "",
-        city: "",
-        pincode: "",
-        dob: "",
-        workExperience: "",
-      });
-      setIsSubmitted(true);
-    }
-
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 1000);
+  // Basic client-side validation
+  const validateForm = () => {
+    const phoneRegex = /^\+?\d{10,15}$/;
+    const pincodeRegex = /^\d{5,6}$/;
+    if (!formData.name.trim()) return "Name is required";
+    if (!/\S+@\S+\.\S+/.test(formData.email)) return "Invalid email format";
+    if (!phoneRegex.test(formData.phone)) return "Invalid phone number (10-15 digits)";
+    if (!formData.gender) return "Gender is required";
+    if (!formData.city.trim()) return "City is required";
+    if (!pincodeRegex.test(formData.pincode)) return "Invalid pincode (5-6 digits)";
+    if (!formData.dob) return "Date of birth is required";
+    if (!formData.message.trim()) return "Enquiry details are required";
+    return null;
   };
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
 
-  
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${baseUrl}/add-enquiry`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          gender: "",
+          city: "",
+          pincode: "",
+          dob: "",
+          message: "",
+        });
+        toast.success("Enquiry submitted successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(result.error || "Failed to submit enquiry");
+      }
+    } catch (error) {
+      toast.error("Network error, please try again later");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div ref={enquiryRef} className="py-16 px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 bg-white text-center">
-      <HeaderText title={"Contact Us"} />
-
+      <HeaderText title="Contact Us" />
       <div className="max-w-4xl mx-auto mt-10 bg-gray-900 text-white p-8 rounded-lg">
         <p className="text-gray-300 mb-6">
           Fill in your details, and we'll get back to you as soon as possible.
         </p>
-
-        <form
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          onSubmit={handleSubmit}
-        >
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
@@ -79,7 +105,6 @@ const ContactUs = () => {
             className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           />
-
           <input
             type="email"
             name="email"
@@ -89,7 +114,6 @@ const ContactUs = () => {
             className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           />
-
           <input
             type="tel"
             name="phone"
@@ -99,7 +123,6 @@ const ContactUs = () => {
             className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           />
-
           <select
             name="gender"
             value={formData.gender}
@@ -114,71 +137,58 @@ const ContactUs = () => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
-          {/* City */}
           <input
             type="text"
             name="city"
             placeholder="City"
             value={formData.city}
             onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           />
-          {/* Pincode */}
           <input
             type="text"
             name="pincode"
             placeholder="Pincode"
             value={formData.pincode}
             onChange={handleChange}
-            className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-green-500"
+            className="p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           />
-          {/* Date of Birth */}
-          <div
-            className="relative p-3 col-span-1 md:col-span-2 flex gap-5 items-center rounded-lg bg-gray-800 text-white"
-            onClick={() => document.getElementById("dob-input").showPicker()}
-          >
-            <label htmlFor="dob-input" className="text-gray-400 text-nowrap">
-              Date of Birth
-            </label>
+          <div className="col-span-1 md:col-span-2">
             <input
               id="dob-input"
               name="dob"
               type="date"
               value={formData.dob}
               onChange={handleChange}
-              className="w-full outline-none bg-transparent"
+              className="w-full p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
               required
             />
           </div>
-
           <textarea
-            name="workExperience"
+            name="message"
             rows="4"
-            value={formData.workExperience}
+            value={formData.message}
             onChange={handleChange}
             placeholder="Enquiry Details"
             className="col-span-1 md:col-span-2 p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-logoColor"
             required
           ></textarea>
-
-          {/* Submit Button */}
           <button
             type="submit"
-            className="relative col-span-1 md:col-span-2 bg-logoColor hover:bg-logoColor/90 cursor-pointer transition-all py-3 rounded-lg"
+            disabled={isSubmitting}
+            className={`col-span-1 md:col-span-2 bg-logoColor hover:bg-logoColor/90 cursor-pointer transition-all py-3 rounded-lg ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            <div
-              className={`text-logoColor absolute text-nowrap right-[50%] translate-x-[50%] transition-all duration-500  -top-8  text-lg font-bold ${
-                isSubmitted ? "block" : "hidden"
-              }`}
-            >
-              Enquiry Submitted Successfully!
-            </div>
-            <span className="  font-semibold text-white">Submit</span>
+            <span className="font-semibold text-white">
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </span>
           </button>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
