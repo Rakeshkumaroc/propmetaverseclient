@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import { GoArrowUpRight } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import countries from "../../../utils/country.json";
+import LocationDropdowns from "../global/LocationDropdowns";
 import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;
 export default function CompleteSellerProfile() {
@@ -25,13 +27,13 @@ export default function CompleteSellerProfile() {
     fullName: "",
     bio: "", //ggggggggggggggggggggg ffffffff
     number: "",
-    fullAddress: "",
     pincode: "",
-    district: "",
+    country: "",
     state: "",
+    city: "",
     email: "",
     isGoogleUser: false,
-    // sellerType: "",
+    phonecode: "",
   });
   // const [initialSellerType, setInitialSellerType] = useState("");
   // Update the document form data state
@@ -107,14 +109,16 @@ export default function CompleteSellerProfile() {
     setLoading(true);
     const sellerUpdateData = {
       fullName: formData.fullName,
-      // sellerType: formData.sellerType,
       bio: formData.bio,
       number: formData.number,
-      fullAddress: formData.fullAddress,
       pincode: formData.pincode,
-      district: formData.district,
+      country: formData.country,
       state: formData.state,
+      city: formData.city,
+      phonecode: formData.phonecode,
     };
+
+    console.log(sellerUpdateData, "j");
     // console.log("userdata", sellerUpdateData);
     const sellerId = localStorage.getItem("sellerId");
     const token = localStorage.getItem("token");
@@ -373,51 +377,6 @@ export default function CompleteSellerProfile() {
               className="space-y-3 md:space-y-4"
               onSubmit={updateProfileHandler}
             >
-              {/* {initialSellerType ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] font-semibold leading-[26px]">
-                    Seller Type
-                  </span>
-                  <span
-                    className={`text-sm font-medium px-3 py-0.5 rounded-full ${
-                      initialSellerType === "subBroker"
-                        ? "bg-green-100 text-green-600"
-                        : "bg-red-100 text-red-600"
-                    }`}
-                  >
-                    {initialSellerType}
-                  </span>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Seller Type
-                  </label>
-                  <div className="flex flex-col md:flex-row gap-3">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="sellerType"
-                        value="subBroker"
-                        onChange={handleInputChange}
-                        className="w-4 h-4 accent-green-600"
-                      />
-                      <span className="text-sm">Sub Broker</span>
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="sellerType"
-                        value="individualSeller"
-                        onChange={handleInputChange}
-                        className="w-4 h-4 accent-green-600"
-                      />
-                      <span className="text-sm">Individual Seller</span>
-                    </label>
-                  </div>
-                </div>
-              )} */}
-
               <div className="space-y-2">
                 <label className="text-[14px] font-semibold leading-[26px]">
                   Full Name
@@ -453,7 +412,7 @@ export default function CompleteSellerProfile() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="text-[14px] font-semibold leading-[26px]">
                   Number
                 </label>
@@ -469,8 +428,46 @@ export default function CompleteSellerProfile() {
                   maxLength={10}
                   pattern="[0-9]*"
                 />
-              </div>
+              </div> */}
+              <div className="space-y-2">
+                <label className="text-[14px] font-semibold leading-[26px]">
+                  Number
+                </label>
+                <div className="flex gap-2">
+                  {/* Country Code Selector */}
+                  <select
+                    name="phonecode"
+                    value={formData.phonecode}
+                    onChange={handleInputChange}
+                    className="w-[30%] px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                    required
+                  >
+                    <option value="" disabled>
+                      {" "}
+                      {formData.phonecode ? formData.phonecode : "country code"}
+                    </option>
+                    {countries.map((country) => (
+                      <option key={country.id} value={country.phonecode}>
+                        +{country.phonecode} ({country.sortname})
+                      </option>
+                    ))}
+                  </select>
 
+                  {/* Phone Number Input */}
+                  <input
+                    type="tel"
+                    name="number"
+                    value={formData.number || ""}
+                    onChange={handleInputChange}
+                    className="w-[70%] px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                    placeholder="Enter your number"
+                    required
+                    minLength={10}
+                    maxLength={10}
+                    pattern="[0-9]*"
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Professional Bio
@@ -485,66 +482,30 @@ export default function CompleteSellerProfile() {
                 ></textarea>
               </div>
 
+              {/* ⬇️ Country/State/City Dropdowns (replacing full address textarea) */}
+              <LocationDropdowns
+                formData={formData}
+                setFormData={setFormData}
+              />
+
+              {/* Grid: Pincode, District, State */}
+
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Full Address
+                <label className="text-[14px] font-semibold leading-[26px]">
+                  Pincode
                 </label>
-                <textarea
-                  name="fullAddress"
-                  value={formData.fullAddress}
+                <input
+                  type="tel"
+                  name="pincode"
+                  value={formData.pincode || ""}
                   onChange={handleInputChange}
-                  rows="2"
                   className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                  placeholder="Enter your complete address"
-                ></textarea>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="space-y-2">
-                  <label className="text-[14px] font-semibold leading-[26px]">
-                    Pincode
-                  </label>
-                  <input
-                    type="tel"
-                    name="pincode"
-                    value={formData.pincode || ""}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter pincode"
-                    required
-                    minLength={6}
-                    maxLength={6}
-                    pattern="[0-9]*"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[14px] font-semibold leading-[26px]">
-                    District
-                  </label>
-                  <input
-                    type="text"
-                    name="district"
-                    value={formData.district}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter district"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[14px] font-semibold leading-[26px]">
-                    State
-                  </label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                    placeholder="Enter state"
-                  />
-                </div>
+                  placeholder="Enter pincode"
+                  required
+                  minLength={6}
+                  maxLength={6}
+                  pattern="[0-9]*"
+                />
               </div>
 
               <div className="flex justify-between">
@@ -681,10 +642,7 @@ export default function CompleteSellerProfile() {
                   <button
                     type="button"
                     onClick={() => {
-                      if (
-                        documentFormData.aadhar &&
-                        documentFormData.pan
-                      ) {
+                      if (documentFormData.aadhar && documentFormData.pan) {
                         setCompletedSteps((prev) => [...prev, "document"]);
                         setActiveTab("verification");
                       }
