@@ -115,7 +115,9 @@ const PropertyListing = ({ properties }) => {
               propertyType={proj.propertyType}
               title={proj.title}
               location={`${proj.city}, ${proj.state}`}
-              price={proj.price ? `₹${proj.price.toLocaleString()}` : null} // Adjust currency if needed
+              price={ proj.floorPlan?.[0]?.price
+                  ? `₹${proj.floorPlan[0].price.toLocaleString("en-IN")}`
+                  : "Price on Request"} 
             
               date={
                 proj.constructionYear ? proj.constructionYear.toString() : "N/A"

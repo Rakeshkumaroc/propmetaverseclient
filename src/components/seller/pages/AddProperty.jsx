@@ -2,14 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import Media from "../AddProperty/Media";
 import Location from "../AddProperty/Location";
 import Amenities from "../AddProperty/Amenities";
-import Keywords from "../AddProperty/Keywords"; 
+import Keywords from "../AddProperty/Keywords";
 import BasicInformation from "../AddProperty/BasicInformation";
 import { useLocation } from "react-router-dom";
 import { MyContext } from "../../../App";
 import Faq from "../AddProperty/Faq";
 import Configuration from "../AddProperty/Configuration";
-import State from "../../../utils/state.json";
-import City from "../../../utils/city.json";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -17,7 +15,7 @@ const AddProperty = ({ action }) => {
   const [isActive, setIsActive] = useState(1);
   const { pathname } = useLocation();
   const id = pathname.split("/").pop();
-  const { setFormData } = useContext(MyContext);
+  const { setFormData,formData } = useContext(MyContext);
 
   useEffect(() => {
     async function getData() {
@@ -26,35 +24,35 @@ const AddProperty = ({ action }) => {
 
         if (result.ok) {
           const data = await result.json();
-          // Map state and city names to IDs
-          const state = State.find((s) => s.name === data.state || s.id === data.state);
-          const city = City.find((c) => c.name === data.city || c.id === data.city);
-
+          console.log("Fetched data:", data.city, data.state, data.country);
+          
           setFormData({
             ...data,
-            state: state ? String(state.id) : "",
-            city: city ? String(city.id) : "",
-            purpose: data.purpose || "", // Ensure purpose is included
+            country: data.country || "", // Ensure country is a name
+            state: data.state || "", // Keep state as name
+            city: data.city || "", // Keep city as name
+            purpose: data.purpose || "",
             galleryImg: data.galleryImg?.map((img) => img) || [],
             floorPlanImg:
               data.floorPlanImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/uploads/floor/${item.img}`,
+                preview: `${baseUrl}/Uploads/floor/${item.img}`,
                 info: item.info || "",
               })) || [],
             reraImg:
               data.reraImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/uploads/rera/${item.img}`,
+                preview: `${baseUrl}/Uploads/rera/${item.img}`,
                 no: item.no || "",
               })) || [],
-            floorPlan: data.floorPlan?.map((plan) => ({
-              type: plan.type || "",
-              carpetArea: plan.carpetArea || "",
-              parking: plan.parking || 0, // Include parking
-              price: plan.price || "",
-              sellingArea: plan.sellingArea || "", // Include sellingArea
-            })) || [{ type: "", carpetArea: "", parking: 0, price: "", sellingArea: "" }],
+            floorPlan:
+              data.floorPlan?.map((plan) => ({
+                type: plan.type || "",
+                carpetArea: plan.carpetArea || "",
+                parking: plan.parking || 0,
+                price: plan.price || "",
+                sellingArea: plan.sellingArea || "",
+              })) || [{ type: "", carpetArea: "", parking: 0, price: "", sellingArea: "" }],
           });
         }
       } catch (error) {
@@ -64,13 +62,15 @@ const AddProperty = ({ action }) => {
 
     if (action === "edit") {
       getData();
+      console.log(formData, "Location Form Data");
+
     } else {
       setFormData({
         title: "",
         description: "",
         propertyType: "",
         status: "",
-        purpose: "", // Add purpose
+        purpose: "",
         constructionYear: "",
         price: "",
         discount: "",
@@ -83,7 +83,7 @@ const AddProperty = ({ action }) => {
         galleryImg: [],
         floorPlanImg: [],
         reraImg: [],
-        floorPlan: [{ type: "", carpetArea: "", parking: 0,balcony:0, price: "", sellingArea: "" }], // Include sellingArea and parking
+        floorPlan: [{ type: "", carpetArea: "", parking: 0, balcony: 0, price: "", sellingArea: "" }],
         faqs: [{ question: "", answer: "" }],
         keywords: [{ heading: "", keyword: [] }],
         amenities: [],

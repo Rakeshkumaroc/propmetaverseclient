@@ -1,19 +1,19 @@
-// components/TrendingProjects.js
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // For redirection
+import  { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TrendingProjectCard from "../TrendingProjectCard";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const categories = ["View All", "Residential", "Commercial", "Plot or Land"];
+
+ 
 
 const TrendingProjects = () => {
   const [activeCategory, setActiveCategory] = useState("View All");
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
-  // Fetch data from API (only approved properties)
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -23,7 +23,6 @@ const TrendingProjects = () => {
         }
         const data = await response.json();
 
-        // Filter for approved properties only
         const approvedProperties = Array.isArray(data)
           ? data.filter((item) => item.approveStatus === "approved")
           : [];
@@ -38,16 +37,15 @@ const TrendingProjects = () => {
     fetchProperties();
   }, []);
 
-  // Filter properties based on active category and limit to 6
   const filtered =
     activeCategory === "View All"
-      ? properties.slice(0, 6) // Limit to 6 for "View All"
+      ? properties.slice(0, 6)
       : properties
           .filter((p) => p.propertyType === activeCategory)
-          .slice(0, 6); // Limit to 6 for specific categories
+          .slice(0, 6);
 
   const handleExploreMore = () => {
-    navigate("/projects"); // Redirect to projects tab
+    navigate("/projects");
   };
 
   if (loading) {
@@ -68,20 +66,17 @@ const TrendingProjects = () => {
 
   return (
     <div className="md:py-28 py-10 px-6 md:px-16 lg:px-40 bg-gradient-to-b from-gray-50 to-white">
-      {/* Header Section */}
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold text-logoColor">
           Most Trending Projects
         </h2>
-        {/* Subtitle */}
         <p className="text-gray-600 mt-2 max-w-3xl mx-auto">
-          we carefully select the finest real estate projects for you, ensuring
+          We carefully select the finest real estate projects for you, ensuring
           top locations, trusted developers, and future-ready homes that match
           your lifestyle and investment goals.
         </p>
       </div>
 
-      {/* Category Filters */}
       <div className="flex justify-center flex-wrap gap-3 mb-12">
         {categories.map((cat) => (
           <button
@@ -101,7 +96,6 @@ const TrendingProjects = () => {
         ))}
       </div>
 
-      {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map((proj) => (
           <div key={proj._id}>
@@ -110,27 +104,31 @@ const TrendingProjects = () => {
               propertyType={proj.propertyType}
               title={proj.title}
               location={`${proj.city}, ${proj.state}`}
-              price={proj.price ? `₹${proj.price.toLocaleString()}` : null} // Adjust currency if needed
+              price={
+                proj.floorPlan?.[0]?.price
+                  ? `₹${proj.floorPlan[0].price.toLocaleString("en-IN")}`
+                  : "Price on Request"
+              }
               date={
                 proj.constructionYear ? proj.constructionYear.toString() : "N/A"
               }
-              developer={proj.developer ? proj.developer : "Unknown"}
+              developer={proj.developer || "Unknown"}
               image={
-                proj.galleryImg[0]
-                  ? `${baseUrl}/Uploads/property/${proj.galleryImg[0]}`
+                proj.floorPlanImg?.[0]?.img
+                  ? `${baseUrl}/Uploads/property/${proj.floorPlanImg[0].img}`
                   : "https://propmetaverse.com/assets/logopng-BXERHkCM.png"
               }
             />
           </div>
         ))}
       </div>
-      {/* Call to Action */}
+
       {filtered.length === 0 && (
         <p className="text-center text-gray-500 mt-8 animate-fadeIn">
           No approved projects found for this category. Explore other options!
         </p>
       )}
-      {/* Explore More Button */}
+
       <div className="text-center mt-10">
         {filtered.length > 0 && (
           <button

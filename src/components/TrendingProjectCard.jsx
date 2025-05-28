@@ -7,6 +7,7 @@ import { VscDiff } from "react-icons/vsc";
 import { FaWhatsapp, FaFacebook, FaLinkedin, FaLink } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { IoShareSocialOutline } from "react-icons/io5";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -316,7 +317,7 @@ const TrendingProjectCard = ({
               title="Share Property"
               aria-label="Share Property"
             >
-              <FaLink className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
+              <IoShareSocialOutline className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
             </button>
           </div>
 
