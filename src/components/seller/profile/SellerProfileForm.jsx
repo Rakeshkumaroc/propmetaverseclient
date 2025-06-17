@@ -188,9 +188,9 @@ const SellerProfileFrom = () => {
     UpdateFormData.append("country", formData.country);
     UpdateFormData.append("city", formData.city);
 
-    if (profilePic) {
-      formData.append("profilePic", profilePic);
-    }
+   if (profilePic) {
+  UpdateFormData.append("profilePic", profilePic);  
+}
 
     const sellerId = localStorage.getItem("sellerId");
     const token = localStorage.getItem("token");
