@@ -5,10 +5,9 @@ import Admin from "../pages/Admin";
 import RedirectPage from "../pages/RedirectPage";
 import AdminLogin from "../pages/AdminLogin";
 import Dashboard from "../components/admin/pages/Dashboard";
-import WeEnquiry from "../components/admin/pages/WeEnquiry";
+import Enquiry from "../components/admin/pages/Enquiry";
 import MyProfile from "../components/admin/pages/MyProfile";
 import NotFound from "../pages/NotFound";
-import DamacEnquiry from "../components/admin/pages/DamacEnquiry";
 import AddProperty from "../components/seller/pages/AddProperty";
 import Property from "../components/seller/pages/Property";
 import Hero from "../components/admin/pages/Hero";
@@ -133,8 +132,7 @@ const Layout = () => {
         >
           <Route index element={<Dashboard />} />
 
-          <Route path="we-enquiry" element={<WeEnquiry />} />
-          <Route path="damac-enquiry" element={<DamacEnquiry />} />
+          <Route path="enquiry" element={<Enquiry />} />
           <Route path="announcements" element={<ManageAnnouncements />} />
           {/* User Management */}
           <Route path="manage-sellers" element={<ManageSeller />} />

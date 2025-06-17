@@ -4,30 +4,23 @@ import { MdEmail, MdHome, MdOutlineStar } from "react-icons/md";
 import { VscDiff } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logopng.png";
-import { RiLoginBoxFill, RiUserFill } from "react-icons/ri";
-import { MyContext } from "../../App";
+import { RiLoginBoxFill, RiUserFill } from "react-icons/ri"; 
 import ChatBot from "./ChatBot";
-import ActionsBtn from "./ActionsBtn";
-// import DamacPopUp from "../global/DamacPopUp";
-// import Popup from "../global/Popup";
+import ActionsBtn from "./ActionsBtn"; 
+ 
 const Navbar = ({ isGlass }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { isPopUpOpen, setIsPopUpOpen, damacIsPopUpOpen, setDamacIsPopUpOpen } =
-    useContext(MyContext);
+ 
 
   useEffect(() => {
     const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
     setIsAuthenticated(!!(customerAuth && customerAuth.token));
 
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setTimeout(() => {
-      setDamacIsPopUpOpen(true);
-    }, 10000);
-    setTimeout(() => {
-      setIsPopUpOpen(true);
-    }, 15000);
+  
+  
 
     const handleScroll = () => {
       if (window.scrollY > window.innerHeight) {
@@ -41,7 +34,7 @@ const Navbar = ({ isGlass }) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [setIsPopUpOpen, setDamacIsPopUpOpen]);
+  }, []);
 
   return (
     <>
@@ -204,9 +197,7 @@ const Navbar = ({ isGlass }) => {
             </div>
           </div>
         </nav>
-      </header>
-      {/* {isPopUpOpen ? <Popup /> : null}
-      {damacIsPopUpOpen ? <DamacPopUp /> : null} */}
+      </header> 
       <ChatBot />
       <ActionsBtn />
     </>

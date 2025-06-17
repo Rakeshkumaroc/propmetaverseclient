@@ -16,7 +16,7 @@ const BasicInformation = ({ setIsActive }) => {
     (e, index, field, changeType) => {
       if (changeType === "file") {
         const file = e.target.files[0];
-        console.log(`Selected file for ${field} index ${index}:`, file);
+      
         if (!file) {
           console.warn(`No file selected for ${field} index ${index}`);
           return;
@@ -41,7 +41,7 @@ const BasicInformation = ({ setIsActive }) => {
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
           newImages[index] = { ...newImages[index], file, preview: fileURL };
-          console.log(`Updated ${field}:`, newImages);
+        
           return { ...prevData, [field]: newImages };
         });
       } else if (changeType === "no") {
@@ -54,7 +54,7 @@ const BasicInformation = ({ setIsActive }) => {
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
           newImages[index] = { ...newImages[index], [changeType]: value };
-          console.log(`Updated ${field} ${changeType}:`, newImages);
+         
           return { ...prevData, [field]: newImages };
         });
       } else {
@@ -106,7 +106,7 @@ const BasicInformation = ({ setIsActive }) => {
         { file: null, preview: "", no: "" },
       ],
     }));
-    console.log(`Added new reraImg input`);
+ 
   }, [formData, setFormData]);
 
   // Remove RERA image and clean up URL
@@ -118,7 +118,7 @@ const BasicInformation = ({ setIsActive }) => {
         if (removedItem.preview && removedItem.file) {
           URL.revokeObjectURL(removedItem.preview); // Clean up memory
         }
-        console.log(`reraImg after removal:`, newImages);
+        
         return { ...prevData, reraImg: newImages };
       });
     },

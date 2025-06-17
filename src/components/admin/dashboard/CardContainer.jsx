@@ -21,8 +21,8 @@ const CardContainer = () => {
   const dashboardItems = [
   
     {
-      label: "Event Enquiry",
-      link: "/admin/we-enquiry",
+      label: "Website Enquiry",
+      link: "/admin/enquiry",
       value: enquiryData || 0,
       icon: <BsChatDots className="text-2xl transition-all duration-700" />,
     },

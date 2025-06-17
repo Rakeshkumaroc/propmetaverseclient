@@ -44,7 +44,7 @@ const Media = ({ setIsActive }) => {
     (e, index, field, changeType) => {
       if (changeType === "file") {
         const file = e.target.files[0];
-        console.log(`Selected file for ${field} index ${index}:`, file);
+        
         if (!file) {
           console.warn(`No file selected for ${field} index ${index}`);
           return;
@@ -69,15 +69,13 @@ const Media = ({ setIsActive }) => {
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
           newImages[index] = { ...newImages[index], file, preview: fileURL };
-          console.log(`Updated ${field}:`, newImages);
           return { ...prevData, [field]: newImages };
         });
       } else if (changeType === "info" || changeType === "type") {
         const value = e.target.value;
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
-          newImages[index] = { ...newImages[index], [changeType]: value };
-          console.log(`Updated ${field} ${changeType}:`, newImages);
+          newImages[index] = { ...newImages[index], [changeType]: value }; 
           return { ...prevData, [field]: newImages };
         });
       }
@@ -100,8 +98,7 @@ const Media = ({ setIsActive }) => {
             ? { file: null, preview: "" }
             : { file: null, preview: "", info: "", type: "" },
         ],
-      }));
-      console.log(`Added new ${field} input`);
+      })); 
     },
     [formData, setFormData]
   );
@@ -114,8 +111,7 @@ const Media = ({ setIsActive }) => {
         const removedItem = newImages.splice(index, 1)[0];
         if (removedItem.preview && removedItem.file) {
           URL.revokeObjectURL(removedItem.preview); // Clean up memory
-        }
-        console.log(`${field} after removal:`, newImages);
+        } 
         return { ...prevData, [field]: newImages };
       });
     },

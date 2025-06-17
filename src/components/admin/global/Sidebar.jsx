@@ -28,10 +28,8 @@ const Sidebar = () => {
         {
           icon: <MdOutlineMarkUnreadChatAlt />,
           label: "Enquiries", // Review relevance
-          nested: [
-            { label: "Women’s EPM", link: "/we-enquiry" },
-            { label: "DAMAC Property", link: "/damac-enquiry" },
-          ],
+          link: "/enquiry"
+         
         },
         {
           icon: <MdContentCopy />,

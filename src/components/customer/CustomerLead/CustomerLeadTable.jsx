@@ -88,8 +88,10 @@ const CustomerLeadTable = ({ searchValue }) => {
   useEffect(() => {
     const getFun = async () => {
       try {
-        const sellerId = localStorage.getItem("sellerId");
-        let result = await fetch(`${baseUrl}/lead/${sellerId}`);
+        let customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+        console.log('customerAuth',customerAuth);
+        
+        let result = await fetch(`${baseUrl}/lead/${customerAuth.user._id}`);
         result = await result.json();
 
         // Step 1: Filter by status if needed

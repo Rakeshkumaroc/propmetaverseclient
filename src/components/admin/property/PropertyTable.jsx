@@ -453,7 +453,8 @@ const PropertyTable = ({ searchValue }) => {
                       />
                     </td>
                     <td className="px-6 py-4">
-                      {value.price ? `₹${value.price}` : "N/A"}
+                      {value.floorPlan?.[0]?.price ? `₹${value.floorPlan[0].price.toLocaleString("en-IN")}` : "N/A"}
+                       
                     </td>
                     <td className="px-6 py-4">{value.propertyType || "N/A"}</td>
                     <td className="px-6 py-4 text-center">

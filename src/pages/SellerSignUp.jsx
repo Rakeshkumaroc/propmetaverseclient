@@ -85,40 +85,7 @@ const SellerSignUp = () => {
             </h2>
           </div>
           <form className="p-6 space-y-2" onSubmit={submitHandler}>
-            {/* User Type */}
-            {/* <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sign Up As <span className="text-black-500">*</span>
-            </label>
-            <div className="flex gap-6">
-              <label className="flex items-center text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={sellerType === "subBroker"}
-                  onChange={() =>
-                    setSellerType(sellerType === "subBroker" ? "" : "subBroker")
-                  }
-                  className="mr-2 h-4 w-4 accent-green-600"
-                />
-                Sub Broker
-              </label>
-              <label className="flex items-center text-sm text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={sellerType === "individualSeller"}
-                  onChange={() =>
-                    setSellerType(
-                      sellerType === "individualSeller"
-                        ? ""
-                        : "individualSeller"
-                    )
-                  }
-                  className="mr-2 h-4 w-4 accent-green-600"
-                />
-                Individual Seller
-              </label>
-            </div>
-          </div> */}
+            
 
             {/* Full Name */}
             <div>
@@ -138,21 +105,7 @@ const SellerSignUp = () => {
               </div>
             </div>
 
-            {/* Bio */}
-            {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Bio
-            </label>
-            <textarea
-              rows={1}
-              placeholder="bio..."
-              className="w-full border border-gray-300 rounded-lg p-2.5 outline-none resize-none focus:ring-1 focus:ring-logoColor"
-              name="bio"
-              value={formData.bio}
-              onChange={inputHandler}
-            ></textarea>
-          </div> */}
-
+           
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -171,23 +124,7 @@ const SellerSignUp = () => {
               </div>
             </div>
 
-            {/* Phone */}
-            {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number <span className="text-black-500">*</span>
-            </label>
-            <div className="relative">
-              <FaPhoneAlt className="absolute left-3 top-3 text-gray-400" />
-              <input
-                type="tel"
-                placeholder="9876543210"
-                className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
-                name="phone"
-                value={formData.phone}
-                onChange={inputHandler}
-              />
-            </div>
-          </div> */}
+          
 
             {/* Password */}
             <div>
@@ -213,23 +150,7 @@ const SellerSignUp = () => {
               </div>
             </div>
 
-            {/* Profile Image */}
-            {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Profile Picture
-            </label>
-            <div className="relative">
-              <FaImage className="absolute left-3 top-3 text-gray-400" />
-              <input
-                type="file"
-                accept="image/*"
-                className="pl-10 w-full border border-gray-300 rounded-lg py-2.5 px-2 file:mr-2 file:py-1 file:px-3 file:border-0 file:rounded-md file:bg-logoColor file:text-white file:cursor-pointer focus:ring-1 focus:ring-logoColor"
-                onChange={(e) => {
-                  setProfilePic(e.target.files[0]);
-                }}
-              />
-            </div>
-          </div> */}
+         
 
             {/* Submit Button */}
             <div className="md:col-span-2">

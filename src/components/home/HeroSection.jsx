@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const HeroSection = () => {
-  const { setDamacIsPopUpOpen, enquiryRef } = useContext(MyContext);
+  const { enquiryRef } = useContext(MyContext);
   const [heroData, setHeroData] = useState([]);
   const sliderRef = useRef(null);
 

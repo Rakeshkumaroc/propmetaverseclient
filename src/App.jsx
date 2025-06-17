@@ -8,9 +8,7 @@ export const MyContext = createContext();
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const App = () => {
-  const enquiryRef = useRef(false);
-  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-  const [damacIsPopUpOpen, setDamacIsPopUpOpen] = useState(false);
+  const enquiryRef = useRef(false); 
   const [propertyData, setPropertyData] = useState([]);
   const [siteName, setSiteName] = useState("Prop Metaverse");
   const [formData, setFormData] = useState({
@@ -78,10 +76,6 @@ const App = () => {
       value={{
         formData,
         setFormData,
-        isPopUpOpen,
-        setIsPopUpOpen,
-        damacIsPopUpOpen,
-        setDamacIsPopUpOpen,
         propertyData,
         setPropertyData,
         siteName,

@@ -7,8 +7,7 @@ const EmiCalculator = () => {
   const [loanAmount, setLoanAmount] = useState(1000000);
   const [tenure, setTenure] = useState(30);
   const [interestRate, setInterestRate] = useState(8.75);
-  const [otherEmis, setOtherEmis] = useState(0);
-  const { setIsPopUpOpen, setEnquiryHeading } = useContext(MyContext);
+  const [otherEmis, setOtherEmis] = useState(0); 
   const [eligibility, setEligibility] = useState();
   // const eligibility=47870
   // if (tenure == 1) {

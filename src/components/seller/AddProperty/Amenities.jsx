@@ -85,7 +85,7 @@ useEffect(() => {
   } else {
     const customerAuth = localStorage.getItem("customerAuth");
     if (customerAuth) {
-      console.log(customerAuth);
+   
       const parsedCustomerAuth = JSON.parse(customerAuth); // Parse the JSON string
       setFormData((prev) => ({
         ...prev,
@@ -163,7 +163,7 @@ useEffect(() => {
       appendIfValid("city", formData.city);
       appendIfValid("pinCode", formData.pinCode);
       appendIfValid("googleMap", formData.googleMap);
-      console.log(formData.seller_id);
+     
 
       formData.galleryImg.forEach((img, index) => {
         if (img?.file) {
