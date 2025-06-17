@@ -346,17 +346,6 @@ const SellerTable = ({ searchValue }) => {
                   </ul>
                 </div>
 
-                {/* Role Filter */}
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="border rounded-lg p-1.5 text-sm text-gray-700"
-                >
-                  <option value="all">All Sellers</option>
-                  <option value="subBroker">Sub-Brokers</option>
-                  <option value="individualSeller">Individual Sellers</option>
-                </select>
-
                 <RiDeleteBin2Fill
                   onClick={handleDelete}
                   className="text-black font-medium rounded-lg text-md cursor-pointer"
@@ -411,9 +400,7 @@ const SellerTable = ({ searchValue }) => {
                 <th scope="col" className="px-6 py-3">
                   Phone
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Role
-                </th>
+               
                 <th scope="col" className="px-6 py-3">
                   Status
                 </th>

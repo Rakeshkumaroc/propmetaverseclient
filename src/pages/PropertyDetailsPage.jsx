@@ -5,6 +5,7 @@ import Navbar from "../components/global/Navbar";
 import AgentsSection from "../components/home/AgentsSection";
 import Footer from "../components/global/Footer";
 import Header from "../components/property-details/Header";
+import Enquiry from "../components/property-details/Enquiry";
 import PropertyHeader from "../components/property-details/PropertyHeader";
 import Overview from "../components/property-details/Overview";
 import Description from "../components/property-details/Description";
@@ -17,8 +18,7 @@ import Rera from "../components/property-details/Rera";
 import FloorPlanImg from "../components/property-details/FloorPlanImg";
 import RatingSystem from "../components/property-details/RatingSystem";
 import EmiCalculator from "../components/property-details/EmiCalculator";
-import Pricing from "../components/property-details/Pricing"; 
-import { GoArrowUpRight } from "react-icons/go";
+import Pricing from "../components/property-details/Pricing";  
 import EnquiryPopup from "../components/global/EnquiryPopup";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
@@ -94,7 +94,13 @@ const PropertyDetailsPage = () => {
               <Overview
                 propertyType={propertyDetails.propertyType}
                 developer={propertyDetails.developer}
-                price={formatPrice(propertyDetails.floorPlan?.[0]?.price)}
+                 price={
+                  propertyDetails.floorPlan?.[0]?.price
+                    ? `₹${propertyDetails.floorPlan[0].price.toLocaleString(
+                        "en-IN"
+                      )}`
+                    : "Price on Request"
+                }
               />
             ) : null}
             {propertyDetails && propertyDetails.description ? (
@@ -156,13 +162,7 @@ const PropertyDetailsPage = () => {
           </div>
           <div className="col-span-2 lg:col-span-1 space-y-6">
             <EmiCalculator />
-            <button
-              onClick={() => setIsEnquiryFormOpen(true)}
-              className="bg-logoColor text-white px-6 py-3 rounded-lg font-semibold text-[15px] flex items-center justify-center gap-1 transition-all duration-300 hover:bg-logoColor/90 hover:scale-105 shadow-md w-full"
-            >
-              <span>Contact Agency</span>
-              <GoArrowUpRight className="text-xl" />
-            </button>
+             <Enquiry />
           </div>
         </div>
       </div>

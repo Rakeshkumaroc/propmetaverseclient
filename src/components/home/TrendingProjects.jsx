@@ -114,8 +114,8 @@ const TrendingProjects = () => {
               }
               developer={proj.developer || "Unknown"}
               image={
-                proj.floorPlanImg?.[0]?.img
-                  ? `${baseUrl}/Uploads/property/${proj.floorPlanImg[0].img}`
+                proj.galleryImg[0]
+                  ? `${baseUrl}/Uploads/property/${proj.galleryImg[0]}`
                   : "https://propmetaverse.com/assets/logopng-BXERHkCM.png"
               }
             />
