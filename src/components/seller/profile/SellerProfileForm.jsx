@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GoArrowUpRight } from "react-icons/go";
 import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;

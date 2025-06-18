@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MdOpenInNew } from "react-icons/md";
 import FavoriteCard from "../favorite/FavoriteCard";
 import { toast } from "react-toastify";
+import { FiHeart } from "react-icons/fi";
 
 const SavedPropertiesSection = ({
   savedProperties,
@@ -26,17 +27,18 @@ const SavedPropertiesSection = ({
   });
 
   return (
-    <section className="mb-8 bg-white shadow rounded p-6">
-      <h2 className="text-2xl flex items-center gap-3 font-semibold mb-4">
-        Saved Properties{" "}
-        <Link to={"/favorites"}>
-          <MdOpenInNew className="text-logoBlue text-lg hover:text-logoColor" />
-        </Link>
-      </h2>
+      <div>
+     
       {savedProperties.length === 0 ? (
-        <p className="text-gray-600">No saved properties yet.</p>
+        <div className="flex items-center justify-center py-8 text-gray-500">
+          <FiHeart
+            className="text-2xl mr-2 text-logoBlue"
+            aria-hidden="true"
+          />
+          <p className="text-lg">No saved properties yet.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedProperties.map((property) => (
             <FavoriteCard
               key={property._id}
@@ -61,7 +63,7 @@ const SavedPropertiesSection = ({
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 };
 

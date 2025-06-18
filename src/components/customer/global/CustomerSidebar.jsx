@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import {
-  FiCalendar,
-  FiFileText,
-  FiHeart,
-  FiSearch,
-  FiTrendingUp,
-  FiUsers,
+import { 
+  FiHeart, 
+  FiTrendingUp, 
 } from "react-icons/fi";
 import { MdContentPaste, MdOutlineDashboard } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
@@ -27,43 +23,26 @@ const CustomerSidebar = () => {
       title: "Main",
       items: [
         { icon: <MdOutlineDashboard />, label: "Dashboard", link: "/customer" },
-
         // {
-        //   icon: <FiSearch />,
-        //   label: "Browse Properties",
-        //   link: "/projects",
+        //   icon: <FiHeart />,
+        //   label: "Saved Properties",
+        //   link: "/customer/saved-properties",
         // },
         {
           icon: <MdContentPaste />,
           label: "My Listings",
           link: "/customer/my-listings",
         },
-        // {
-        //   icon: <FiFileText />,
-        //   label: "My Transactions",
-        //   link: "/customer/transactions",
-        // },
         {
           icon: <FiTrendingUp />,
           label: "Activities",
           link: "/customer/activities",
         },
-        // {
-        //   icon: <FiCalendar />,
-        //   label: "Site Visits & Appointments",
-        //   link: "/customer/appointments",
-        // },
-        // {
-        //   icon: <FiUsers />,
-        //   label: "My Agents / Brokers",
-        //   link: "/customer/agents",
-        // },
       ],
     },
     {
       title: "Administration",
       items: [
-       
         {
           icon: <FaTasks />,
           label: "Lead Management",

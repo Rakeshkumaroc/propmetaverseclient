@@ -4,8 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Verified } from "lucide-react";
 import CustomerNavbar from "../global/CustomerNavbar";
-import CustomerSidebar from "../global/CustomerSidebar";
-import Footer from "../../global/Footer";
+import CustomerSidebar from "../global/CustomerSidebar"; 
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 

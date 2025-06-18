@@ -597,29 +597,7 @@ export default function CompleteSellerProfile() {
                     />
                   </div>
                 </label>
-
-                {/* <label className="border-2 border-dashed border-gray-300 rounded-xl p-4 md:p-6 block hover:border-blue-500 transition-colors cursor-pointer h-[6rem]">
-                  <div className="flex flex-col items-center justify-center h-full space-y-3">
-                    <FiUpload className="w-8 h-8 text-gray-400" />
-                    <div className="text-center">
-                      <p className="text-sm md:text-base font-medium">
-                        {documentFormData.addressProof
-                          ? documentFormData.addressProof.name
-                          : "Address Proof"}
-                      </p>
-                      <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PNG, JPEG, JPG, MAX 2MB
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      name="addressProof"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept=".jpg,.jpeg,.png"
-                    />
-                  </div>
-                </label> */}
+ 
               </div>
 
               <div className="flex justify-between">

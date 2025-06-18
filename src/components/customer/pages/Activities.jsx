@@ -30,7 +30,11 @@ const Activities = () => {
          
 
         // Fetch search history
-        const historyRes = await axios.get(`${baseUrl}/customer-search-history`, config);
+        const historyRes = await axios.get(`${baseUrl}/customer-search-history`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
         setSearchHistory(historyRes.data.searchHistory || []);
 
         // Fetch enquiries
@@ -51,26 +55,26 @@ const Activities = () => {
     fetchData();
   }, [navigate]);
 
-  if (loading) {
-    return <div className="text-center p-6">Loading...</div>;
-  }
+ 
 
   return (
-    <>
+   <>
       <CustomerNavbar />
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-screen">
         <CustomerSidebar />
-        <div className="px-3 md:px-10 w-full mt-12">
-          <section className="my-8 bg-white shadow rounded p-6">
-            <h2 className="text-2xl font-semibold mb-4">Activities</h2>
+        <main className="px-3 md:px-10 w-full mt-12">
+          <header className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Activities</h1>
+            
+          </header>
+          <section className="bg-white shadow rounded p-6 my-8">
             <RecentSearchesSection searchHistory={searchHistory} />
           </section>
-          <section className="my-8 bg-white shadow rounded p-6">
-            <h2 className="text-2xl font-semibold mb-4">Enquiry Status</h2>
+          <section className="bg-white shadow rounded p-6 my-8">
             <EnquiryStatusSection enquiries={enquiries} />
           </section>
-        </div>
-      </div> 
+        </main>
+      </div>
     </>
   );
 };

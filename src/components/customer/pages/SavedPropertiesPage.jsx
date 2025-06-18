@@ -127,18 +127,18 @@ const SavedPropertiesPage = () => {
     }
   };
 
-  if (loading) {
-    return <div className="text-center p-6">Loading...</div>;
-  }
-
+ 
   return (
     <>
       <CustomerNavbar />
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-screen">
         <CustomerSidebar />
-        <div className="px-3 md:px-10 w-full mt-12">
-          <section className="my-8 bg-white shadow rounded p-6">
-            <h2 className="text-2xl font-semibold mb-4">Saved Properties</h2>
+        <main className="px-3 md:px-10 w-full mt-12">
+          <header className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Saved Properties</h1>
+            
+          </header>
+          <section className="bg-white shadow rounded p-6 my-8">
             <SavedPropertiesSection
               savedProperties={savedProperties}
               favoriteDetails={favoriteDetails}
@@ -151,8 +151,8 @@ const SavedPropertiesPage = () => {
               toggleEdit={toggleEdit}
             />
           </section>
-        </div>
-      </div> 
+        </main>
+      </div>
     </>
   );
 };
