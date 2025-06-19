@@ -1,11 +1,9 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TrendingProjectCard from "../TrendingProjectCard";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const categories = ["View All", "Residential", "Commercial", "Plot or Land"];
-
- 
 
 const TrendingProjects = () => {
   const [activeCategory, setActiveCategory] = useState("View All");
@@ -40,9 +38,7 @@ const TrendingProjects = () => {
   const filtered =
     activeCategory === "View All"
       ? properties.slice(0, 6)
-      : properties
-          .filter((p) => p.propertyType === activeCategory)
-          .slice(0, 6);
+      : properties.filter((p) => p.propertyType === activeCategory).slice(0, 6);
 
   const handleExploreMore = () => {
     navigate("/projects");
@@ -58,8 +54,20 @@ const TrendingProjects = () => {
 
   if (error) {
     return (
-      <div className="py-20 text-center">
-        <p className="text-red-500">Error: {error}</p>
+      <div className="md:py-28 py-10 px-6 md:px-16 lg:px-40 bg-gradient-to-b from-gray-50 to-white">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-logoColor">
+            Most Trending Projects
+          </h2>
+          <p className="text-gray-600 mt-2 max-w-3xl mx-auto">
+            We carefully select the finest real estate projects for you,
+            ensuring top locations, trusted developers, and future-ready homes
+            that match your lifestyle and investment goals.
+          </p>
+        </div>
+        <div className="py-20 text-center">
+          <p className="text-gray-500">Data not found</p>
+        </div>
       </div>
     );
   }
@@ -125,7 +133,7 @@ const TrendingProjects = () => {
 
       {filtered.length === 0 && (
         <p className="text-center text-gray-500 mt-8 animate-fadeIn">
-          No approved projects found for this category. Explore other options!
+          No projects found for this category. Explore other options!
         </p>
       )}
 

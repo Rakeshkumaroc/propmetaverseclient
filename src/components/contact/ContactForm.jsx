@@ -177,13 +177,7 @@ const ContactForm = () => {
         ></textarea>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <label className="flex items-center text-gray-600">
-            <input
-              type="checkbox"
-              className="h-4 w-4 accent-logoColor mr-2"
-            />
-            <span className="text-sm">I'm not a robot</span>
-          </label>
+          
           <button
             type="submit"
             disabled={isSubmitting}
