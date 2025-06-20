@@ -4,7 +4,7 @@ import { FaFilter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect, useRef } from "react";
 import { MyContext } from "../../App";
-import axios from "axios"; // Added axios import
+import axios from "axios";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const SearchBox = () => {
@@ -20,6 +20,33 @@ const SearchBox = () => {
   const [filteredData, setFilteredData] = useState([]);
   const dropdownRef = useRef(null);
   const filterRef = useRef(null);
+
+  // Function to save click event to search history
+  const saveClickEvent = async (title, _id) => {
+    const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+    if (customerAuth && customerAuth.token) {
+      try {
+        // Construct query string for the clicked property
+        const query = `${title}`;
+        await axios.post(
+          `${baseUrl}/save-search-history`,
+          { query },
+          {
+            headers: {
+              Authorization: `Bearer ${customerAuth.token}`,
+            },
+          }
+        );
+        console.log("Click event saved:", query);
+      } catch (error) {
+        console.error(
+          "Error saving click event:",
+          error.response?.data?.message || error.message
+        );
+        // Continue navigation even if saving fails
+      }
+    }
+  };
 
   // Existing useEffect for filtering
   useEffect(() => {
@@ -45,9 +72,10 @@ const SearchBox = () => {
             : true;
           const matchesStatus = status ? item.status === status : true;
           const matchesBhk = bhkType
-            ? item.floorPlan.some((plan) =>
-                plan.type.toLowerCase().replaceAll(" ", "") ===
-                bhkType.toLowerCase().replaceAll(" ", "")
+            ? item.floorPlan.some(
+                (plan) =>
+                  plan.type.toLowerCase().replaceAll(" ", "") ===
+                  bhkType.toLowerCase().replaceAll(" ", "")
               )
             : true;
           return matchesSearch && matchesType && matchesStatus && matchesBhk;
@@ -84,24 +112,21 @@ const SearchBox = () => {
     };
   }, []);
 
-  // Updated handleSearchSubmit to save search history
+  // Existing handleSearchSubmit
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
     if (selectedIndex >= 0 && filteredData[selectedIndex]) {
       const { title, _id } = filteredData[selectedIndex];
+      const queryParts = [];
+      if (search) queryParts.push(search);
+      if (propertyType) queryParts.push(`Type: ${propertyType}`);
+      if (status) queryParts.push(`Status: ${status}`);
+      if (bhkType) queryParts.push(`BHK: ${bhkType}`);
+      const query = queryParts.join(", ") || "Empty search";
 
-      // Save search history for authenticated users
       const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
       if (customerAuth && customerAuth.token) {
         try {
-          // Construct query string from search and filters
-          const queryParts = [];
-          if (search) queryParts.push(search);
-          if (propertyType) queryParts.push(`Type: ${propertyType}`);
-          if (status) queryParts.push(`Status: ${status}`);
-          if (bhkType) queryParts.push(`BHK: ${bhkType}`);
-          const query = queryParts.join(", ") || "Empty search";
-
           await axios.post(
             `${baseUrl}/save-search-history`,
             { query },
@@ -117,11 +142,9 @@ const SearchBox = () => {
             "Error saving search history:",
             error.response?.data?.message || error.message
           );
-          // Continue navigation even if saving fails
         }
       }
 
-      // Navigate to the selected property
       navigate(`/projects/${title.replaceAll(" ", "-")}/${_id}`);
     } else {
       alert("Please select a property from the list.");
@@ -177,7 +200,6 @@ const SearchBox = () => {
               className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 text-sm md:text-base"
             />
           </div>
-          {/* Filter Button for Mobile */}
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
@@ -187,7 +209,6 @@ const SearchBox = () => {
           </button>
         </div>
 
-        {/* Filters - Hidden on mobile by default, shown on sm+ */}
         <div
           ref={filterRef}
           className={`${
@@ -250,19 +271,23 @@ const SearchBox = () => {
           <div className="absolute w-full bg-white shadow-lg rounded-xl border border-gray-100 max-h-[300px] overflow-y-auto z-10">
             {filteredData.map(
               (
-                { _id, title, propertyType, address, galleryImg, floorPlan, status },
+                {
+                  _id,
+                  title,
+                  propertyType,
+                  address,
+                  galleryImg,
+                  floorPlan,
+                  status,
+                },
                 index
               ) => {
-                const isString = typeof galleryImg[0] === "string";
-                const fileName = isString
-                  ? galleryImg[0].split(/[/\\]/).pop()
-                  : null;
-                const fileUrl = isString
-                  ? `${baseUrl}/uploads/property/${fileName}`
-                  : null;
                 return (
                   <div
-                    onClick={() => {
+                    onClick={async () => {
+                      // Save the click event
+                      await saveClickEvent(title, _id);
+                      // Navigate to the property page
                       navigate(
                         "/projects/" + title.replaceAll(" ", "-") + "/" + _id
                       );
@@ -275,7 +300,7 @@ const SearchBox = () => {
                     }`}
                   >
                     <img
-                      src={fileUrl}
+                      src={galleryImg[0]} // Use the URL directly from galleryImg[0]
                       alt={title}
                       className="rounded-lg w-12 h-12 object-cover border border-gray-200"
                     />

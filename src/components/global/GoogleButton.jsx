@@ -49,7 +49,11 @@ const GoogleButton = ({
               "sellerFullName",
               result.data.sellerData.sellerFullName
             );
+            console.log('result.data.sellerData',result.data.sellerData);
+            
             localStorage.setItem("token", result.data.sellerData.token);
+            localStorage.setItem('createdAt',result.data.sellerData.createdAt);
+            
 
             // Ensure verification fields are booleans
             const isEmailVerified = result.data.sellerData.sellerIsEmailVerify === true;
@@ -86,7 +90,7 @@ const GoogleButton = ({
         }
       }
     } catch (error) {
-      console.error("Google Login Error:", error.response?.data || error);
+      console.error("Google Login Error:",   error.response?.data?.message);
       toast(error.response?.data?.message || "Google login failed", {
         position: "top-left",
         type: "error",

@@ -123,7 +123,7 @@ const TrendingProjects = () => {
               developer={proj.developer || "Unknown"}
               image={
                 proj.galleryImg[0]
-                  ? `${baseUrl}/Uploads/property/${proj.galleryImg[0]}`
+                  ? proj.galleryImg[0] // Use the URL directly
                   : "https://propmetaverse.com/assets/logopng-BXERHkCM.png"
               }
             />

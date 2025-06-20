@@ -15,7 +15,8 @@ import {
   Trash2,
 } from "lucide-react";
 
-const baseUrl = import.meta.env.VITE_APP_URL;
+// baseUrl is not needed for Cloudinary URLs
+const baseUrl = import.meta.env.VITE_APP_URL; 
 
 const formatPrice = (value) => {
   const num = Number(value);
@@ -268,7 +269,7 @@ const CompareTable = () => {
                     render: (val) =>
                       val?.[0] ? (
                         <img
-                          src={`${baseUrl}/Uploads/property/${val[0]}`}
+                          src={val[0]} // DIRECTLY USE THE CLOUDINARY URL
                           alt="Property"
                           className="w-28 h-20 object-cover rounded border border-gray-200 hover:scale-105 transition-transform"
                         />
@@ -448,7 +449,7 @@ const CompareTable = () => {
                     <div className="mt-3">
                       {prop.galleryImg?.[0] ? (
                         <img
-                          src={`${baseUrl}/Uploads/property/${prop.galleryImg[0]}`}
+                          src={prop.galleryImg[0]} // DIRECTLY USE THE CLOUDINARY URL
                           alt="Property"
                           className="w-full max-w-[250px] h-auto rounded-lg border border-gray-200 hover:scale-105 transition-transform"
                         />

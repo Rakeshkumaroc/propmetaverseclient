@@ -49,7 +49,7 @@ const SellerLoginPage = () => {
         );
 
         localStorage.setItem("token", result.data.sellerData.token);
-
+        localStorage.setItem("createdAt", result.data.sellerData.createdAt);
         setLoading(false);
         toast(result.data.message, {
           position: "top-left",

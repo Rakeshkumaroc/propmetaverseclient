@@ -7,36 +7,43 @@ import CustomerSidebar from "../global/CustomerSidebar";
 import MyListingTable from "../listing/MyListingTable";
 
 const MyListing = () => {
-  const [ search, setSearch ] = useState(null);
+  const [search, setSearch] = useState(""); // Initialize with an empty string for consistency
 
   return (
     <>
       <CustomerNavbar />
-      <div className="flex flex-1">
+      {/* Main content area: Flex container for sidebar and dashboard content */}
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]"> {/* Added min-h and adjusted flex direction */}
+        {/* CustomerSidebar is hidden on small screens and shown on lg screens */}
         <CustomerSidebar />
-        <div className="px-3 md:px-10 w-full mt-12">
-          <header className="flex justify-between items-center mb-8">
+        {/* Main dashboard content */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0"> {/* Adjusted padding and removed fixed w-full */}
+          {/* Header section with title and Add Property button */}
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4 sm:gap-0">
             <h1 className="text-3xl font-bold">My Properties</h1>
             <Link
-              to="/seller/add-property"
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 flex items-center gap-2"
+              to="/customer/add-property"
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start"
             >
               Add New Property <GoArrowUpRight className="text-xl" />
             </Link>
           </header>
-          <section className="my-8 bg-white shadow rounded p-6">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-1 bg-gray-100 px-3 py-2 rounded-lg border border-gray-300">
+
+          {/* Search and Listing Table Section */}
+          <section className="my-4 sm:my-8 bg-white shadow rounded-lg p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6">
+              <div className="flex items-center gap-1 bg-gray-100 px-3 py-2 rounded-lg border border-gray-300 w-full sm:max-w-xs"> {/* Adjusted width for search input container */}
                 <CiSearch className="text-xl" />
                 <input
-                  value={search || ""}
+                  value={search} // Use 'search' directly
                   onChange={(e) => setSearch(e.target.value)}
                   type="text"
                   placeholder="Search properties..."
-                  className="w-40 md:w-64 outline-none text-sm bg-gray-100"
+                  className="w-full outline-none text-sm bg-gray-100" // Input takes full width of its parent div
                 />
               </div>
             </div>
+            {/* MyListingTable Component - Crucial for its internal responsiveness */}
             <MyListingTable searchValue={search} />
           </section>
         </div>

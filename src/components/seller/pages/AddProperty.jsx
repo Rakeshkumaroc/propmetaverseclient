@@ -15,7 +15,7 @@ const AddProperty = ({ action }) => {
   const [isActive, setIsActive] = useState(1);
   const { pathname } = useLocation();
   const id = pathname.split("/").pop();
-  const { setFormData,formData } = useContext(MyContext);
+  const { setFormData, formData } = useContext(MyContext);
 
   useEffect(() => {
     async function getData() {
@@ -25,34 +25,38 @@ const AddProperty = ({ action }) => {
         if (result.ok) {
           const data = await result.json();
           console.log("Fetched data:", data.city, data.state, data.country);
-          
+
+          // Helper function to map image arrays
+          const mapImageArray = (arr) => {
+            return arr?.map((item) => ({
+              file: null,
+              preview: typeof item === "string" ? item : item.img, // Handle both string (galleryImg) and object (floorPlanImg, reraImg)
+              ...(item.info && { info: item.info }),
+              ...(item.no && { no: item.no }),
+            })) || [];
+          };
+
           setFormData({
             ...data,
-            country: data.country || "", // Ensure country is a name
-            state: data.state || "", // Keep state as name
-            city: data.city || "", // Keep city as name
+            country: data.country || "",
+            state: data.state || "",
+            city: data.city || "",
             purpose: data.purpose || "",
-            galleryImg: data.galleryImg?.map((img) => img) || [],
-            floorPlanImg:
-              data.floorPlanImg?.map((item) => ({
-                file: null,
-                preview: `${baseUrl}/Uploads/floor/${item.img}`,
-                info: item.info || "",
-              })) || [],
-            reraImg:
-              data.reraImg?.map((item) => ({
-                file: null,
-                preview: `${baseUrl}/Uploads/rera/${item.img}`,
-                no: item.no || "",
-              })) || [],
+            galleryImg: mapImageArray(data.galleryImg), // Updated to use mapImageArray
+            floorPlanImg: mapImageArray(data.floorPlanImg),
+            reraImg: mapImageArray(data.reraImg),
             floorPlan:
               data.floorPlan?.map((plan) => ({
                 type: plan.type || "",
                 carpetArea: plan.carpetArea || "",
                 parking: plan.parking || 0,
+                balcony: plan.balcony || 0,
                 price: plan.price || "",
                 sellingArea: plan.sellingArea || "",
-              })) || [{ type: "", carpetArea: "", parking: 0, price: "", sellingArea: "" }],
+              })) || [{ type: "", carpetArea: "", parking: 0, balcony: 0, price: "", sellingArea: "" }],
+            faqs: data.faqs?.map((faq) => ({ question: faq.question || "", answer: faq.answer || "" })) || [{ question: "", answer: "" }],
+            keywords: data.keywords?.map((kw) => ({ heading: kw.heading || "", keyword: kw.keyword || [] })) || [{ heading: "", keyword: [] }],
+            amenities: data.amenities || [],
           });
         }
       } catch (error) {
@@ -62,8 +66,6 @@ const AddProperty = ({ action }) => {
 
     if (action === "edit") {
       getData();
-      console.log(formData, "Location Form Data");
-
     } else {
       setFormData({
         title: "",
@@ -98,9 +100,7 @@ const AddProperty = ({ action }) => {
           <p className="text-[30px] font-semibold leading-[45px]">
             {action === "edit" ? "Edit Property" : "Add New Property"}
           </p>
-          <p className="text-sm leading-[25.9px]">
-            We are glad to see you again!
-          </p>
+          <p className="text-sm leading-[25.9px]">We are glad to see you again!</p>
         </div>
       </div>
       <div className="md:mt-8 w-full rounded-lg bg-white p-8">
@@ -155,7 +155,7 @@ const AddProperty = ({ action }) => {
         {isActive === 4 && <Media setIsActive={setIsActive} />}
         {isActive === 5 && <Keywords setIsActive={setIsActive} />}
         {isActive === 6 && <Faq setIsActive={setIsActive} />}
-        {isActive === 7 && <Amenities action={action} setIsActive={setIsActive} />}
+        {isActive === 7 && <Amenities action={action} setIsActive={setIsActive} page={'sub-broker'} />}
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react"; // Import useRef for dropdown closing
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import MyListingRow from "./MyListingRow";
+
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const MyListingTable = ({ searchValue }) => {
@@ -11,6 +12,24 @@ const MyListingTable = ({ searchValue }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+
+  const filterDropdownRef = useRef(null); // Ref for the filter dropdown
+
+  // Close filter dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        filterDropdownRef.current &&
+        !filterDropdownRef.current.contains(event.target)
+      ) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleCheckboxChange = (id) => {
     if (selectedIds.includes(id)) {
@@ -49,10 +68,16 @@ const MyListingTable = ({ searchValue }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+          if (!customerAuth || !customerAuth.token) {
+            throw new Error("User not authenticated.");
+          }
+
           const response = await fetch(`${baseUrl}/select-property-delete`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${customerAuth.token}`, // Include token
             },
             body: JSON.stringify({ ids: selectedIds }),
           });
@@ -67,12 +92,15 @@ const MyListingTable = ({ searchValue }) => {
               confirmButtonColor: "#1b639f",
             });
           } else {
-            throw new Error("Failed to delete properties");
+            // Attempt to read error message from response
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to delete properties");
           }
         } catch (error) {
+          console.error("Error deleting properties:", error);
           Swal.fire({
             title: "Error",
-            text: "Failed to delete properties. Please try again.",
+            text: error.message || "Failed to delete properties. Please try again.",
             icon: "error",
             confirmButtonColor: "#1b639f",
           });
@@ -86,7 +114,7 @@ const MyListingTable = ({ searchValue }) => {
       setLoading(true);
       try {
         const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
-        if (!customerAuth || !customerAuth.user?._id) {
+        if (!customerAuth || !customerAuth.user?._id || !customerAuth.token) {
           Swal.fire({
             title: "Unauthorized",
             text: "Please log in to view properties.",
@@ -97,9 +125,19 @@ const MyListingTable = ({ searchValue }) => {
           return;
         }
 
-        const response = await fetch(`${baseUrl}/property/${customerAuth.user._id}`);
+        const response = await fetch(
+          `${baseUrl}/property/${customerAuth.user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${customerAuth.token}`, // Include token
+            },
+          }
+        );
+
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          // Attempt to read error message from response
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
         }
 
         let result = await response.json();
@@ -107,8 +145,9 @@ const MyListingTable = ({ searchValue }) => {
           result = [];
         }
 
+        let filteredResult = result;
         if (searchValue) {
-          result = result.filter((item) =>
+          filteredResult = result.filter((item) =>
             [
               item.title,
               item.developer,
@@ -124,18 +163,24 @@ const MyListingTable = ({ searchValue }) => {
           );
         }
 
-        setData(filter === "Recent" ? result : result.reverse());
+        setData(filter === "Recent" ? filteredResult : [...filteredResult].reverse()); // Use spread to avoid modifying original array
       } catch (error) {
         console.error("Error fetching data:", error);
+        // Display a user-friendly error message if data fetch fails
+        Swal.fire({
+          title: "Error",
+          text: error.message || "Failed to fetch properties. Please try again.",
+          icon: "error",
+          confirmButtonColor: "#1b639f",
+        });
         setData([]);
-        
       } finally {
         setLoading(false);
       }
     };
 
     getData();
-  }, [filter, searchValue]);
+  }, [filter, searchValue]); // Add data to dependencies if needed for real-time updates after delete
 
   if (loading) {
     return <div className="text-center p-6">Loading...</div>;
@@ -143,17 +188,18 @@ const MyListingTable = ({ searchValue }) => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Property Listings</h2>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+      {/* Top controls: Property Listings title, filter, export, delete buttons */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl font-semibold whitespace-nowrap">Property Listings</h2> {/* Added whitespace-nowrap */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto"> {/* Stack buttons on mobile, row on sm+ */}
+          <div className="relative w-full sm:w-auto" ref={filterDropdownRef}> {/* Set width for dropdown container */}
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-200 flex items-center gap-2"
+              className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-200 flex items-center justify-between w-full sm:w-auto" // w-full for mobile, justify-between for icon
             >
               {filter}
               <svg
-                className="w-2.5 h-2.5"
+                className="w-2.5 h-2.5 ml-2" // Added ml-2 for spacing
                 fill="none"
                 viewBox="0 0 10 6"
               >
@@ -167,7 +213,7 @@ const MyListingTable = ({ searchValue }) => {
               </svg>
             </button>
             {isFilterOpen && (
-              <div className="absolute z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+              <div className="absolute z-10 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg w-full sm:w-auto"> {/* w-full for mobile dropdown */}
                 <ul className="py-1 text-sm text-gray-700">
                   <li>
                     <button
@@ -197,31 +243,33 @@ const MyListingTable = ({ searchValue }) => {
           </div>
           <button
             onClick={downloadExcel}
-            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 w-full sm:w-auto" // Full width on mobile
           >
             Export to Excel
           </button>
           <button
             onClick={handleDelete}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center gap-2"
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center justify-center gap-2 w-full sm:w-auto" // Full width on mobile, center text
           >
             <RiDeleteBin2Fill /> Delete Selected
           </button>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500">
+
+      {/* Responsive Table Container */}
+      <div className="overflow-x-auto shadow-md rounded-lg"> {/* Added shadow and rounded corners here for the container */}
+        <table className="w-full text-sm text-left text-gray-500 min-w-max"> {/* Added min-w-max to ensure table doesn't shrink too much */}
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
               <th scope="col" className="p-4">
                 <span className="sr-only">Select</span>
               </th>
-              <th scope="col" className="px-6 py-3 text-center">ID</th>
-              <th scope="col" className="px-6 py-3 text-center">Title</th>
-              <th scope="col" className="px-6 py-3 text-center">Created At</th>
-              <th scope="col" className="px-6 py-3 text-center">Updated At</th>
-              <th scope="col" className="px-6 py-3 text-center">Property Type</th>
-              <th scope="col" className="px-6 py-3 text-center">Action</th>
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">ID</th> {/* Reduced padding, added nowrap */}
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">Title</th> {/* Reduced padding, added nowrap */}
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">Created At</th> {/* Reduced padding, added nowrap */}
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">Updated At</th> {/* Reduced padding, added nowrap */}
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">Property Type</th> {/* Reduced padding, added nowrap */}
+              <th scope="col" className="px-3 py-3 text-center whitespace-nowrap">Action</th> {/* Reduced padding, added nowrap */}
             </tr>
           </thead>
           <tbody>

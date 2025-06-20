@@ -32,7 +32,7 @@ const FavoriteCard = ({
     >
       {property.galleryImg?.[0] ? (
         <img
-          src={`${baseUrl}/Uploads/property/${property.galleryImg[0]}`}
+          src={`${property.galleryImg[0]}`}
           alt={property.title}
           className="w-full h-48 object-cover"
         />

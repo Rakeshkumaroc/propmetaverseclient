@@ -131,7 +131,7 @@ const SavedPropertiesPage = () => {
   return (
     <>
       <CustomerNavbar />
-      <div className="flex flex-1 min-h-screen">
+     <div className="flex flex-col lg:flex-row flex-1"> 
         <CustomerSidebar />
         <main className="px-3 md:px-10 w-full mt-12">
           <header className="flex justify-between items-center mb-8">

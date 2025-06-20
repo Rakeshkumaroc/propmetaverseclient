@@ -22,7 +22,8 @@ const SellerDetails = () => {
         if (!data.sellerData) {
           throw new Error("Seller not found");
         }
-        setSeller(data.sellerData);
+        setSeller(data.sellerData); 
+        
       } catch (error) {
         console.error("Error fetching seller:", error);
         Swal.fire({

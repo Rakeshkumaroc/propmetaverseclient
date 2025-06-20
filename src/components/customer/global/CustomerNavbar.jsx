@@ -162,16 +162,23 @@ const CustomerNavbar = () => {
     }
   };
 
-  return (
-    <header className="bg-white shadow-md p-4 flex items-center justify-between">
-      <Link to={'/'} className="flex items-center">
-        <img
-          src="https://propmetaverse.com/assets/logopng-BXERHkCM.png"
-          alt="Logo"
-          className="h-10"
-        />
-      </Link>
-      <div className="flex-1 mx-4 relative">
+    return (
+    <header className="bg-white shadow-md p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between sticky top-0 z-50">
+      {/* Logo */}
+      <div className="flex items-center justify-between w-full sm:w-auto mb-2 sm:mb-0">
+        <Link to={"/"} className="flex items-center">
+          <img
+            src="https://propmetaverse.com/assets/logopng-BXERHkCM.png"
+            alt="Logo"
+            className="h-8 sm:h-10" // Smaller height on mobile
+          />
+        </Link>
+        {/* Mobile-only User/Notification Icons (if desired, could be moved here) */}
+        {/* For this example, keeping them grouped on the right for simplicity */}
+      </div>
+
+      {/* Search Bar - takes full width on mobile, shrinks on larger screens */}
+      <div className="flex-1 w-full sm:mx-4 relative order-3 sm:order-2"> {/* order-3 ensures it's below logo on mobile */}
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -181,14 +188,14 @@ const CustomerNavbar = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full pl-10 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-logoBlue"
+              className="w-full pl-10 p-2 text-sm sm:text-base rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-logoBlue" // Adjusted text size
             />
           </div>
         </form>
         {isHideSearch && filteredData.length > 0 && (
           <div
             ref={dropdownRef}
-            className="absolute w-full bg-white shadow-lg rounded-xl border border-gray-100 max-h-[300px] overflow-y-auto z-10 mt-2"
+            className="absolute w-full bg-white shadow-lg rounded-xl border border-gray-100 max-h-[200px] sm:max-h-[300px] overflow-y-auto z-10 mt-2" // Max height adjusted for mobile
           >
             {filteredData.map(
               (
@@ -220,7 +227,7 @@ const CustomerNavbar = () => {
                       setSearch("");
                     }}
                     key={index}
-                    className={`flex items-center gap-3 p-3 cursor-pointer transition-all duration-200 hover:bg-green-50 ${
+                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 cursor-pointer transition-all duration-200 hover:bg-green-50 ${ // Adjusted padding, gap
                       index === selectedIndex ? "bg-green-100" : ""
                     } ${index === 0 ? "rounded-t-xl" : ""} ${
                       index === filteredData.length - 1 ? "rounded-b-xl" : ""
@@ -229,10 +236,10 @@ const CustomerNavbar = () => {
                     <img
                       src={fileUrl}
                       alt={title}
-                      className="rounded-lg w-12 h-12 object-cover border border-gray-200"
+                      className="rounded-lg w-10 h-10 sm:w-12 sm:h-12 object-cover border border-gray-200" // Smaller image on mobile
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-800">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-800"> {/* Adjusted text size */}
                         {title}
                         <span className="text-gray-500">
                           {" "}
@@ -242,7 +249,7 @@ const CustomerNavbar = () => {
                           ({status})
                         </span>
                       </p>
-                      <p className="text-xs text-gray-600 line-clamp-1">
+                      <p className="text-xxs sm:text-xs text-gray-600 line-clamp-1"> {/* Adjusted text size */}
                         {address} -{" "}
                         {floorPlan.map((plan) => plan.type).join(", ")}
                       </p>
@@ -254,29 +261,34 @@ const CustomerNavbar = () => {
           </div>
         )}
       </div>
-      <div className="flex items-center space-x-4">
-        <button className="text-gray-600 hover:text-logoBlue">
-          <FiBell className="text-2xl" />
-        </button>
+
+      {/* User Icons - remain on the right, but adapt spacing */}
+      <div className="flex items-center space-x-3 sm:space-x-4 order-2 sm:order-3 mt-2 sm:mt-0"> {/* order-2 ensures it's next to logo on mobile, mt adds space */}
+        <Link to={"/customer"} className="text-gray-600 hover:text-logoBlue p-1 sm:p-0"> {/* Added padding for tap target */}
+          <FiBell className="text-xl sm:text-2xl" /> {/* Adjusted icon size */}
+        </Link>
         <Link to={"/customer/profile"} className="flex items-center space-x-2">
-          <CgProfile className="text-2xl" />
-          {loading ? (
-            <div>Loading...</div>
-          ) : user ? (
-            <div>
-              <span className="font-semibold">{user.fullName || "User"}</span>
-              <span className="text-sm text-gray-500 block">Buyer/Seller</span>
-            </div>
-          ) : (
-            <div>
-              <span className="font-semibold">Guest</span>
-              <span className="text-sm text-gray-500 block">Buyer/Seller</span>
-            </div>
-          )}
+          <CgProfile className="text-xl sm:text-2xl" /> {/* Adjusted icon size */}
+          <div className="hidden sm:block"> {/* Hide user name/role on very small screens */}
+            {loading ? (
+              <div className="text-sm">Loading...</div>
+            ) : user ? (
+              <div>
+                <span className="font-semibold text-sm">{user.fullName || "User"}</span>
+                <span className="text-xs text-gray-500 block">Buyer/Seller</span>
+              </div>
+            ) : (
+              <div>
+                <span className="font-semibold text-sm">Guest</span>
+                <span className="text-xs text-gray-500 block">Buyer/Seller</span>
+              </div>
+            )}
+          </div>
         </Link>
       </div>
     </header>
   );
+
 };
 
 export default CustomerNavbar;

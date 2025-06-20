@@ -28,14 +28,21 @@ const ManageAnnouncements = () => {
 
       if (response.ok) {
         setNewAnnouncement({ title: "", content: "", sendEmail: false });
-        setIsFormOpen(false);
-        alert("Announcement created successfully!");
+        setIsFormOpen(false); 
+        toast("Announcement created successfully!", {
+          position: "top-left",
+          type: "success",
+        });
       } else {
         throw new Error("Failed to create announcement");
       }
     } catch (error) {
       console.error("Error creating announcement:", error);
-      alert("Failed to create announcement. Please try again.");
+      alert("");
+       toast("Failed to create announcement. Please try again.!", {
+          position: "top-left",
+          type: "error",
+        });
     }
   };
 
@@ -73,7 +80,9 @@ const ManageAnnouncements = () => {
       {/* Create Announcement Form */}
       {isFormOpen && (
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Create New Announcement</h3>
+          <h3 className="text-xl font-semibold mb-4">
+            Create New Announcement
+          </h3>
           <form onSubmit={handleCreateAnnouncement} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Title</label>
@@ -81,7 +90,10 @@ const ManageAnnouncements = () => {
                 type="text"
                 value={newAnnouncement.title}
                 onChange={(e) =>
-                  setNewAnnouncement({ ...newAnnouncement, title: e.target.value })
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    title: e.target.value,
+                  })
                 }
                 placeholder="Enter announcement title"
                 className="w-full px-3 py-2 border rounded-lg outline-none"
@@ -93,7 +105,10 @@ const ManageAnnouncements = () => {
               <textarea
                 value={newAnnouncement.content}
                 onChange={(e) =>
-                  setNewAnnouncement({ ...newAnnouncement, content: e.target.value })
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    content: e.target.value,
+                  })
                 }
                 placeholder="Enter announcement content"
                 className="w-full px-3 py-2 border rounded-lg outline-none h-32"
@@ -105,7 +120,10 @@ const ManageAnnouncements = () => {
                 type="checkbox"
                 checked={newAnnouncement.sendEmail}
                 onChange={(e) =>
-                  setNewAnnouncement({ ...newAnnouncement, sendEmail: e.target.checked })
+                  setNewAnnouncement({
+                    ...newAnnouncement,
+                    sendEmail: e.target.checked,
+                  })
                 }
                 className="h-4 w-4"
               />

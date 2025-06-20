@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import   { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
-import Footer from "../../global/Footer";
+import { toast } from "react-toastify"; 
 import CustomerNavbar from "../global/CustomerNavbar";
 import CustomerSidebar from "../global/CustomerSidebar";
 import PreferencesSection from "../../customerDashboard/PreferencesSection";
@@ -129,14 +128,14 @@ const CustomerDashboard = () => {
   return (
     <>
       <CustomerNavbar />
-      <div className="flex flex-1">
+      <div className="flex flex-col lg:flex-row flex-1"> 
         <CustomerSidebar />
-        <div className="px-3 md:px-10 w-full mt-12">
-          <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Customer Dashboard</h1>
+        <div className="px-3 md:px-10 w-full mt-4 lg:mt-12"> {/* Adjusted margin-top for mobile */}
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0"> {/* Adjusted header for stacking on small screens */}
+            <h1 className="text-2xl sm:text-3xl font-bold">Customer Dashboard</h1> {/* Adjusted font size */}
             <button
               onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto" // Full width on mobile
             >
               Logout
             </button>

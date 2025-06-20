@@ -9,8 +9,7 @@ import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
 import { BsBuildingAdd } from "react-icons/bs";
 import { FaTasks } from "react-icons/fa"; // Icon for Lead Management
-import { MdOutlineBook } from "react-icons/md";
-import { LiaMoneyCheckSolid } from "react-icons/lia";
+import { MdOutlineBook } from "react-icons/md"; 
 import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
@@ -283,6 +282,7 @@ const SellerSidebar = () => {
                         localStorage.removeItem("sellerId");
                         localStorage.removeItem("sellerFullName");
                         localStorage.removeItem("token");
+                        localStorage.removeItem("createdAt");
                         navigate("/seller-sign-in");
                       }}
                       className="flex w-full items-center py-4 px-6 rounded-lg hover:bg-black hover:text-white transition duration-500 gap-3"

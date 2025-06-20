@@ -8,25 +8,30 @@ const AnnouncementPage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [readMoreMap, setReadMoreMap] = useState({});
 
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/announcements`);
-        setAnnouncements(response.data);
+ useEffect(() => {
+  const fetchAnnouncements = async () => {
+    try {
+      const createdAt = localStorage.getItem("createdAt");
+      console.log('createdAt',createdAt);
+      
+      const response = await axios.get(
+        `${baseUrl}/announcements/${createdAt}` // Matches new route
+      );
+      setAnnouncements(response.data);
 
-        // Initialize readMore state for each announcement
-        const initialMap = {};
-        response.data.forEach((_, index) => {
-          initialMap[index] = false;
-        });
-        setReadMoreMap(initialMap);
-      } catch (error) {
-        console.error("Error fetching announcements:", error);
-      }
-    };
+      // Initialize readMore state for each announcement
+      const initialMap = {};
+      response.data.forEach((_, index) => {
+        initialMap[index] = false;
+      });
+      setReadMoreMap(initialMap);
+    } catch (error) {
+      console.error("Error fetching announcements:", error);
+    }
+  };
 
-    fetchAnnouncements();
-  }, []);
+  fetchAnnouncements();
+}, []);
 
   const toggleReadMore = (index) => {
     setReadMoreMap((prevMap) => ({
@@ -45,7 +50,7 @@ const AnnouncementPage = () => {
         announcements.map((announcement, index) => (
           <div
             key={index}
-            className="bg-white shadow-lg rounded-xl p-5 mb-6 w-full"
+            className="mt-6 bg-white p-6 rounded-lg shadow-md"
           >
             <div className="flex justify-between">
               <h2 className="text-2xl font-semibold text-gray-800">

@@ -1,4 +1,4 @@
-import { useState } from "react"; 
+import { useState } from "react";
 import { CgClose } from "react-icons/cg";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
@@ -34,7 +34,7 @@ const Gallery = ({ galleryImg }) => {
             .map((value, index) => (
               <img
                 key={index}
-                src={baseUrl + "/Uploads/property/" + value}
+                src={value}
                 className="rounded w-full h-20 md:h-44 cursor-pointer"
                 onClick={() => openModal(index)}
                 alt={`Gallery image ${index + 1}`}
@@ -47,7 +47,7 @@ const Gallery = ({ galleryImg }) => {
             onClick={() => openModal(3)}
           >
             <img
-              src={baseUrl + "/Uploads/property/" + galleryImg[3]}
+              src={galleryImg[3]}
               className="rounded w-full h-full"
               alt="Gallery image 4"
             />
@@ -71,7 +71,7 @@ const Gallery = ({ galleryImg }) => {
                 {galleryImg.map((value, index) => (
                   <img
                     key={index}
-                    src={baseUrl + "/Uploads/property/" + value}
+                    src={value}
                     className={`absolute top-0 left-0 w-full h-full object-contain transition-opacity duration-500 ease-in-out ${
                       index === currentSlide ? "opacity-100" : "opacity-0"
                     }`}

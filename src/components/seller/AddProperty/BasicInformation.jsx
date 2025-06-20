@@ -4,8 +4,6 @@ import { MyContext } from "../../../App";
 import { IoIosAddCircle } from "react-icons/io";
 import { toast } from "react-toastify";
 
-const baseUrl = import.meta.env.VITE_APP_URL;
-
 const BasicInformation = ({ setIsActive }) => {
   const { formData, setFormData } = useContext(MyContext);
   const MAX_IMAGES = 5; // Maximum allowed images for reraImg
@@ -16,7 +14,6 @@ const BasicInformation = ({ setIsActive }) => {
     (e, index, field, changeType) => {
       if (changeType === "file") {
         const file = e.target.files[0];
-      
         if (!file) {
           console.warn(`No file selected for ${field} index ${index}`);
           return;
@@ -41,7 +38,6 @@ const BasicInformation = ({ setIsActive }) => {
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
           newImages[index] = { ...newImages[index], file, preview: fileURL };
-        
           return { ...prevData, [field]: newImages };
         });
       } else if (changeType === "no") {
@@ -54,7 +50,6 @@ const BasicInformation = ({ setIsActive }) => {
         setFormData((prevData) => {
           const newImages = [...(prevData[field] || [])];
           newImages[index] = { ...newImages[index], [changeType]: value };
-         
           return { ...prevData, [field]: newImages };
         });
       } else {
@@ -65,7 +60,7 @@ const BasicInformation = ({ setIsActive }) => {
         if (["constructionYear"].includes(id)) {
           setFormData((prevData) => ({
             ...prevData,
-            [id]: value, // Keep as string; backend will convert to number
+            [id]: value,
           }));
           return;
         }
@@ -106,7 +101,6 @@ const BasicInformation = ({ setIsActive }) => {
         { file: null, preview: "", no: "" },
       ],
     }));
- 
   }, [formData, setFormData]);
 
   // Remove RERA image and clean up URL
@@ -118,7 +112,6 @@ const BasicInformation = ({ setIsActive }) => {
         if (removedItem.preview && removedItem.file) {
           URL.revokeObjectURL(removedItem.preview); // Clean up memory
         }
-        
         return { ...prevData, reraImg: newImages };
       });
     },
@@ -127,7 +120,6 @@ const BasicInformation = ({ setIsActive }) => {
 
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
-    // If propertyType is changed, reset status if it's not valid for the new property type
     if (name === "propertyType") {
       const validStatuses =
         value === "Plot or Land"
@@ -143,7 +135,6 @@ const BasicInformation = ({ setIsActive }) => {
     }
   };
 
-  // Define status options based on property type
   const statusOptions =
     formData.propertyType === "Plot or Land"
       ? ["Pre-launch", "Developed", "Under construction"]
@@ -351,8 +342,6 @@ const BasicInformation = ({ setIsActive }) => {
           />
         </div>
 
-        
-
         <div className="flex flex-col gap-2 mb-3">
           <label
             htmlFor="discount"
@@ -376,12 +365,8 @@ const BasicInformation = ({ setIsActive }) => {
           </label>
           {formData.reraImg?.length > 0 ? (
             formData.reraImg.map((item, index) => {
-              const isString = typeof item === "string";
               const isObject = typeof item === "object" && item !== null;
-              const fileName = isString ? item.split(/[/\\]/).pop() : null;
-              const fileUrl = isString
-                ? `${baseUrl}/uploads/rera/${fileName}`
-                : null;
+              const imageUrl = isObject ? item.preview || item.img : item;
 
               return (
                 <div
@@ -422,20 +407,10 @@ const BasicInformation = ({ setIsActive }) => {
                       className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                     />
 
-                    {isString && (
-                      <div className="mt-3 flex justify-end items-center gap-2">
-                        <img
-                          src={fileUrl}
-                          alt={`RERA ${index + 1}`}
-                          className="w-24 h-24 rounded-md object-cover shadow-sm hover:scale-105 transition-transform"
-                        />
-                      </div>
-                    )}
-
-                    {isObject && item.preview && (
+                    {imageUrl && (
                       <div className="mt-3 flex justify-end">
                         <img
-                          src={item.preview}
+                          src={imageUrl}
                           alt={`RERA ${index + 1}`}
                           className="w-24 h-24 rounded-md object-cover shadow-sm hover:scale-105 transition-transform"
                         />

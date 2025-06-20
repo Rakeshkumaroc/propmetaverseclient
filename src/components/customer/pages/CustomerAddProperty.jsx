@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { MyContext } from "../../../App";
 import CustomerNavbar from "../global/CustomerNavbar";
 import CustomerSidebar from "../global/CustomerSidebar";
-// import Amenities from "../customerAddProperty/Amenities";
 import BasicInformation from "../../seller/AddProperty/BasicInformation";
 import Media from "../../seller/AddProperty/Media";
 import Location from "../../seller/AddProperty/Location";
@@ -11,30 +10,30 @@ import Configuration from "../../seller/AddProperty/Configuration";
 import Keywords from "../../seller/AddProperty/Keywords";
 import Amenities from "../../seller/AddProperty/Amenities";
 import Faq from "../../seller/AddProperty/Faq";
+
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const dummyPropertyData = {
   _id: "dummy_1",
   title: "Sample Oceanview Condo",
-  description:
-    "A luxurious condo with stunning ocean views and modern amenities.",
+  description: "A luxurious condo with stunning ocean views and modern amenities.",
   propertyType: "Condo",
   status: "Available",
-  constructionYear: "2023", 
+  constructionYear: "2023",
   discount: "5",
   galleryImg: [
-    `${baseUrl}/uploads/gallery/sample1.jpg`,
-    `${baseUrl}/uploads/gallery/sample2.jpg`,
+    "https://res.cloudinary.com/demo/image/upload/sample1.jpg",
+    "https://res.cloudinary.com/demo/image/upload/sample2.jpg",
   ],
   floorPlanImg: [
     {
-      img: "sample_floor1.jpg",
+      img: "https://res.cloudinary.com/demo/image/upload/sample_floor1.jpg",
       info: "2BHK Floor Plan",
     },
   ],
   reraImg: [
     {
-      img: "sample_rera1.jpg",
+      img: "https://res.cloudinary.com/demo/image/upload/sample_rera1.jpg",
       no: "RERA12345",
     },
   ],
@@ -86,13 +85,13 @@ const CustomerAddProperty = ({ action }) => {
             floorPlanImg:
               dummyPropertyData.floorPlanImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/uploads/floor/${item.img}`,
+                preview: item.img, // Use Cloudinary URL directly
                 info: item.info || "",
               })) || [],
             reraImg:
               dummyPropertyData.reraImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/uploads/rera/${item.img}`,
+                preview: item.img, // Use Cloudinary URL directly
                 no: item.no || "",
               })) || [],
           });
@@ -100,17 +99,17 @@ const CustomerAddProperty = ({ action }) => {
         } else {
           setFormData({
             ...data,
-            galleryImg: data.galleryImg?.map((img) => img) || [],
+            galleryImg: data.galleryImg || [], // Use Cloudinary URLs directly
             floorPlanImg:
               data.floorPlanImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/uploads/floor/${item.img}`,
+                preview: item.img, // Use Cloudinary URL directly
                 info: item.info || "",
               })) || [],
             reraImg:
               data.reraImg?.map((item) => ({
                 file: null,
-                preview: `${baseUrl}/Uploads/rera/${item.img}`,
+                preview: item.img, // Use Cloudinary URL directly
                 no: item.no || "",
               })) || [],
           });
@@ -125,13 +124,13 @@ const CustomerAddProperty = ({ action }) => {
           floorPlanImg:
             dummyPropertyData.floorPlanImg?.map((item) => ({
               file: null,
-              preview: `${baseUrl}/Uploads/floor/${item.img}`,
+              preview: item.img, // Use Cloudinary URL directly
               info: item.info || "",
             })) || [],
           reraImg:
             dummyPropertyData.reraImg?.map((item) => ({
               file: null,
-              preview: `${baseUrl}/Uploads/rera/${item.img}`,
+              preview: item.img, // Use Cloudinary URL directly
               no: item.no || "",
             })) || [],
         });
@@ -143,12 +142,12 @@ const CustomerAddProperty = ({ action }) => {
       getData();
     } else {
       setFormData({
-          title: "",
+        title: "",
         description: "",
         propertyType: "",
         status: "",
-        purpose: "", // Add purpose
-        constructionYear: "", 
+        purpose: "",
+        constructionYear: "",
         discount: "",
         address: "",
         country: "",
@@ -159,7 +158,7 @@ const CustomerAddProperty = ({ action }) => {
         galleryImg: [],
         floorPlanImg: [],
         reraImg: [],
-        floorPlan: [{ type: "", carpetArea: "", parking: 0,balcony:0, price: "", sellingArea: "" }], // Include sellingArea and parking
+        floorPlan: [{ type: "", carpetArea: "", parking: 0, balcony: 0, price: "", sellingArea: "" }],
         faqs: [{ question: "", answer: "" }],
         keywords: [{ heading: "", keyword: [] }],
         amenities: [],
@@ -171,21 +170,24 @@ const CustomerAddProperty = ({ action }) => {
   return (
     <>
       <CustomerNavbar />
-      <div className="flex flex-1">
+      {/* Main layout container: stacks vertically on small screens, row on large screens */}
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
         <CustomerSidebar />
-        <div className="px-3 md:px-10 w-full mt-12">
-          <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">
+        {/* Main content area: responsive padding and top margin */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0"> {/* Adjusted padding and mt for responsiveness */}
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8"> {/* Stack on mobile, row on sm+, adjusted margin */}
+            <h1 className="text-2xl sm:text-3xl font-bold"> {/* Adjusted font size for mobile */}
               {action === "edit" ? "Edit Property" : "Add New Property"}
             </h1>
           </header>
-          <section className="my-8 bg-white shadow rounded p-6">
+          <section className="my-4 sm:my-8 bg-white shadow rounded-lg p-4 sm:p-6 lg:p-8"> {/* Adjusted padding and margin */}
             {isDummyData && (
-              <div className="text-center text-sm text-gray-500 mb-4">
+              <div className="text-center text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4"> {/* Adjusted font size and margin for mobile */}
                 Showing sample data for demonstration purposes.
               </div>
             )}
-            <ul className="flex flex-wrap gap-4 md:gap-6 border-b border-gray-200 mb-6">
+            {/* Tab Navigation: flex-wrap for smaller screens, responsive gap */}
+            <ul className="flex flex-wrap gap-x-3 gap-y-2 sm:gap-x-4 md:gap-x-6 border-b border-gray-200 mb-6"> {/* Added gap-y for wrapping, adjusted gap-x */}
               {[
                 "1. Basic",
                 "2. Configuration",
@@ -198,7 +200,7 @@ const CustomerAddProperty = ({ action }) => {
                 <li
                   key={index}
                   onClick={() => setIsActive(index + 1)}
-                  className={`cursor-pointer px-4 py-2 text-sm font-semibold border-b-2 ${
+                  className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap ${ /* Adjusted padding, font size, and added whitespace-nowrap */
                     isActive === index + 1
                       ? "border-black text-black"
                       : "border-transparent text-gray-500 hover:border-gray-300"
@@ -208,7 +210,7 @@ const CustomerAddProperty = ({ action }) => {
                 </li>
               ))}
             </ul>
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6"> {/* Adjusted top margin for content */}
               {isActive === 1 && <BasicInformation setIsActive={setIsActive} />}
               {isActive === 2 && <Configuration setIsActive={setIsActive} />}
               {isActive === 3 && <Location setIsActive={setIsActive} />}
@@ -216,7 +218,7 @@ const CustomerAddProperty = ({ action }) => {
               {isActive === 5 && <Keywords setIsActive={setIsActive} />}
               {isActive === 6 && <Faq setIsActive={setIsActive} />}
               {isActive === 7 && (
-                <Amenities action={action} setIsActive={setIsActive} />
+                <Amenities action={action} setIsActive={setIsActive} page={'customer'} />
               )}
             </div>
           </section>

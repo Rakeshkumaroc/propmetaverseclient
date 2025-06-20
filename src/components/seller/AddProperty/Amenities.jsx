@@ -13,6 +13,7 @@ import { MyContext } from "../../../App";
 import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -68,37 +69,37 @@ const initialFormData = {
   amenities: [],
 };
 
-const Amenities = ({ action }) => {
+const Amenities = ({ action, page }) => {
   const { formData, setFormData } = useContext(MyContext);
   const { pathname } = useLocation();
   const id = pathname.split("/").pop();
-
-useEffect(() => {
-  const user = localStorage.getItem("sellerId");
-  console.log(user);
-
-  if (user) {
-    setFormData((prev) => ({
-      ...prev,
-      seller_id: user,
-    }));
-  } else {
-    const customerAuth = localStorage.getItem("customerAuth");
-    if (customerAuth) {
-   
-      const parsedCustomerAuth = JSON.parse(customerAuth); // Parse the JSON string
-      setFormData((prev) => ({
-        ...prev,
-        seller_id: parsedCustomerAuth.user._id, // Access user after parsing
-      }));
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (page == "sub-broker") {
+      const user = localStorage.getItem("sellerId");
+      console.log(user);
+      if (user) {
+        setFormData((prev) => ({
+          ...prev,
+          seller_id: user,
+        }));
+      }
+    } else {
+      const customerAuth = localStorage.getItem("customerAuth");
+      if (customerAuth) {
+        const parsedCustomerAuth = JSON.parse(customerAuth); // Parse the JSON string
+        setFormData((prev) => ({
+          ...prev,
+          seller_id: parsedCustomerAuth.user._id, // Access user after parsing
+        }));
+      }
     }
-  }
-}, [setFormData]);
+  }, [setFormData]);
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-
+      setLoading(true);
       // Validate required fields
       const requiredFields = [
         { key: "title", label: "Title" },
@@ -130,12 +131,14 @@ useEffect(() => {
             .map((f) => f.label)
             .join(", ")}`
         );
+        setLoading(false);
         return;
       }
       if (invalidFloorPlan) {
         toast.error(
           "Please fill all required fields in each floor plan: Type, Carpet Area, Parking, Price, Selling Area"
         );
+        setLoading(false);
         return;
       }
 
@@ -163,7 +166,6 @@ useEffect(() => {
       appendIfValid("city", formData.city);
       appendIfValid("pinCode", formData.pinCode);
       appendIfValid("googleMap", formData.googleMap);
-     
 
       formData.galleryImg.forEach((img, index) => {
         if (img?.file) {
@@ -269,6 +271,8 @@ useEffect(() => {
               "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
           },
         });
+      } finally {
+        setLoading(false); // Stop loading
       }
     },
     [action, formData, id, setFormData]
@@ -343,10 +347,19 @@ useEffect(() => {
       <div className="flex justify-start">
         <button
           type="submit"
-          className="text-[15px] px-2 md:px-5 py-4 flex mt-5 items-center bg-black rounded-lg text-white"
+          className="text-[15px] px-2 md:px-5 py-4 flex mt-5 items-center bg-black rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={loading}
         >
-          Submit
-          <GoArrowUpRight className="text-xl" />
+          {loading ? (
+            <div className="flex items-center">
+              <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
+              Loading...
+            </div>
+          ) : (
+            <>
+              Submit <GoArrowUpRight className="text-xl" />
+            </>
+          )}
         </button>
       </div>
     </form>

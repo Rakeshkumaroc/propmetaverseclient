@@ -11,6 +11,7 @@ const HeroForm = ({ action }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const id = pathname.split("/").pop();
+    const [loading, setLoading] = useState(false); // Add loading state
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -48,7 +49,7 @@ const HeroForm = ({ action }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  setLoading(true); // Start loading
     const apiUrl =
       action === "edit" ? `${baseUrl}/edit-hero/${id}` : `${baseUrl}/add-hero`;
     const method = action === "edit" ? "PUT" : "POST";
@@ -114,6 +115,8 @@ const HeroForm = ({ action }) => {
             "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
         },
       });
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -130,7 +133,7 @@ const HeroForm = ({ action }) => {
           image: null, // Reset image for edit, backend will keep old image unless replaced
         });
         if (data.image_url) {
-          setPreview(`${baseUrl}/uploads/hero/${data.image_url}`); // Assuming image_url is now the filename
+          setPreview(`${data.image_url}`); // Assuming image_url is now the filename
         }
       } else {
         console.error("Error fetching data");
@@ -234,9 +237,19 @@ const HeroForm = ({ action }) => {
           <div className="flex cursor-pointer justify-center">
             <button
               type="submit"
-              className="text-[15px] px-2 md:px-5 py-4 flex mt-7 items-center bg-black rounded-lg text-white"
+              className="text-[15px] px-2 md:px-5 py-4 flex mt-7 items-center bg-black rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
             >
-              {action === "edit" ? "Edit Hero" : "Add Hero"} <GoArrowUpRight className="text-xl" />
+              {loading ? (
+                <div className="flex items-center">
+                  <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
+                  Loading...
+                </div>
+              ) : (
+                <>
+                  {action === "edit" ? "Edit Hero" : "Add Hero"} <GoArrowUpRight className="text-xl" />
+                </>
+              )}
             </button>
           </div>
         </form>

@@ -815,7 +815,7 @@ export default function CompleteSellerProfile() {
               You can now access your professional dashboard
             </p>
             <button
-              className="w-full bg-blue-600 text-white py-2 md:py-3 rounded-lg font-medium hover:bg-blue-700 transition text-sm md:text-base"
+              className="w-full bg-black text-white py-2 md:py-3 rounded-lg font-medium hover:bg-gray-800 transition text-sm md:text-base"
               onClick={() => navigate("/seller")}
             >
               Launch Dashboard
