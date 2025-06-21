@@ -6,16 +6,37 @@ import { toast } from "react-toastify";
 
 // Dummy floor plan data
 const floorPlan = [
-  { type: "2 BHK", carpetArea: "750 sq.ft", parking: "1 Covered", price: "₹60 Lakh" },
-  { type: "3 BHK", carpetArea: "1100 sq.ft", parking: "1 Covered, 1 Open", price: "₹85 Lakh" },
-  { type: "4 BHK", carpetArea: "1600 sq.ft", parking: "2 Covered", price: "₹1.25 Cr" },
-  { type: "Penthouse", carpetArea: "2200 sq.ft", parking: "3 Covered", price: "₹2 Cr" },
+  {
+    type: "2 BHK",
+    carpetArea: "750 sq.ft",
+    parking: "1 Covered",
+    price: "₹60 Lakh",
+  },
+  {
+    type: "3 BHK",
+    carpetArea: "1100 sq.ft",
+    parking: "1 Covered, 1 Open",
+    price: "₹85 Lakh",
+  },
+  {
+    type: "4 BHK",
+    carpetArea: "1600 sq.ft",
+    parking: "2 Covered",
+    price: "₹1.25 Cr",
+  },
+  {
+    type: "Penthouse",
+    carpetArea: "2200 sq.ft",
+    parking: "3 Covered",
+    price: "₹2 Cr",
+  },
 ];
 
 const Media = ({ setIsActive }) => {
   const { formData, setFormData } = useContext(MyContext);
   const MAX_IMAGES = 5; // Maximum allowed images for galleryImg and floorPlanImg
   const MAX_FILE_SIZE = 500 * 1024; // 500KB in bytes
+console.log('formdata',formData);
 
   // Handle file, info, and type changes for galleryImg and floorPlanImg
   const handleChange = useCallback(
@@ -111,9 +132,15 @@ const Media = ({ setIsActive }) => {
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-all hover:border-gray-400">
         {formData.galleryImg?.length > 0 ? (
           formData.galleryImg.map((item, index) => (
-            <div key={`galleryImg-${index}`} className="mt-5 flex flex-col gap-3 animate-fadeIn">
+            <div
+              key={`galleryImg-${index}`}
+              className="mt-5 flex flex-col gap-3 animate-fadeIn"
+            >
               <div className="flex items-center justify-between">
-                <label htmlFor={`galleryImg${index}`} className="text-[14px] font-semibold">
+                <label
+                  htmlFor={`galleryImg${index}`}
+                  className="text-[14px] font-semibold"
+                >
                   Gallery Image {index + 1}
                 </label>
                 <button
@@ -123,7 +150,6 @@ const Media = ({ setIsActive }) => {
                   Remove
                 </button>
               </div>
-
               <div className="relative">
                 <input
                   type="file"
@@ -132,8 +158,7 @@ const Media = ({ setIsActive }) => {
                   accept=".jpeg,.jpg,.png,.gif"
                   className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 />
-
-                {item.preview && (
+                {item.preview ? (
                   <div className="mt-3 flex justify-end">
                     <img
                       src={item.preview}
@@ -141,7 +166,14 @@ const Media = ({ setIsActive }) => {
                       className="w-24 h-24 rounded-md object-cover shadow-sm hover:scale-105 transition-transform"
                     />
                   </div>
-                )}
+                ):<div className="mt-3 flex justify-end">
+                    <img
+                      src={item}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-24 h-24 rounded-md object-cover shadow-sm hover:scale-105 transition-transform"
+                    />
+                  </div>}
+             
               </div>
             </div>
           ))
@@ -173,9 +205,15 @@ const Media = ({ setIsActive }) => {
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-all hover:border-gray-400">
         {formData.floorPlanImg?.length > 0 ? (
           formData.floorPlanImg.map((item, index) => (
-            <div key={`floorPlanImg-${index}`} className="mt-5 flex flex-col gap-3 animate-fadeIn">
+            <div
+              key={`floorPlanImg-${index}`}
+              className="mt-5 flex flex-col gap-3 animate-fadeIn"
+            >
               <div className="flex items-center justify-between">
-                <label htmlFor={`floorPlanImg${index}`} className="text-[14px] font-semibold">
+                <label
+                  htmlFor={`floorPlanImg${index}`}
+                  className="text-[14px] font-semibold"
+                >
                   Floor Plan Image {index + 1}
                 </label>
                 <button
@@ -190,7 +228,9 @@ const Media = ({ setIsActive }) => {
                 <select
                   id={`floorPlanImgType${index}`}
                   value={item.type || ""}
-                  onChange={(e) => handleChange(e, index, "floorPlanImg", "type")}
+                  onChange={(e) =>
+                    handleChange(e, index, "floorPlanImg", "type")
+                  }
                   className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 >
                   <option value="" disabled>
@@ -207,7 +247,9 @@ const Media = ({ setIsActive }) => {
                   type="text"
                   id={`floorPlanImgInfo${index}`}
                   value={item.info || ""}
-                  onChange={(e) => handleChange(e, index, "floorPlanImg", "info")}
+                  onChange={(e) =>
+                    handleChange(e, index, "floorPlanImg", "info")
+                  }
                   placeholder="Enter floor plan info (e.g., 2BHK Layout)"
                   className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 />
@@ -215,7 +257,9 @@ const Media = ({ setIsActive }) => {
                 <input
                   type="file"
                   id={`floorPlanImg${index}`}
-                  onChange={(e) => handleChange(e, index, "floorPlanImg", "file")}
+                  onChange={(e) =>
+                    handleChange(e, index, "floorPlanImg", "file")
+                  }
                   accept=".jpeg,.jpg,.png,.gif"
                   className="border-[1px] px-3 py-3 rounded-lg h-12 border-gray-300 text-sm w-full focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 />

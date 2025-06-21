@@ -100,6 +100,7 @@ const Amenities = ({ action, page }) => {
     async (e) => {
       e.preventDefault();
       setLoading(true);
+
       // Validate required fields
       const requiredFields = [
         { key: "title", label: "Title" },
@@ -142,6 +143,12 @@ const Amenities = ({ action, page }) => {
         return;
       }
 
+      // Log formData to inspect floorPlanImg
+      console.log(
+        "formData.floorPlanImg before appending:",
+        formData.floorPlanImg
+      );
+
       const formDataToSend = new FormData();
 
       const appendIfValid = (key, value) => {
@@ -180,6 +187,9 @@ const Amenities = ({ action, page }) => {
         if (img?.info) {
           formDataToSend.append(`floorPlanImgInfo[${index}]`, img.info);
         }
+        if (img?.type) {
+          formDataToSend.append(`floorPlanImgType[${index}]`, img.type);
+        }
       });
 
       formData.reraImg.forEach((img, index) => {
@@ -197,7 +207,7 @@ const Amenities = ({ action, page }) => {
         appendIfValid(`floorPlan[${index}][parking]`, plan.parking);
         appendIfValid(`floorPlan[${index}][price]`, plan.price);
         appendIfValid(`floorPlan[${index}][sellingArea]`, plan.sellingArea);
-        appendIfValid(`floorPlan[${index}][balcony]`, plan.balcony); // Added balcony
+        appendIfValid(`floorPlan[${index}][balcony]`, plan.balcony);
       });
 
       formData.faqs.forEach((faq, index) => {
@@ -216,17 +226,37 @@ const Amenities = ({ action, page }) => {
         appendIfValid(`amenities[${index}]`, amenity);
       });
 
+      // Enhanced logging for FormData
+      console.log("formDataToSend entries:");
+      for (const [key, value] of formDataToSend.entries()) {
+        if (value instanceof File) {
+          console.log(
+            `${key}: ${value.name} (Size: ${value.size} bytes, Type: ${value.type})`
+          );
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+
       const apiUrl =
         action === "edit"
           ? `${baseUrl}/edit-property/${id}`
           : `${baseUrl}/add-property`;
       const method = action === "edit" ? "PUT" : "POST";
 
+      console.log("API URL:", apiUrl);
+
       try {
         const response = await fetch(apiUrl, {
           method,
           body: formDataToSend,
         });
+
+        console.log(
+          "API Response Status:",
+          response.status,
+          response.statusText
+        );
 
         if (response.ok) {
           const successMessage =
@@ -247,6 +277,7 @@ const Amenities = ({ action, page }) => {
           });
         } else {
           const errorData = await response.json();
+          console.log("API Error Data:", errorData);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -261,6 +292,7 @@ const Amenities = ({ action, page }) => {
           });
         }
       } catch (error) {
+        console.log("Network Error:", error);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -272,7 +304,7 @@ const Amenities = ({ action, page }) => {
           },
         });
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     },
     [action, formData, id, setFormData]

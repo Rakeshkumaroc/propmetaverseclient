@@ -29,6 +29,7 @@ const dummyPropertyData = {
     {
       img: "https://res.cloudinary.com/demo/image/upload/sample_floor1.jpg",
       info: "2BHK Floor Plan",
+      type: "2 BHK", // Include type in dummy data
     },
   ],
   reraImg: [
@@ -85,13 +86,14 @@ const CustomerAddProperty = ({ action }) => {
             floorPlanImg:
               dummyPropertyData.floorPlanImg?.map((item) => ({
                 file: null,
-                preview: item.img, // Use Cloudinary URL directly
+                preview: item.img,
                 info: item.info || "",
+                type: item.type || "", // Include type
               })) || [],
             reraImg:
               dummyPropertyData.reraImg?.map((item) => ({
                 file: null,
-                preview: item.img, // Use Cloudinary URL directly
+                preview: item.img,
                 no: item.no || "",
               })) || [],
           });
@@ -99,17 +101,18 @@ const CustomerAddProperty = ({ action }) => {
         } else {
           setFormData({
             ...data,
-            galleryImg: data.galleryImg || [], // Use Cloudinary URLs directly
+            galleryImg: data.galleryImg || [],
             floorPlanImg:
               data.floorPlanImg?.map((item) => ({
                 file: null,
-                preview: item.img, // Use Cloudinary URL directly
+                preview: item.img,
                 info: item.info || "",
+                type: item.type || "", // Include type
               })) || [],
             reraImg:
               data.reraImg?.map((item) => ({
                 file: null,
-                preview: item.img, // Use Cloudinary URL directly
+                preview: item.img,
                 no: item.no || "",
               })) || [],
           });
@@ -124,13 +127,14 @@ const CustomerAddProperty = ({ action }) => {
           floorPlanImg:
             dummyPropertyData.floorPlanImg?.map((item) => ({
               file: null,
-              preview: item.img, // Use Cloudinary URL directly
+              preview: item.img,
               info: item.info || "",
+              type: item.type || "", // Include type
             })) || [],
           reraImg:
             dummyPropertyData.reraImg?.map((item) => ({
               file: null,
-              preview: item.img, // Use Cloudinary URL directly
+              preview: item.img,
               no: item.no || "",
             })) || [],
         });
@@ -156,7 +160,7 @@ const CustomerAddProperty = ({ action }) => {
         pinCode: "",
         googleMap: "",
         galleryImg: [],
-        floorPlanImg: [],
+        floorPlanImg: [{ file: null, preview: "", info: "", type: "" }], // Initialize with type
         reraImg: [],
         floorPlan: [{ type: "", carpetArea: "", parking: 0, balcony: 0, price: "", sellingArea: "" }],
         faqs: [{ question: "", answer: "" }],
@@ -170,24 +174,21 @@ const CustomerAddProperty = ({ action }) => {
   return (
     <>
       <CustomerNavbar />
-      {/* Main layout container: stacks vertically on small screens, row on large screens */}
       <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
         <CustomerSidebar />
-        {/* Main content area: responsive padding and top margin */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0"> {/* Adjusted padding and mt for responsiveness */}
-          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8"> {/* Stack on mobile, row on sm+, adjusted margin */}
-            <h1 className="text-2xl sm:text-3xl font-bold"> {/* Adjusted font size for mobile */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0">
+          <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold">
               {action === "edit" ? "Edit Property" : "Add New Property"}
             </h1>
           </header>
-          <section className="my-4 sm:my-8 bg-white shadow rounded-lg p-4 sm:p-6 lg:p-8"> {/* Adjusted padding and margin */}
+          <section className="my-4 sm:my-8 bg-white shadow rounded-lg p-4 sm:p-6 lg:p-8">
             {isDummyData && (
-              <div className="text-center text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4"> {/* Adjusted font size and margin for mobile */}
+              <div className="text-center text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
                 Showing sample data for demonstration purposes.
               </div>
             )}
-            {/* Tab Navigation: flex-wrap for smaller screens, responsive gap */}
-            <ul className="flex flex-wrap gap-x-3 gap-y-2 sm:gap-x-4 md:gap-x-6 border-b border-gray-200 mb-6"> {/* Added gap-y for wrapping, adjusted gap-x */}
+            <ul className="flex flex-wrap gap-x-3 gap-y-2 sm:gap-x-4 md:gap-x-6 border-b border-gray-200 mb-6">
               {[
                 "1. Basic",
                 "2. Configuration",
@@ -200,7 +201,7 @@ const CustomerAddProperty = ({ action }) => {
                 <li
                   key={index}
                   onClick={() => setIsActive(index + 1)}
-                  className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap ${ /* Adjusted padding, font size, and added whitespace-nowrap */
+                  className={`cursor-pointer px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold border-b-2 whitespace-nowrap ${
                     isActive === index + 1
                       ? "border-black text-black"
                       : "border-transparent text-gray-500 hover:border-gray-300"
@@ -210,7 +211,7 @@ const CustomerAddProperty = ({ action }) => {
                 </li>
               ))}
             </ul>
-            <div className="mt-4 sm:mt-6"> {/* Adjusted top margin for content */}
+            <div className="mt-4 sm:mt-6">
               {isActive === 1 && <BasicInformation setIsActive={setIsActive} />}
               {isActive === 2 && <Configuration setIsActive={setIsActive} />}
               {isActive === 3 && <Location setIsActive={setIsActive} />}
