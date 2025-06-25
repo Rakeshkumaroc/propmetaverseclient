@@ -135,12 +135,7 @@ const CustomerTable = ({
         setData(filteredData);
       } catch (error) {
         console.error("Error fetching customers:", error);
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to fetch customers. Please try again.",
-          icon: "error",
-          confirmButtonColor: "#1b639f",
-        });
+        
       } finally {
         setLoading(false);
       }

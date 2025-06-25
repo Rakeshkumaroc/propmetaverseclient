@@ -40,13 +40,7 @@ const SellerTable = ({ searchValue }) => {
     const worksheetData = data.map((item) => ({
       FullName: item.fullName || "N/A",
       Email: item.email || "N/A",
-      Phone: item.number || "N/A",
-      // Role:
-      //   item.sellerType === "subBroker"
-      //     ? "Sub-Broker"
-      //     : item.sellerType === "individualSeller"
-      //     ? "Individual Seller"
-      //     : "N/A",
+      Phone: item.number || "N/A", 
       Status:
         item.approveStatus === "active"
           ? "Approved"
@@ -267,12 +261,7 @@ const SellerTable = ({ searchValue }) => {
         setData(filteredData);
       } catch (error) {
         console.error("Error fetching sellers:", error);
-        Swal.fire({
-          title: "Error!",
-          text: "Failed to fetch sellers. Please try again.",
-          icon: "error",
-          confirmButtonColor: "#1b639f",
-        });
+      
       } finally {
         setLoading(false);
       }
