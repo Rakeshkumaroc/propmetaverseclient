@@ -3,7 +3,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import googleIcon from "../../assets/image/google-icon.svg";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -37,11 +37,15 @@ const GoogleButton = ({
             };
             localStorage.setItem(storageKey, JSON.stringify(authData));
             console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
-            toast(result.data.message, {
-              position: "top-left",
-              type: "success",
+            // Show SweetAlert2 success modal with custom confirm button color
+            await Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: result.data.message,
+              confirmButtonText: "OK",
+              confirmButtonColor: "#1b639f", // Set confirm button color
             });
-            navigate(navigatePathSuccess); // Explicitly navigate for customers
+            navigate(navigatePathSuccess); // Navigate after alert is closed
           } else {
             // Store seller credentials in localStorage
             localStorage.setItem("sellerId", result.data.sellerData.sellerId);
@@ -49,11 +53,10 @@ const GoogleButton = ({
               "sellerFullName",
               result.data.sellerData.sellerFullName
             );
-            console.log('result.data.sellerData',result.data.sellerData);
-            
+            console.log("result.data.sellerData", result.data.sellerData);
+
             localStorage.setItem("token", result.data.sellerData.token);
-            localStorage.setItem('createdAt',result.data.sellerData.createdAt);
-            
+            localStorage.setItem("createdAt", result.data.sellerData.createdAt);
 
             // Ensure verification fields are booleans
             const isEmailVerified = result.data.sellerData.sellerIsEmailVerify === true;
@@ -66,6 +69,15 @@ const GoogleButton = ({
               rawNumberVerify: result.data.sellerData.sellerIsNumberVerify,
             });
 
+            // Show SweetAlert2 success modal with custom confirm button color
+            await Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: result.data.message,
+              confirmButtonText: "OK",
+              confirmButtonColor: "#1b639f", // Set confirm button color
+            });
+
             // Strict redirect logic for sellers
             if (isEmailVerified && isNumberVerified) {
               console.log("Both verified, redirecting to /seller");
@@ -74,26 +86,29 @@ const GoogleButton = ({
               console.log("Verification incomplete, redirecting to", navigatePathSuccess);
               navigate(navigatePathSuccess);
             }
-
-            toast(result.data.message, {
-              position: "top-left",
-              type: "success",
-            });
           }
         } else {
           console.log("API success false:", result.data);
-          toast("Login failed: " + result.data.message, {
-            position: "top-left",
-            type: "error",
+          // Show SweetAlert2 error modal with custom confirm button color
+          await Swal.fire({
+            icon: "error",
+            title: "Login Failed",
+            text: result.data.message,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#1b639f", // Set confirm button color
           });
           navigate(navigatePathError);
         }
       }
     } catch (error) {
-      console.error("Google Login Error:",   error.response?.data?.message);
-      toast(error.response?.data?.message || "Google login failed", {
-        position: "top-left",
-        type: "error",
+      console.error("Google Login Error:", error.response?.data?.message);
+      // Show SweetAlert2 error modal with custom confirm button color
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "Google login failed",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
       navigate(navigatePathError);
     }

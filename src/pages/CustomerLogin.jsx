@@ -3,7 +3,7 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleButton from "../components/global/GoogleButton";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import axios from "axios";
 import Footer from "../components/global/Footer";
 import Navbar from "../components/global/Navbar";
@@ -64,16 +64,24 @@ const CustomerLogin = () => {
         })
       );
       console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
-      toast(result.data.message, {
-        position: "top-left",
-        type: "success",
+      // Show SweetAlert2 success modal
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: result.data.message,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
       navigate("/customer");
     } catch (err) {
       setLoading(false);
-      toast(err.message || err.response?.data?.message || "An error occurred", {
-        position: "top-left",
-        type: "error",
+      // Show SweetAlert2 error modal
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err.message || err.response?.data?.message || "An error occurred",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
       console.error("Login error:", err);
     }
@@ -140,7 +148,6 @@ const CustomerLogin = () => {
                 />
                 <div
                   className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                  onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? (
                     <AiOutlineEyeInvisible className="text-gray-400" />

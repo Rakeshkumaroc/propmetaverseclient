@@ -10,69 +10,58 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import GoogleButton from "../components/global/GoogleButton";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Import SweetAlert2
+
 const baseUrl = import.meta.env.VITE_APP_URL;
+
 const SellerSignUp = () => {
-  // const [sellerType, setSellerType] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // const [profilePic, setProfilePic] = useState("");
   const Navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    // phone: "",
     password: "",
-    // bio: "",
   });
 
   const inputHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // const signUpData = new FormData();
     const signUpData = {
       fullName: formData.fullName,
       email: formData.email,
       password: formData.password,
     };
-    // signUpData.append("sellerType", sellerType);
-    // signUpData.append("fullName", formData.fullName);
-    // signUpData.append("email", formData.email);
-    // signUpData.append("phone", formData.phone);
-    // signUpData.append("password", formData.password);
-    // signUpData.append("bio", formData.bio);
-    // if (profilePic) {
-    //   signUpData.append("profilePic", profilePic);
-    // }
-    // {
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // }
 
-    axios
-      .post(`${baseUrl}/sign-up-seller`, signUpData)
-      .then((result) => {
-        setLoading(false);
-        toast(result.data.message, {
-          position: "top-left",
-          type: "success",
-        });
-        Navigate("/seller-sign-in");
-        console.log(result);
-      })
-      .catch((err) => {
-        setLoading(false);
-        toast(err.response.data.message, {
-          position: "top-left",
-          type: "error",
-        });
-        console.log(err);
+    try {
+      const result = await axios.post(`${baseUrl}/sign-up-seller`, signUpData);
+      setLoading(false);
+      // Show SweetAlert2 success modal
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: result.data.message,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
+      Navigate("/seller-sign-in");
+      console.log(result);
+    } catch (err) {
+      setLoading(false);
+      // Show SweetAlert2 error modal
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err.response?.data?.message || "Sign up failed",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
+      });
+      console.log(err);
+    }
   };
 
   return (
@@ -80,13 +69,11 @@ const SellerSignUp = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
           <div className="py-4 px-6">
-            <h2 className="text-2xl font-semibold  text-center mb-4">
-             Sub-Broker Sign Up
+            <h2 className="text-2xl font-semibold text-center mb-4">
+              Sub-Broker Sign Up
             </h2>
           </div>
           <form className="p-6 space-y-2" onSubmit={submitHandler}>
-            
-
             {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -97,7 +84,7 @@ const SellerSignUp = () => {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor "
+                  className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
                   onChange={inputHandler}
                   name="fullName"
                   value={formData.fullName}
@@ -105,7 +92,6 @@ const SellerSignUp = () => {
               </div>
             </div>
 
-           
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -123,8 +109,6 @@ const SellerSignUp = () => {
                 />
               </div>
             </div>
-
-          
 
             {/* Password */}
             <div>
@@ -149,8 +133,6 @@ const SellerSignUp = () => {
                 </div>
               </div>
             </div>
-
-         
 
             {/* Submit Button */}
             <div className="md:col-span-2">

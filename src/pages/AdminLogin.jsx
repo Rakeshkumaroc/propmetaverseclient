@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -13,7 +14,6 @@ const AdminLogin = ({ setIsAdmin }) => {
     password: "",
   });
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState(""); // State for API error message
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,12 +32,24 @@ const AdminLogin = ({ setIsAdmin }) => {
     }
 
     setErrors(newErrors);
-    setApiError(""); // Clear API error on input change
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(1);
+
+    // Validate email before submitting
+    if (!validateEmail(formData.email)) {
+      setLoading(0);
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Invalid email format",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
+      });
+      return;
+    }
 
     try {
       const result = await fetch(baseUrl + "/login-user", {
@@ -53,6 +65,14 @@ const AdminLogin = ({ setIsAdmin }) => {
         const data = await result.json();
         localStorage.setItem("user", JSON.stringify(data));
         setLoading(0);
+        // Show SweetAlert2 success modal
+        await Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Logged in successfully",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#1b639f", // Set confirm button color
+        });
         navigate("/admin");
 
         setFormData({
@@ -61,11 +81,25 @@ const AdminLogin = ({ setIsAdmin }) => {
         });
       } else {
         setLoading(0);
-        setApiError("Invalid email or password"); // Set API error
+        // Show SweetAlert2 error modal for invalid credentials
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Invalid email or password",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#1b639f", // Set confirm button color
+        });
       }
     } catch (error) {
       setLoading(0);
-      setApiError("An error occurred. Please try again."); // Handle network errors
+      // Show SweetAlert2 error modal for network errors
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again.",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
+      });
     }
   };
 
@@ -90,19 +124,13 @@ const AdminLogin = ({ setIsAdmin }) => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={`mt-1 block w-full px-3  md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3  border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black ${
+              className={`mt-1 block w-full px-3 md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="email@example.com"
               required
               aria-invalid={errors.email ? "true" : "false"}
-              aria-describedby={errors.email ? "email-error" : undefined}
             />
-            {errors.email && (
-              <p id="email-error" className="mt-1 text-sm text-red-600">
-                {errors.email}
-              </p>
-            )}
           </div>
 
           <div className="relative">
@@ -119,7 +147,7 @@ const AdminLogin = ({ setIsAdmin }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3  md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3  border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black border-gray-300"
+                className="mt-1 block w-full px-3 md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black border-gray-300"
                 placeholder="••••••••"
                 required
               />
@@ -138,24 +166,12 @@ const AdminLogin = ({ setIsAdmin }) => {
             </div>
           </div>
 
-          {/* Display API Error */}
-          {apiError && (
-            <p className="text-sm text-red-600 text-center">{apiError}</p>
-          )}
-
-
-         
-
-
-
-
           <button
-           type="submit"
-           disabled={loading || Object.keys(errors).length > 0}
-           className="relative z-[2] text-white   overflow-hidden text-base leading-[1.1] font-bold font-secondary tracking-wide uppercase [transition:all_0.3s_linear] inline-flex items-center justify-center gap-3 md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3 px-6 md:px-7  transition-colors ease-in-out ring-offset-logoColor focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-logoColor after:absolute after:h-full after:w-0 after:bottom-0 after:right-0 after:bg-black/[.15] after:-z-1 after:[transition:all_.3s_ease-in-out] hover:text-white hover:after:w-full hover:after:left-0 rounded-[5px] w-full"
-        
-        >
-        {loading ? (
+            type="submit"
+            disabled={loading || Object.keys(errors).length > 0}
+            className="relative z-[2] text-white overflow-hidden text-base leading-[1.1] font-bold font-secondary tracking-wide uppercase [transition:all_0.3s_linear] inline-flex items-center justify-center gap-3 md:min-h-[3.75rem] min-h-[3.5rem] py-2 md:py-3 px-6 md:px-7 transition-colors ease-in-out ring-offset-logoColor focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-logoColor after:absolute after:h-full after:w-0 after:bottom-0 after:right-0 after:bg-black/[.15] after:-z-1 after:[transition:all_.3s_ease-in-out] hover:text-white hover:after:w-full hover:after:left-0 rounded-[5px] w-full"
+          >
+            {loading ? (
               <div className="flex items-center justify-center">
                 <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
                 <span className="ml-2 z-10 relative">Loading...</span>
@@ -163,7 +179,7 @@ const AdminLogin = ({ setIsAdmin }) => {
             ) : (
               <span className="z-10 relative">Sign In</span>
             )}
-        </button>
+          </button>
         </form>
       </div>
     </div>

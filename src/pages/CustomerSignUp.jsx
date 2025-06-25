@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react"; // Added useEffect
+import React, { useState, useEffect } from "react";
 import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import GoogleButton from "../components/global/GoogleButton";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import Navbar from "../components/global/Navbar";
 import Footer from "../components/global/Footer";
 
@@ -13,7 +13,7 @@ const baseUrl = import.meta.env.VITE_APP_URL;
 const CustomerSignUp = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate(); // Changed Navigate to navigate
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,13 +27,13 @@ const CustomerSignUp = () => {
     if (customerAuth && customerAuth.token) {
       navigate("/customer");
     }
-  }, [navigate]); // Dependency array includes navigate
+  }, [navigate]);
 
   const inputHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -45,9 +45,12 @@ const CustomerSignUp = () => {
       !formData.password
     ) {
       setLoading(false);
-      toast("Please fill all required fields", {
-        position: "top-left",
-        type: "error",
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Please fill all required fields",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
       return;
     }
@@ -59,33 +62,39 @@ const CustomerSignUp = () => {
       password: formData.password,
     };
 
-    axios
-      .post(`${baseUrl}/sign-up-customer`, signUpData)
-      .then((result) => {
-        setLoading(false);
-        // Save customerAuth to localStorage
-        localStorage.setItem(
-          "customerAuth",
-          JSON.stringify({
-            token: result.data.token,
-            user: result.data.user,
-          })
-        );
-        toast(result.data.message, {
-          position: "top-left",
-          type: "success",
-        });
-        navigate("/customer-sign-in");
-        console.log("Sign-up response:", result.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-        toast(err.response?.data?.message || "An error occurred", {
-          position: "top-left",
-          type: "error",
-        });
-        console.error("Sign-up error:", err);
+    try {
+      const result = await axios.post(`${baseUrl}/sign-up-customer`, signUpData);
+      setLoading(false);
+      // Save customerAuth to localStorage
+      localStorage.setItem(
+        "customerAuth",
+        JSON.stringify({
+          token: result.data.token,
+          user: result.data.user,
+        })
+      );
+      // Show SweetAlert2 success modal
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: result.data.message,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
+      navigate("/customer-sign-in");
+      console.log("Sign-up response:", result.data);
+    } catch (err) {
+      setLoading(false);
+      // Show SweetAlert2 error modal
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err.response?.data?.message || "An error occurred",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
+      });
+      console.error("Sign-up error:", err);
+    }
   };
 
   return (
@@ -94,7 +103,7 @@ const CustomerSignUp = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mt-20">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
           <div className="py-4 px-6">
-            <h2 className="text-2xl font-semibold text-center ">
+            <h2 className="text-2xl font-semibold text-center">
               Customer Sign Up
             </h2>
           </div>

@@ -3,9 +3,11 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleButton from "../components/global/GoogleButton";
-import { toast } from "react-toastify";
-const baseUrl = import.meta.env.VITE_APP_URL;
+import Swal from "sweetalert2"; // Import SweetAlert2
 import axios from "axios";
+
+const baseUrl = import.meta.env.VITE_APP_URL;
+
 const SellerLoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,19 +20,8 @@ const SellerLoginPage = () => {
   const inputHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  // const [userType, setUserType] = useState({
-  //   subBroker: false,
-  //   individualSeller: false,
-  // });
 
-  // const handleUserTypeChange = (type) => {
-  //   setUserType({
-  //     subBroker: type === "subBroker",
-  //     individualSeller: type === "individualSeller",
-  //   });
-  // };
-
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -39,98 +30,56 @@ const SellerLoginPage = () => {
       password: formData.password,
     };
 
-    axios
-      .post(`${baseUrl}/sign-in-seller`, signInData)
-      .then((result) => {
-        localStorage.setItem("sellerId", result.data.sellerData.sellerId);
-        localStorage.setItem(
-          "sellerFullName",
-          result.data.sellerData.sellerFullName
-        );
-
-        localStorage.setItem("token", result.data.sellerData.token);
-        localStorage.setItem("createdAt", result.data.sellerData.createdAt);
-        setLoading(false);
-        toast(result.data.message, {
-          position: "top-left",
-          type: "success",
-        });
-
-        if (
-          result.data.sellerData.sellerIsEmailVerify &&
-          result.data.sellerData.sellerIsNumberVerify
-        ) {
-          Navigate("/seller");
-        } else {
-          Navigate("/seller-complete-profile");
-        }
-
-        console.log(result, "result ffffffffffffffffffffffffffffffff");
-      })
-      .catch((err) => {
-        setLoading(false);
-        toast(err.response.data.message, {
-          position: "top-left",
-          type: "error",
-        });
-        console.log(err);
+    try {
+      const result = await axios.post(`${baseUrl}/sign-in-seller`, signInData);
+      localStorage.setItem("sellerId", result.data.sellerData.sellerId);
+      localStorage.setItem("sellerFullName", result.data.sellerData.sellerFullName);
+      localStorage.setItem("token", result.data.sellerData.token);
+      localStorage.setItem("createdAt", result.data.sellerData.createdAt);
+      setLoading(false);
+      // Show SweetAlert2 success modal
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: result.data.message,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
       });
+
+      if (
+        result.data.sellerData.sellerIsEmailVerify &&
+        result.data.sellerData.sellerIsNumberVerify
+      ) {
+        Navigate("/seller");
+      } else {
+        Navigate("/seller-complete-profile");
+      }
+
+      console.log(result, "result ffffffffffffffffffffffffffffffff");
+    } catch (err) {
+      setLoading(false);
+      // Show SweetAlert2 error modal
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err.response?.data?.message || "Login failed",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#1b639f", // Set confirm button color
+      });
+      console.log(err);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
         <div className="py-4 px-6">
-          <h2 className="text-2xl font-semibold  text-center mb-8">
-            {" "}
+          <h2 className="text-2xl font-semibold text-center mb-8">
             Sub-Broker Login
           </h2>
         </div>
 
         <form className="p-6 space-y-4" onSubmit={submitHandler}>
-          {/* User Type Selection */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sign In As <span className="text-red-500">*</span>
-            </label>
-            <div className="space-y-2">
-            
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="subBroker"
-                  name="userType"
-                  checked={userType.subBroker}
-                  onChange={() => handleUserTypeChange("subBroker")}
-                  className="h-4 w-4 accent-green-600"
-                />
-                <label
-                  htmlFor="subBroker"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Sub Broker
-                </label>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="individualSeller"
-                  name="userType"
-                  checked={userType.individualSeller}
-                  onChange={() => handleUserTypeChange("individualSeller")}
-                  className="h-4 w-4 accent-green-600"
-                />
-                <label
-                  htmlFor="individualSeller"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Individual Seller
-                </label>
-              </div>
-            </div>
-          </div> */}
-
           {/* Email Field */}
           <div>
             <label
