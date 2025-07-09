@@ -14,14 +14,7 @@ const PropertyTable = ({ searchValue }) => {
   const [allSelect, setAllSelect] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
-  // const handleAllSelect = () => {
-  //   setAllSelect(!allSelect);
-  //   if (!allSelect) {
-  //     setSelectedIds(data.map((item) => item._id));
-  //   } else {
-  //     setSelectedIds([]);
-  //   }
-  // };
+ 
 
   const handleCheckboxChange = (id) => {
     setAllSelect(false);

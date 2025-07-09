@@ -166,13 +166,7 @@ const MyListingTable = ({ searchValue }) => {
         setData(filter === "Recent" ? filteredResult : [...filteredResult].reverse()); // Use spread to avoid modifying original array
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Display a user-friendly error message if data fetch fails
-        Swal.fire({
-          title: "Error",
-          text: error.message || "Failed to fetch properties. Please try again.",
-          icon: "error",
-          confirmButtonColor: "#1b639f",
-        });
+        
         setData([]);
       } finally {
         setLoading(false);

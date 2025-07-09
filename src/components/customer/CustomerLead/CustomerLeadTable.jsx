@@ -164,12 +164,7 @@ const CustomerLeadTable = ({ searchValue }) => {
         setData(filteredData);
       } catch (error) {
         console.error("Error fetching data:", error);
-        Swal.fire({
-          title: "Error",
-          text: "Failed to fetch leads. Please try again.",
-          icon: "error",
-          confirmButtonColor: "#1b639f",
-        });
+       
         setData([]);
       }
     };

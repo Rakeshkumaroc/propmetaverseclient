@@ -64,7 +64,7 @@ const FloorPlanImg = ({ floorPlanImg, setIsEnquiryFormOpen }) => {
                   {img ? (
                     <div className="relative group">
                       <img
-                        src={`${baseUrl}/Uploads/floor/${img}`}
+                        src={`${img}`}
                         alt={`Floor Plan ${index + 1}`}
                         className="w-full h-auto max-h-[450px] object-contain rounded-lg transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110 cursor-pointer"
                         loading="lazy"
@@ -98,7 +98,7 @@ const FloorPlanImg = ({ floorPlanImg, setIsEnquiryFormOpen }) => {
                   {img ? (
                     <div className="relative group">
                       <img
-                        src={`${baseUrl}/Uploads/floor/${img}`}
+                        src={`${img}`}
                         alt={`Floor Plan ${index + 1}`}
                         className="w-full h-auto max-h-[450px] object-contain rounded-lg transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110 cursor-pointer"
                         loading="lazy"

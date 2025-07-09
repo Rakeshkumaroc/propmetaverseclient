@@ -25,7 +25,6 @@ const CustomerNavbar = () => {
     const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
 
     if (!customerAuth || !customerAuth.token) {
-      toast.error("Please log in to continue", { position: "top-left" });
       navigate("/customer-sign-in");
       return;
     }
@@ -162,7 +161,7 @@ const CustomerNavbar = () => {
     }
   };
 
-    return (
+  return (
     <header className="bg-white shadow-md p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between sticky top-0 z-50">
       {/* Logo */}
       <div className="flex items-center justify-between w-full sm:w-auto mb-2 sm:mb-0">
@@ -178,7 +177,9 @@ const CustomerNavbar = () => {
       </div>
 
       {/* Search Bar - takes full width on mobile, shrinks on larger screens */}
-      <div className="flex-1 w-full sm:mx-4 relative order-3 sm:order-2"> {/* order-3 ensures it's below logo on mobile */}
+      <div className="flex-1 w-full sm:mx-4 relative order-3 sm:order-2">
+        {" "}
+        {/* order-3 ensures it's below logo on mobile */}
         <form onSubmit={handleSearchSubmit}>
           <div className="relative">
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -210,13 +211,12 @@ const CustomerNavbar = () => {
                 },
                 index
               ) => {
+                {console.log("filteredData", galleryImg)}
                 const isString = typeof galleryImg[0] === "string";
                 const fileName = isString
-                  ? galleryImg[0].split(/[/\\]/).pop()
+                  ? galleryImg[0]
                   : null;
-                const fileUrl = isString
-                  ? `${baseUrl}/uploads/property/${fileName}`
-                  : null;
+                const fileUrl = isString ? `${fileName}` : null;
                 return (
                   <div
                     onClick={() => {
@@ -227,7 +227,8 @@ const CustomerNavbar = () => {
                       setSearch("");
                     }}
                     key={index}
-                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 cursor-pointer transition-all duration-200 hover:bg-green-50 ${ // Adjusted padding, gap
+                    className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 cursor-pointer transition-all duration-200 hover:bg-green-50 ${
+                      // Adjusted padding, gap
                       index === selectedIndex ? "bg-green-100" : ""
                     } ${index === 0 ? "rounded-t-xl" : ""} ${
                       index === filteredData.length - 1 ? "rounded-b-xl" : ""
@@ -239,7 +240,9 @@ const CustomerNavbar = () => {
                       className="rounded-lg w-10 h-10 sm:w-12 sm:h-12 object-cover border border-gray-200" // Smaller image on mobile
                     />
                     <div className="flex-1">
-                      <p className="text-xs sm:text-sm font-semibold text-gray-800"> {/* Adjusted text size */}
+                      <p className="text-xs sm:text-sm font-semibold text-gray-800">
+                        {" "}
+                        {/* Adjusted text size */}
                         {title}
                         <span className="text-gray-500">
                           {" "}
@@ -249,7 +252,9 @@ const CustomerNavbar = () => {
                           ({status})
                         </span>
                       </p>
-                      <p className="text-xxs sm:text-xs text-gray-600 line-clamp-1"> {/* Adjusted text size */}
+                      <p className="text-xxs sm:text-xs text-gray-600 line-clamp-1">
+                        {" "}
+                        {/* Adjusted text size */}
                         {address} -{" "}
                         {floorPlan.map((plan) => plan.type).join(", ")}
                       </p>
@@ -263,24 +268,40 @@ const CustomerNavbar = () => {
       </div>
 
       {/* User Icons - remain on the right, but adapt spacing */}
-      <div className="flex items-center space-x-3 sm:space-x-4 order-2 sm:order-3 mt-2 sm:mt-0"> {/* order-2 ensures it's next to logo on mobile, mt adds space */}
-        <Link to={"/customer"} className="text-gray-600 hover:text-logoBlue p-1 sm:p-0"> {/* Added padding for tap target */}
+      <div className="flex items-center space-x-3 sm:space-x-4 order-2 sm:order-3 mt-2 sm:mt-0">
+        {" "}
+        {/* order-2 ensures it's next to logo on mobile, mt adds space */}
+        <Link
+          to={"/customer"}
+          className="text-gray-600 hover:text-logoBlue p-1 sm:p-0"
+        >
+          {" "}
+          {/* Added padding for tap target */}
           <FiBell className="text-xl sm:text-2xl" /> {/* Adjusted icon size */}
         </Link>
         <Link to={"/customer/profile"} className="flex items-center space-x-2">
-          <CgProfile className="text-xl sm:text-2xl" /> {/* Adjusted icon size */}
-          <div className="hidden sm:block"> {/* Hide user name/role on very small screens */}
+          <CgProfile className="text-xl sm:text-2xl" />{" "}
+          {/* Adjusted icon size */}
+          <div className="hidden sm:block">
+            {" "}
+            {/* Hide user name/role on very small screens */}
             {loading ? (
               <div className="text-sm">Loading...</div>
             ) : user ? (
               <div>
-                <span className="font-semibold text-sm">{user.fullName || "User"}</span>
-                <span className="text-xs text-gray-500 block">Buyer/Seller</span>
+                <span className="font-semibold text-sm">
+                  {user.fullName || "User"}
+                </span>
+                <span className="text-xs text-gray-500 block">
+                  Buyer/Seller
+                </span>
               </div>
             ) : (
               <div>
                 <span className="font-semibold text-sm">Guest</span>
-                <span className="text-xs text-gray-500 block">Buyer/Seller</span>
+                <span className="text-xs text-gray-500 block">
+                  Buyer/Seller
+                </span>
               </div>
             )}
           </div>
@@ -288,7 +309,6 @@ const CustomerNavbar = () => {
       </div>
     </header>
   );
-
 };
 
 export default CustomerNavbar;

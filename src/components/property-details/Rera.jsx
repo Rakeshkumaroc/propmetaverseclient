@@ -14,7 +14,7 @@ const Rera = ({ reraImg }) => {
             >
               {img ? (
                 <img
-                  src={baseUrl + "/Uploads/rera/" + img}
+                  src={img}
                   alt="...."
                   className=" w-32"
                 />

@@ -4,23 +4,24 @@ import { MdEmail, MdHome, MdOutlineStar } from "react-icons/md";
 import { VscDiff } from "react-icons/vsc";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logopng.png";
-import { RiLoginBoxFill, RiUserFill } from "react-icons/ri"; 
+import { RiLoginBoxFill, RiUserFill } from "react-icons/ri";
 import ChatBot from "./ChatBot";
-import ActionsBtn from "./ActionsBtn"; 
- 
+import ActionsBtn from "./ActionsBtn";
+
 const Navbar = ({ isGlass }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
- 
+  const [isSelelrExit, setIsSelelrExit] = useState(false);
 
   useEffect(() => {
     const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+    const sellerid = localStorage.getItem("sellerId");
+    setIsSelelrExit(sellerid);
+
     setIsAuthenticated(!!(customerAuth && customerAuth.token));
 
     window.scrollTo({ top: 0, behavior: "smooth" });
-  
-  
 
     const handleScroll = () => {
       if (window.scrollY > window.innerHeight) {
@@ -143,7 +144,11 @@ const Navbar = ({ isGlass }) => {
               </li>
               <li>
                 <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded w-full md:w-auto">
-                  <Link to="/seller-sign-up">Partner With Us</Link>
+                  {isSelelrExit ? (
+                    <Link to="/seller">Partner Dashboard</Link>
+                  ) : (
+                    <Link to="/seller-sign-up">Partner With Us</Link>
+                  )}
                 </button>
               </li>
             </ul>
@@ -197,7 +202,7 @@ const Navbar = ({ isGlass }) => {
             </div>
           </div>
         </nav>
-      </header> 
+      </header>
       <ChatBot />
       <ActionsBtn />
     </>

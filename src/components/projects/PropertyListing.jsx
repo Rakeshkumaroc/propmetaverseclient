@@ -125,7 +125,7 @@ const PropertyListing = ({ properties }) => {
               developer={proj.developer || "Unknown"}
               image={
                 proj.galleryImg[0]
-                  ? `${baseUrl}/uploads/property/${proj.galleryImg[0]}`
+                  ? `${proj.galleryImg[0]}`
                   : "https://via.placeholder.com/400"
               }
               amenities={proj.amenities.slice(0, 3)} // Show top 3 amenities
