@@ -76,27 +76,35 @@ const Navbar = ({ isGlass }) => {
                 </Link>
               </>
             )}
-            <div className="flex items-center gap-1">
-              {isAuthenticated ? (
-                <Link
-                  to="/customer"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <RiUserFill /> Profile
-                </Link>
-              ) : (
-                <>
-                  <RiLoginBoxFill />
-                  <Link className="hover:text-logoColor" to="/customer-sign-up">
-                    Client Register
+            {!isSelelrExit && (
+              <div className="flex items-center gap-1">
+                {isAuthenticated ? (
+                  <Link
+                    to="/customer"
+                    className="hover:text-logoColor flex items-center gap-1"
+                  >
+                    <RiUserFill /> Profile
                   </Link>
-                  /
-                  <Link className="hover:text-logoColor" to="/customer-sign-in">
-                    Login
-                  </Link>
-                </>
-              )}
-            </div>
+                ) : (
+                  <>
+                    <RiLoginBoxFill />
+                    <Link
+                      className="hover:text-logoColor"
+                      to="/customer-sign-up"
+                    >
+                      Client Register
+                    </Link>
+                    /
+                    <Link
+                      className="hover:text-logoColor"
+                      to="/customer-sign-in"
+                    >
+                      Login
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -142,15 +150,17 @@ const Navbar = ({ isGlass }) => {
                   Contact
                 </Link>
               </li>
-              <li>
-                <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded w-full md:w-auto">
-                  {isSelelrExit ? (
-                    <Link to="/seller">Partner Dashboard</Link>
-                  ) : (
-                    <Link to="/seller-sign-up">Partner With Us</Link>
-                  )}
-                </button>
-              </li>
+              {!isAuthenticated && (
+                <li>
+                  <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded w-full md:w-auto">
+                    {isSelelrExit ? (
+                      <Link to="/seller">Partner Dashboard</Link>
+                    ) : (
+                      <Link to="/seller-sign-up">Partner With Us</Link>
+                    )}
+                  </button>
+                </li>
+              )}
             </ul>
             {/* Mobile Menu Additional Links */}
             <div

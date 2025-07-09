@@ -28,8 +28,7 @@ const Sidebar = () => {
         {
           icon: <MdOutlineMarkUnreadChatAlt />,
           label: "Enquiries", // Review relevance
-          link: "/enquiry"
-         
+          link: "/enquiry",
         },
         {
           icon: <MdContentCopy />,
@@ -132,7 +131,9 @@ const Sidebar = () => {
     <>
       <div className="thin-scrollbar hidden lg:block w-[490px] min-h-screen bg-white text-black overflow-auto shadow-lg">
         <div className="p-5">
-          <img src={Logo} alt="logo" className="w-40 mb-5" />
+          <Link to={"/"}>
+            <img src={Logo} alt="logo" className="w-40 mb-5" />
+          </Link>
           {sections.map((section, index) => (
             <div key={index} className="pb-6">
               <p className="text-gray-900 uppercase mb-3">{section.title}</p>

@@ -9,7 +9,7 @@ import Logo from "../../../assets/logopng.png";
 import { useLocation } from "react-router-dom";
 import { BsBuildingAdd } from "react-icons/bs";
 import { FaTasks } from "react-icons/fa"; // Icon for Lead Management
-import { MdOutlineBook } from "react-icons/md"; 
+import { MdOutlineBook } from "react-icons/md";
 import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
@@ -120,7 +120,9 @@ const SellerSidebar = () => {
     <>
       <div className="thin-scrollbar hidden lg:block w-96 min-h-screen bg-white text-black overflow-auto shadow-lg">
         <div className="p-7">
-          <img src={Logo} alt="logo" className="w-40 mb-5" />
+          <Link to={"/"}>
+            <img src={Logo} alt="logo" className="w-40 mb-5" />
+          </Link>
           {sections.map((section, index) => (
             <div key={index} className="pb-6">
               <p className="text-gray-900 uppercase mb-3">{section.title}</p>
