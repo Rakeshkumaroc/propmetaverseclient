@@ -138,7 +138,7 @@ const TrendingProjects = () => {
       )}
 
       <div className="text-center mt-10">
-        {filtered.length > 0 && (
+        {filtered.length > 6 && (
           <button
             onClick={handleExploreMore}
             className="bg-logoBlue text-white px-5 py-2 rounded hover:bg-logoBlue/90 font-medium transition-all duration-200 transform hover:scale-105"
