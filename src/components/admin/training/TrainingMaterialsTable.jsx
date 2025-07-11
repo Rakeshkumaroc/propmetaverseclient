@@ -8,7 +8,7 @@ import axios from "axios";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const TrainingMaterialsTable = ({ searchValue }) => {
+const TrainingMaterialsTable = ({ searchValue, uploading }) => {
   const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
@@ -43,7 +43,9 @@ const TrainingMaterialsTable = ({ searchValue }) => {
       Description: item.description || "N/A",
       FileName: item.fileName || "N/A",
       SentViaEmail: item.sendEmail ? "Yes" : "No",
-      CreatedAt: item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A",
+      CreatedAt: item.createdAt
+        ? new Date(item.createdAt).toLocaleString()
+        : "N/A",
     }));
     const ws = XLSX.utils.json_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
@@ -71,7 +73,9 @@ const TrainingMaterialsTable = ({ searchValue }) => {
             // headers: { Authorization: `Bearer ${adminAuth.token}` },
             data: { ids: selectedIds },
           });
-          setData((prev) => prev.filter((item) => !selectedIds.includes(item._id)));
+          setData((prev) =>
+            prev.filter((item) => !selectedIds.includes(item._id))
+          );
           setSelectedIds([]);
           Swal.fire({
             title: "Deleted!",
@@ -80,7 +84,10 @@ const TrainingMaterialsTable = ({ searchValue }) => {
             confirmButtonColor: "#1b639f",
           });
         } catch (error) {
-          console.error("Error deleting training materials:", error.response?.data || error.message);
+          console.error(
+            "Error deleting training materials:",
+            error.response?.data || error.message
+          );
           Swal.fire({
             title: "Error!",
             text: "Failed to delete training materials. Please try again.",
@@ -100,13 +107,16 @@ const TrainingMaterialsTable = ({ searchValue }) => {
         // const adminAuth = JSON.parse(localStorage.getItem("adminAuth"));
         const response = await axios.get(`${baseUrl}/training-materials`);
         let filteredData = response.data.materials || [];
+        console.log("filteredData", filteredData);
 
         // Apply search filter
         if (searchValue) {
           filteredData = filteredData.filter(
             (item) =>
               item.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-              item.description?.toLowerCase().includes(searchValue.toLowerCase())
+              item.description
+                ?.toLowerCase()
+                .includes(searchValue.toLowerCase())
           );
         }
 
@@ -119,15 +129,17 @@ const TrainingMaterialsTable = ({ searchValue }) => {
 
         setData(filteredData);
       } catch (error) {
-        console.error("Error fetching training materials:", error.response?.data || error.message);
-        
+        console.error(
+          "Error fetching training materials:",
+          error.response?.data || error.message
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [filter, searchValue]);
+  }, [filter, searchValue, uploading]);
 
   return (
     <div
@@ -203,7 +215,8 @@ const TrainingMaterialsTable = ({ searchValue }) => {
                 onClick={downloadExcel}
                 className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
               >
-                <FaDownload /> Export <span className="hidden md:inline">to Excel</span>
+                <FaDownload /> Export{" "}
+                <span className="hidden md:inline">to Excel</span>
               </p>
             </div>
           </div>
@@ -284,7 +297,11 @@ const TrainingMaterialsTable = ({ searchValue }) => {
                     <td className="px-6 py-4">{value.description || "N/A"}</td>
                     <td className="px-6 py-4">
                       <a
-                        href={`${baseUrl}/Uploads/training/${value.fileName}`}
+                        href={`${
+                          value.fileType === "image"
+                            ? value.filePath
+                            : value.link
+                        }`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
@@ -296,7 +313,9 @@ const TrainingMaterialsTable = ({ searchValue }) => {
                       {value.sendEmail ? "Yes" : "No"}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      {value.createdAt ? new Date(value.createdAt).toLocaleString() : "N/A"}
+                      {value.createdAt
+                        ? new Date(value.createdAt).toLocaleString()
+                        : "N/A"}
                     </td>
                   </tr>
                 ))

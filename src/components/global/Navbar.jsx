@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaPhoneAlt, FaBars, FaTimes, FaBuilding } from "react-icons/fa";
 import { MdEmail, MdHome, MdOutlineStar } from "react-icons/md";
 import { VscDiff } from "react-icons/vsc";
 import { Link } from "react-router-dom";
@@ -7,6 +7,8 @@ import Logo from "../../assets/logopng.png";
 import { RiLoginBoxFill, RiUserFill } from "react-icons/ri";
 import ChatBot from "./ChatBot";
 import ActionsBtn from "./ActionsBtn";
+import { PiBuildingsFill, PiInfoFill } from "react-icons/pi";
+import { IoMdContact } from "react-icons/io";
 
 const Navbar = ({ isGlass }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -131,23 +133,32 @@ const Navbar = ({ isGlass }) => {
           >
             <ul className="flex flex-col md:flex-row md:items-center space-y-6 md:space-y-0 md:space-x-5 lg:space-x-10">
               <li>
-                <Link to="/" className="hover:text-logoColor flex items-center">
-                  <MdHome />
+                <Link to="/" className="hover:text-logoColor flex items-center gap-1">
+                  <MdHome /> Home
                 </Link>
               </li>
               <li>
-                <Link to="/projects" className="hover:text-logoColor">
-                  Projects
+                <Link
+                  to="/projects"
+                  className="hover:text-logoColor flex items-center gap-1"
+                >
+                  <PiBuildingsFill /> Projects
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-logoColor">
-                  About
+                <Link
+                  to="/about"
+                  className="hover:text-logoColor flex items-center gap-1"
+                >
+                  <PiInfoFill /> About
                 </Link>
               </li>
               <li>
-                <Link to="/contact-us" className="hover:text-logoColor">
-                  Contact
+                <Link
+                  to="/contact-us"
+                  className="hover:text-logoColor flex items-center gap-1"
+                >
+                  <IoMdContact /> Contact
                 </Link>
               </li>
               {!isAuthenticated && (

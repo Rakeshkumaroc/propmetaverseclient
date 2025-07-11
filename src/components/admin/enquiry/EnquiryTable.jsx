@@ -87,6 +87,7 @@ const EnquiryTable = ({ searchValue }) => {
       try {
         let result = await fetch(baseUrl + "/enquiry");
         result = await result.json();
+        console.log("result", result);
 
         if (searchValue) {
           let filteredResult = result.filter((item) => {
@@ -289,10 +290,16 @@ const EnquiryTable = ({ searchValue }) => {
                         <td className="px-6 py-4 text-center ">
                           {value.gender ? value.gender : "no value"}
                         </td>
-                        <td className="px-6 py-4 text-center ">
-                          {value.dob ? value.dob : "no value"}
+                        <td className="px-6 py-4 text-center">
+                          {value.dob
+                            ? new Date(value.dob).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              })
+                            : "no value"}
                         </td>
-                        <td className="px-6 mx-auto text-center flex items-center justify-center py-4 text-nowrap">
+                        <td className="px-6 mx-auto cursor-pointer text-center flex items-center justify-center py-4 text-nowrap">
                           <MdOutlinePreview
                             className="text-2xl text-black"
                             onClick={() => {

@@ -69,11 +69,11 @@ const SellerSignUp = () => {
   return (
     <>
      <Navbar />
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mt-20">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
           <div className="py-4 px-6">
             <h2 className="text-2xl font-semibold text-center mb-4">
-              Sub-Broker Sign Up
+              Partner Sign Up
             </h2>
           </div>
           <form className="p-6 space-y-2" onSubmit={submitHandler}>

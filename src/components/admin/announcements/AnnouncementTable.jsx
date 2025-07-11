@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import { FaDownload } from "react-icons/fa";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const AnnouncementTable = ({ searchValue }) => {
+const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
   const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
@@ -140,7 +140,7 @@ const AnnouncementTable = ({ searchValue }) => {
     };
 
     fetchData();
-  }, [filter, searchValue]);
+  }, [filter, searchValue,isFormOpen]);
 
   return (
     <div

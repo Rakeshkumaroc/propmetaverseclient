@@ -151,6 +151,20 @@ export default function CompleteSellerProfile() {
         .catch((err) => {
           setLoading(false);
           SetBtnDisable(false);
+          const errMsg =
+            err?.response?.data?.message ||
+            "Something went wrong, please try again";
+          Swal.fire({
+            title: "Error !",
+            text: errMsg,
+            confirmButtonColor: "#000",
+            icon: "error",
+            customClass: {
+              confirmButton:
+                "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+            },
+            buttonsStyling: false,
+          });
           console.log(err);
         });
     } else {
@@ -220,7 +234,7 @@ export default function CompleteSellerProfile() {
       console.error("Document upload failed:", error);
       Swal.fire({
         title: "Error!",
-        text: "Document updated Failed!",
+        text: error.response.data.error || "Document updated Failed!",
         confirmButtonColor: "#1b639f",
         icon: "error",
         customClass: {
@@ -562,7 +576,7 @@ export default function CompleteSellerProfile() {
                           : "Aadhar Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PNG, JPEG, JPG, MAX 2MB
+                        PNG, JPEG, JPG, MAX 200kb
                       </p>
                     </div>
                     <input
@@ -585,7 +599,7 @@ export default function CompleteSellerProfile() {
                           : "PAN Card"}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 mt-1">
-                        PNG, JPEG, JPG, MAX 2MB
+                        PNG, JPEG, JPG, MAX 200kb
                       </p>
                     </div>
                     <input
@@ -597,7 +611,6 @@ export default function CompleteSellerProfile() {
                     />
                   </div>
                 </label>
- 
               </div>
 
               <div className="flex justify-between">

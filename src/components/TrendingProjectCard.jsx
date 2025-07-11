@@ -38,10 +38,12 @@ const TrendingProjectCard = ({
       const authStatus = !!(customerAuth && customerAuth.token);
       setIsAuthenticated(authStatus);
 
-      const storedFavorites = JSON.parse(localStorage.getItem("savedProperties")) || [];
+      const storedFavorites =
+        JSON.parse(localStorage.getItem("savedProperties")) || [];
       setIsFavorited(storedFavorites.some((item) => item.id === id));
 
-      const storedCompare = JSON.parse(localStorage.getItem("compareProperties")) || [];
+      const storedCompare =
+        JSON.parse(localStorage.getItem("compareProperties")) || [];
       setIsCompared(storedCompare.some((item) => item.id === id));
     } catch (error) {
       console.error("Error parsing localStorage:", error);
@@ -51,7 +53,10 @@ const TrendingProjectCard = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (shareDropdownRef.current && !shareDropdownRef.current.contains(event.target)) {
+      if (
+        shareDropdownRef.current &&
+        !shareDropdownRef.current.contains(event.target)
+      ) {
         setIsShareOpen(false);
       }
     };
@@ -62,7 +67,9 @@ const TrendingProjectCard = ({
   const handleFavoriteToggle = async (e) => {
     e.stopPropagation();
     if (!isAuthenticated) {
-      toast.error("Please log in to add to favorites.", { position: "top-left" });
+      toast.error("Please log in as a customer to add to favorites.", {
+        position: "top-left",
+      });
       return;
     }
 
@@ -73,13 +80,16 @@ const TrendingProjectCard = ({
     }
 
     try {
-      let storedFavorites = JSON.parse(localStorage.getItem("savedProperties")) || [];
+      let storedFavorites =
+        JSON.parse(localStorage.getItem("savedProperties")) || [];
       const alreadyExists = storedFavorites.some((item) => item.id === id);
       const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
 
       if (alreadyExists) {
         // Remove from favorites
-        console.log("Sending remove-from-saved-properties request:", { propertyId: id });
+        console.log("Sending remove-from-saved-properties request:", {
+          propertyId: id,
+        });
         await axios.post(
           `${baseUrl}/remove-from-saved-properties`,
           { propertyId: id },
@@ -88,12 +98,19 @@ const TrendingProjectCard = ({
           }
         );
         storedFavorites = storedFavorites.filter((item) => item.id !== id);
-        localStorage.setItem("savedProperties", JSON.stringify(storedFavorites));
+        localStorage.setItem(
+          "savedProperties",
+          JSON.stringify(storedFavorites)
+        );
         setIsFavorited(false);
-        toast.success(`Removed "${title}" from Favorites`, { position: "top-left" });
+        toast.success(`Removed "${title}" from Favorites`, {
+          position: "top-left",
+        });
       } else {
         // Add to favorites
-        console.log("Sending add-to-saved-properties request:", { propertyId: id });
+        console.log("Sending add-to-saved-properties request:", {
+          propertyId: id,
+        });
         await axios.post(
           `${baseUrl}/add-to-saved-properties`,
           { propertyId: id },
@@ -102,9 +119,14 @@ const TrendingProjectCard = ({
           }
         );
         storedFavorites.push({ id });
-        localStorage.setItem("savedProperties", JSON.stringify(storedFavorites));
+        localStorage.setItem(
+          "savedProperties",
+          JSON.stringify(storedFavorites)
+        );
         setIsFavorited(true);
-        toast.success(`Added "${title}" to Favorites`, { position: "top-left" });
+        toast.success(`Added "${title}" to Favorites`, {
+          position: "top-left",
+        });
       }
     } catch (error) {
       console.error("Error updating favorites:", {
@@ -133,15 +155,20 @@ const TrendingProjectCard = ({
           position: "top-left",
         });
         // Remove from localStorage to sync state
-        let storedFavorites = JSON.parse(localStorage.getItem("savedProperties")) || [];
+        let storedFavorites =
+          JSON.parse(localStorage.getItem("savedProperties")) || [];
         storedFavorites = storedFavorites.filter((item) => item.id !== id);
-        localStorage.setItem("savedProperties", JSON.stringify(storedFavorites));
+        localStorage.setItem(
+          "savedProperties",
+          JSON.stringify(storedFavorites)
+        );
         setIsFavorited(false);
         return;
       }
 
       toast.error(
-        error.response?.data?.message || "Failed to update favorites. Please try again.",
+        error.response?.data?.message ||
+          "Failed to update favorites. Please try again.",
         { position: "top-left" }
       );
     }
@@ -150,12 +177,15 @@ const TrendingProjectCard = ({
   const handleCompareToggle = (e) => {
     e.stopPropagation();
     try {
-      let storedCompare = JSON.parse(localStorage.getItem("compareProperties")) || [];
+      let storedCompare =
+        JSON.parse(localStorage.getItem("compareProperties")) || [];
       const alreadyExists = storedCompare.some((item) => item.id === id);
 
       if (alreadyExists) {
         storedCompare = storedCompare.filter((item) => item.id !== id);
-        toast.success(`Removed "${title}" from Compare`, { position: "top-left" });
+        toast.success(`Removed "${title}" from Compare`, {
+          position: "top-left",
+        });
       } else {
         if (storedCompare.length >= 4) {
           toast.error("You can only compare up to 4 properties.", {
@@ -199,15 +229,18 @@ const TrendingProjectCard = ({
 
   const handleCopyLink = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(propertyUrl).then(() => {
-      toast.success("Link copied to clipboard!", {
-        position: "top-left",
+    navigator.clipboard
+      .writeText(propertyUrl)
+      .then(() => {
+        toast.success("Link copied to clipboard!", {
+          position: "top-left",
+        });
+        setIsShareOpen(false);
+      })
+      .catch((error) => {
+        console.error("Error copying link:", error);
+        toast.error("Failed to copy link.", { position: "top-left" });
       });
-      setIsShareOpen(false);
-    }).catch((error) => {
-      console.error("Error copying link:", error);
-      toast.error("Failed to copy link.", { position: "top-left" });
-    });
   };
 
   const shareLinks = [
@@ -221,7 +254,9 @@ const TrendingProjectCard = ({
     {
       name: "Facebook",
       icon: <FaFacebook size={20} />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(propertyUrl)}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        propertyUrl
+      )}`,
     },
     {
       name: "LinkedIn",
@@ -283,18 +318,24 @@ const TrendingProjectCard = ({
 
         <div className="flex justify-between items-center pt-4 border-t border-gray-100 relative">
           <div className="flex gap-2" ref={shareDropdownRef}>
-            <button
-              onClick={handleFavoriteToggle}
-              className="group focus:outline-none"
-              title={isFavorited ? "Remove from Favorites" : "Add to Favorites"}
-              aria-label={isFavorited ? "Remove from Favorites" : "Add to Favorites"}
-            >
-              {isFavorited ? (
-                <MdFavorite className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
-              ) : (
-                <AiOutlineHeart className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
-              )}
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={handleFavoriteToggle}
+                className="group focus:outline-none"
+                title={
+                  isFavorited ? "Remove from Favorites" : "Add to Favorites"
+                }
+                aria-label={
+                  isFavorited ? "Remove from Favorites" : "Add to Favorites"
+                }
+              >
+                {isFavorited ? (
+                  <MdFavorite className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
+                ) : (
+                  <AiOutlineHeart className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
+                )}
+              </button>
+            )}
 
             <button
               onClick={handleCompareToggle}

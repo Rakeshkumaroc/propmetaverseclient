@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IndianRupee,
   Gift,
@@ -14,9 +14,13 @@ import {
   Eye,
   Trash2,
 } from "lucide-react";
+import { MdFavorite } from "react-icons/md"; // Import filled heart icon
+import { AiOutlineHeart } from "react-icons/ai"; // Import outlined heart icon
+import { toast } from "react-toastify"; // For notifications
+import axios from "axios"; // For API calls
 
 // baseUrl is not needed for Cloudinary URLs
-const baseUrl = import.meta.env.VITE_APP_URL; 
+const baseUrl = import.meta.env.VITE_APP_URL;
 
 const formatPrice = (value) => {
   const num = Number(value);
@@ -29,21 +33,9 @@ const formatPrice = (value) => {
 const CompareTable = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState(() => {
-    return JSON.parse(localStorage.getItem("favoriteProperties")) || [];
-  });
   const [removedProperties, setRemovedProperties] = useState([]);
-
-  const toggleFavorite = (propertyId) => {
-    const updatedFavorites = favorites.includes(propertyId)
-      ? favorites.filter((id) => id !== propertyId)
-      : [...favorites, propertyId];
-    setFavorites(updatedFavorites);
-    localStorage.setItem(
-      "favoriteProperties",
-      JSON.stringify(updatedFavorites)
-    );
-  };
+  const [favoritePropertyIds, setFavoritePropertyIds] = useState([]); // New state for favorite IDs
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for authentication
 
   const removeProperty = (propertyId) => {
     const updatedCompare = JSON.parse(
@@ -52,12 +44,125 @@ const CompareTable = () => {
     localStorage.setItem("compareProperties", JSON.stringify(updatedCompare));
     setProperties(properties.filter((prop) => prop._id !== propertyId));
   };
+
+  const handleFavoriteToggle = async (e, propertyId, propertyTitle) => {
+    e.stopPropagation(); // Prevent triggering other click events (like navigating to details)
+
+    if (!isAuthenticated) {
+      toast.error("Please log in as a customer to add to favorites.", {
+        position: "top-left",
+      });
+      return;
+    }
+
+    // Validate propertyId format before making API call
+    if (!/^[0-9a-fA-F]{24}$/.test(propertyId)) {
+      toast.error("Invalid property ID.", { position: "top-left" });
+      return;
+    }
+
+    try {
+      let storedFavorites =
+        JSON.parse(localStorage.getItem("savedProperties")) || [];
+      const isCurrentlyFavorited = storedFavorites.some(
+        (item) => item.id === propertyId
+      );
+      const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+
+      if (isCurrentlyFavorited) {
+        // Remove from favorites
+        console.log("Sending remove-from-saved-properties request:", {
+          propertyId: propertyId,
+        });
+        await axios.post(
+          `${baseUrl}/remove-from-saved-properties`,
+          { propertyId: propertyId },
+          {
+            headers: { Authorization: `Bearer ${customerAuth.token}` },
+          }
+        );
+        storedFavorites = storedFavorites.filter(
+          (item) => item.id !== propertyId
+        );
+        toast.success(`Removed "${propertyTitle}" from Favorites`, {
+          position: "top-left",
+        });
+      } else {
+        // Add to favorites
+        console.log("Sending add-to-saved-properties request:", {
+          propertyId: propertyId,
+        });
+        await axios.post(
+          `${baseUrl}/add-to-saved-properties`,
+          { propertyId: propertyId },
+          {
+            headers: { Authorization: `Bearer ${customerAuth.token}` },
+          }
+        );
+        storedFavorites.push({ id: propertyId });
+        toast.success(`Added "${propertyTitle}" to Favorites`, {
+          position: "top-left",
+        });
+      }
+
+      localStorage.setItem("savedProperties", JSON.stringify(storedFavorites));
+      setFavoritePropertyIds(storedFavorites.map((item) => item.id)); // Update the state
+    } catch (error) {
+      console.error("Error updating favorites:", {
+        message: error.response?.data?.message || error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        request: {
+          url: isCurrentlyFavorited
+            ? `${baseUrl}/remove-from-saved-properties`
+            : `${baseUrl}/add-to-saved-properties`,
+          payload: { propertyId: propertyId },
+        },
+      });
+
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please log in again.", {
+          position: "top-left",
+        });
+      } else if (error.response?.status === 404) {
+        toast.error("Property not found in favorites.", {
+          position: "top-left",
+        });
+        // Remove from localStorage to sync state if property not found on server
+        let storedFavorites =
+          JSON.parse(localStorage.getItem("savedProperties")) || [];
+        storedFavorites = storedFavorites.filter(
+          (item) => item.id !== propertyId
+        );
+        localStorage.setItem("savedProperties", JSON.stringify(storedFavorites));
+        setFavoritePropertyIds(storedFavorites.map((item) => item.id));
+      } else {
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to update favorites. Please try again.",
+          { position: "top-left" }
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchProperties = async () => {
       const ids = JSON.parse(localStorage.getItem("compareProperties")) || [];
-      if (!ids.length) return setLoading(false);
+      if (!ids.length) {
+        setLoading(false);
+        return;
+      }
 
       try {
+        // Initialize authentication and favorite property IDs from localStorage
+        const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+        setIsAuthenticated(!!(customerAuth && customerAuth.token));
+
+        const storedFavorites =
+          JSON.parse(localStorage.getItem("savedProperties")) || [];
+        setFavoritePropertyIds(storedFavorites.map((item) => item.id));
+
         const fetchedProperties = await Promise.all(
           ids.map(async (item) => {
             try {
@@ -86,6 +191,8 @@ const CompareTable = () => {
 
         setProperties(validProperties);
         setRemovedProperties(invalidIds);
+
+        console.log("validProperties", validProperties);
       } catch (err) {
         console.error("Failed to fetch properties:", err);
       } finally {
@@ -94,7 +201,7 @@ const CompareTable = () => {
     };
 
     fetchProperties();
-  }, []);
+  }, []); // Depend on nothing to run only once on mount, or add dependencies if filtering/sorting changes
 
   if (loading) {
     return (
@@ -160,23 +267,28 @@ const CompareTable = () => {
                   {properties.map((prop) => (
                     <td key={prop._id} className="p-4 text-gray-700">
                       <div className="flex space-x-2">
-                        <button
-                          onClick={() => toggleFavorite(prop._id)}
-                          className="p-2 rounded-full hover:bg-gray-100"
-                          aria-label={
-                            favorites.includes(prop._id)
-                              ? "Remove from favorites"
-                              : "Add to favorites"
-                          }
-                        >
-                          <Heart
-                            className={`w-5 h-5 ${
-                              favorites.includes(prop._id)
-                                ? "text-logoColor fill-logoColor"
-                                : "text-logoBlue"
-                            }`}
-                          />
-                        </button>
+                        {isAuthenticated && (
+                          <button
+                            onClick={(e) => handleFavoriteToggle(e, prop._id, prop.title)}
+                            className="p-2 rounded-full hover:bg-gray-100 group"
+                            title={
+                              favoritePropertyIds.includes(prop._id)
+                                ? "Remove from Favorites"
+                                : "Add to Favorites"
+                            }
+                            aria-label={
+                              favoritePropertyIds.includes(prop._id)
+                                ? "Remove from Favorites"
+                                : "Add to Favorites"
+                            }
+                          >
+                            {favoritePropertyIds.includes(prop._id) ? (
+                              <MdFavorite className="h-5 w-5 text-logoBlue group-hover:text-logoBlue/90" />
+                            ) : (
+                              <AiOutlineHeart className="h-5 w-5 text-gray-500 group-hover:text-logoBlue" />
+                            )}
+                          </button>
+                        )}
                         <button
                           onClick={() => removeProperty(prop._id)}
                           className="p-2 rounded-full hover:bg-gray-100"
@@ -187,7 +299,7 @@ const CompareTable = () => {
                         <a
                           href={
                             "/projects/" +
-                            prop.title.replaceAll(" ", "-") +
+                            prop.title.replaceAll(" ", "-").toLowerCase() +
                             "/" +
                             prop._id
                           }
@@ -201,12 +313,6 @@ const CompareTable = () => {
                   ))}
                 </tr>
                 {[
-                  {
-                    label: "Price",
-                    key: "price",
-                    icon: <IndianRupee className="w-5 h-5" />,
-                    render: (val) => formatPrice(val),
-                  },
                   {
                     label: "Discount",
                     key: "discount",
@@ -254,13 +360,20 @@ const CompareTable = () => {
                         : "N/A",
                   },
                   {
-                    label: "Floor Plan",
+                    label: "Floor Plan (Type - Price - Area)",
                     key: "floorPlan",
                     icon: <Ruler className="w-5 h-5" />,
-                    render: (val) =>
-                      val
-                        ?.map((fp) => `${fp.type} - ${fp.carpetArea} sqft`)
-                        .join(", ") || "N/A",
+                    render: (floorPlans) =>
+                      floorPlans && floorPlans.length > 0
+                        ? floorPlans
+                            .map(
+                              (fp) =>
+                                `${fp.type} - ${formatPrice(fp.price)} - ${
+                                  fp.carpetArea
+                                } sqft`
+                            )
+                            .join(", ")
+                        : "N/A",
                   },
                   {
                     label: "Image",
@@ -311,23 +424,28 @@ const CompareTable = () => {
                 <div className="bg-logoBlue p-2">
                   <h3 className="text-xl font-bold text-white">{prop.title}</h3>
                   <div className="flex space-x-2 mt-2">
-                    <button
-                      onClick={() => toggleFavorite(prop._id)}
-                      className="p-2 rounded-full bg-white hover:bg-gray-100"
-                      aria-label={
-                        favorites.includes(prop._id)
-                          ? "Remove from favorites"
-                          : "Add to favorites"
-                      }
-                    >
-                      <Heart
-                        className={`w-5 h-5 ${
-                          favorites.includes(prop._id)
-                            ? "text-logoColor fill-logoColor"
-                            : "text-logoBlue"
-                        }`}
-                      />
-                    </button>
+                    {isAuthenticated && (
+                      <button
+                        onClick={(e) => handleFavoriteToggle(e, prop._id, prop.title)}
+                        className="p-2 rounded-full bg-white hover:bg-gray-100 group"
+                        title={
+                          favoritePropertyIds.includes(prop._id)
+                            ? "Remove from Favorites"
+                            : "Add to Favorites"
+                        }
+                        aria-label={
+                          favoritePropertyIds.includes(prop._id)
+                            ? "Remove from Favorites"
+                            : "Add to Favorites"
+                        }
+                      >
+                        {favoritePropertyIds.includes(prop._id) ? (
+                          <MdFavorite className="h-5 w-5 text-logoBlue group-hover:text-logoBlue/90" />
+                        ) : (
+                          <AiOutlineHeart className="h-5 w-5 text-gray-500 group-hover:text-logoBlue" />
+                        )}
+                      </button>
+                    )}
                     <button
                       onClick={() => removeProperty(prop._id)}
                       className="p-2 rounded-full bg-white hover:bg-gray-100"
@@ -338,7 +456,7 @@ const CompareTable = () => {
                     <a
                       href={
                         "/projects/" +
-                        prop.title.replaceAll(" ", "-") +
+                        prop.title.replaceAll(" ", "-").toLowerCase() +
                         "/" +
                         prop._id
                       }
@@ -350,13 +468,6 @@ const CompareTable = () => {
                   </div>
                 </div>
                 <div className="space-y-3 text-sm p-2">
-                  <div className="flex items-center">
-                    <span>
-                      <IndianRupee className="w-5 h-5 mr-2 text-logoBlue" />
-                    </span>
-                    <span className="font-medium text-logoBlue">Price:</span>
-                    <span className="ml-2">{formatPrice(prop.price)}</span>
-                  </div>
                   <div className="flex items-center">
                     <span>
                       <Gift className="w-5 h-5 mr-2 text-logoBlue" />
@@ -431,12 +542,19 @@ const CompareTable = () => {
                       <Ruler className="w-5 h-5 mr-2 text-logoBlue" />
                     </span>
                     <span className="font-medium text-logoBlue">
-                      Floor Plan:
+                      Floor Plan (Type - Price - Area):
                     </span>
                     <span className="ml-2">
-                      {prop.floorPlan
-                        ?.map((fp) => `${fp.type} - ${fp.carpetArea} sqft`)
-                        .join(", ") || "N/A"}
+                      {prop.floorPlan && prop.floorPlan.length > 0
+                        ? prop.floorPlan
+                            .map(
+                              (fp) =>
+                                `${fp.type} - ${formatPrice(fp.price)} - ${
+                                  fp.carpetArea
+                                } sqft`
+                            )
+                            .join(", ")
+                        : "N/A"}
                     </span>
                   </div>
                   <div>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import AnnouncementTable from "../announcements/AnnouncementTable";
 import { FaPlus } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const ManageAnnouncements = () => {
   const [search, setSearch] = useState("");
@@ -28,21 +29,24 @@ const ManageAnnouncements = () => {
 
       if (response.ok) {
         setNewAnnouncement({ title: "", content: "", sendEmail: false });
-        setIsFormOpen(false); 
-        toast("Announcement created successfully!", {
-          position: "top-left",
-          type: "success",
+        setIsFormOpen(false);
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Announcement created successfully!",
+          confirmButtonColor: "#000",
         });
       } else {
         throw new Error("Failed to create announcement");
       }
     } catch (error) {
       console.error("Error creating announcement:", error);
-      alert("");
-       toast("Failed to create announcement. Please try again.!", {
-          position: "top-left",
-          type: "error",
-        });
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete announcements. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#1b639f",
+      });
     }
   };
 
@@ -148,7 +152,7 @@ const ManageAnnouncements = () => {
         </div>
       )}
 
-      <AnnouncementTable searchValue={search} />
+      <AnnouncementTable searchValue={search} isFormOpen={isFormOpen} />
     </div>
   );
 };
