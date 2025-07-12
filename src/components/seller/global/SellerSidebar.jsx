@@ -11,6 +11,7 @@ import { BsBuildingAdd } from "react-icons/bs";
 import { FaTasks } from "react-icons/fa"; // Icon for Lead Management
 import { MdOutlineBook } from "react-icons/md";
 import axios from "axios";
+import { LiaMoneyCheckSolid } from "react-icons/lia";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -74,13 +75,13 @@ const SellerSidebar = () => {
               link: "/seller-leads",
             }
           : null,
-        // status === "approved"
-        //   ? {
-        //       icon: <LiaMoneyCheckSolid />,
-        //       label: "Commission Management",
-        //       link: "/commissions",
-        //     }
-        //   : null,
+        status === "approved"
+           ? {
+              icon: <LiaMoneyCheckSolid/>,
+              label: "Commission Management",
+              link: "/seller-commission",
+            }
+          : null,
       ].filter(Boolean),
     },
     {

@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import GoogleButton from "../components/global/GoogleButton";
 import Swal from "sweetalert2"; // Import SweetAlert2
 import axios from "axios";
+import Navbar from "../components/global/Navbar";
+import Footer from "../components/global/Footer";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -70,6 +72,8 @@ const SellerLoginPage = () => {
   };
 
   return (
+    <>
+     <Navbar/>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
         <div className="py-4 px-6">
@@ -181,6 +185,8 @@ const SellerLoginPage = () => {
         </form>
       </div>
     </div>
+      <Footer/>
+    </>
   );
 };
 

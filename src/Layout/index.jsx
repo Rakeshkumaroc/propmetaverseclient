@@ -55,6 +55,7 @@ import MyListing from "../components/customer/pages/MyListing";
 import CustomerAddProperty from "../components/customer/pages/CustomerAddProperty";
 import CustomerLeadManagement from "../components/customer/pages/CustomerLeadManagement";
 import SearchHistory from "../components/customer/pages/SearchHistory";
+import SellerCommission from "../components/seller/pages/SellerCommission";
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -134,7 +135,7 @@ const Layout = () => {
           {/* commission-management */}
           <Route
             path="commission-management"
-            element={<CommissionManagement />}
+            element={<CommissionManagement/>}
           />
           <Route path="listing-management" element={<ListingManagement />} />
 
@@ -162,6 +163,7 @@ const Layout = () => {
           <Route path="seller-leads" element={<SellerLeadManagement />} />
           <Route path="seller-training" element={<TrainingAndResources />} />
           <Route path="seller-notification" element={<AnnouncementsPage />} />
+           <Route path="seller-commission" element={<SellerCommission/>} />
         </Route>
       </Routes>
     </BrowserRouter>

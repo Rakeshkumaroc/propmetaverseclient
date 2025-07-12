@@ -1,320 +1,478 @@
 import { useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
-import { FaEdit, FaDownload } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
+import { MdEdit, MdVisibility } from "react-icons/md";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
 import axios from "axios";
-import { MdEdit } from "react-icons/md";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const CommissionTable = ({
-  searchValue,
-  commissions,
-  setCommissions,
-  onEdit,
-}) => {
+const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
   const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [allSelect, setAllSelect] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [allSelect, setAllSelect] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [editCommission, setEditCommission] = useState(null);
+  const [editRanges, setEditRanges] = useState([]);
 
-  // Flatten commissions for table display
-  const flattenedCommissions = commissions.flatMap((commission) =>
-    commission.ranges.map((range, index) => ({
-      _id: `${commission._id}-${index}`,
-      setId: commission._id,
-      minValue: range.minValue,
-      maxValue: range.maxValue,
-      rate: range.rate,
-      updatedAt: commission.updatedAt,
+  const groupedData = commissions
+    .map((c) => ({
+      setId: c._id,
+      sellerId: c.sellerId?._id || "N/A",
+      sellerName: c.sellerId?.fullName || "N/A",
+      commissionStatus: c.status || "pending",
+      updatedAt: c.updatedAt,
+      validFrom: c.validFrom,
+      validTo: c.validTo,
+      ranges: c.ranges,
     }))
-  );
-
-  // Handle select all checkboxes
-  const handleAllSelect = () => {
-    setAllSelect(!allSelect);
-    if (!allSelect) {
-      setSelectedIds(flattenedCommissions.map((item) => item._id));
-    } else {
-      setSelectedIds([]);
-    }
-  };
-
-  // Handle individual checkbox
-  const handleCheckboxChange = (id) => {
-    setAllSelect(false);
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((selectedId) => selectedId !== id)
-        : [...prev, id]
+    .filter((item) =>
+      [
+        item.sellerName,
+        item.sellerId,
+        item.commissionStatus,
+        ...item.ranges.map((r) => `${r.minValue} ${r.maxValue} ${r.rate}`),
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(searchValue.toLowerCase())
+    )
+    .sort((a, b) =>
+      filter === "Recent"
+        ? new Date(b.updatedAt) - new Date(a.updatedAt)
+        : new Date(a.updatedAt) - new Date(b.updatedAt)
     );
+
+  const handleAllSelect = () => {
+    const allIds = groupedData.map((item) => item.setId);
+    setAllSelect(!allSelect);
+    setSelectedIds(!allSelect ? allIds : []);
   };
 
-  // Export commissions to Excel
-  const downloadExcel = () => {
-    const worksheetData = flattenedCommissions.map((item) => ({
-      SetID: item.setId || "N/A",
-      MinValue: item.minValue.toFixed(2) || "N/A",
-      MaxValue: item.maxValue.toFixed(2) || "N/A",
-      Rate: item.rate.toFixed(1) || "N/A",
-      UpdatedAt: item.updatedAt
-        ? new Date(item.updatedAt).toLocaleDateString()
-        : "N/A",
-    }));
-    const ws = XLSX.utils.json_to_sheet(worksheetData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Commissions");
-    XLSX.writeFile(wb, "Commissions.xlsx");
+  const handleCheckboxChange = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
+    );
   };
 
   const handleDelete = () => {
     if (!selectedIds.length) return;
-
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#1b639f",
-      cancelButtonColor: "#000",
+      confirmButtonColor: "#000",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const setIds = [
-            ...new Set(selectedIds.map((id) => id.split("-")[0])),
-          ];
-          const response = await axios.delete(
-            `${baseUrl}/select-commission-delete`,
-            {
-              headers: { "Content-Type": "application/json" },
-              data: { ids: setIds },
-            }
-          );
-
-          if (response.status === 200) {
-            setCommissions((prev) =>
-              prev.filter((item) => !setIds.includes(item._id))
-            );
-            setSelectedIds([]);
-            Swal.fire({
-              title: "Deleted!",
-              text: "Selected commissions have been deleted.",
-              icon: "success",
-              confirmButtonColor: "#1b639f",
-            });
-          } else {
-            throw new Error("Failed to delete commissions");
-          }
-        } catch (error) {
-          console.error("Error deleting commissions:", error);
-          Swal.fire({
-            title: "Error!",
-            text: "Failed to delete commissions. Please try again.",
-            icon: "error",
-            confirmButtonColor: "#1b639f",
+          await axios.delete(`${baseUrl}/select-commission-delete`, {
+            data: { ids: selectedIds },
           });
+          setCommissions((prev) =>
+            prev.filter((c) => !selectedIds.includes(c._id))
+          );
+          setSelectedIds([]);
+          Swal.fire("Deleted!", "Selected commission(s) deleted.", "success");
+        } catch (err) {
+          Swal.fire("Error", "Failed to delete. Try again.", "error");
         }
       }
     });
   };
 
-  // Filter and sort data
-  const filteredData = flattenedCommissions
-    .filter(
-      (item) =>
-        item.minValue
-          .toString()
-          .toLowerCase()
-          .includes(searchValue.toLowerCase()) ||
-        item.maxValue
-          .toString()
-          .toLowerCase()
-          .includes(searchValue.toLowerCase()) ||
-        item.rate.toString().toLowerCase().includes(searchValue.toLowerCase())
-    )
-    .sort((a, b) => {
-      const dateA = new Date(a.updatedAt);
-      const dateB = new Date(b.updatedAt);
-      return filter === "Recent" ? dateB - dateA : dateA - dateB;
+  const downloadExcel = () => {
+    const data = groupedData.flatMap((item) =>
+      item.ranges.map((r) => ({
+        SetID: item.setId,
+        SellerID: item.sellerId,
+        SellerName: item.sellerName,
+        MinValue: r.minValue,
+        MaxValue: r.maxValue,
+        Rate: r.rate,
+        Status: item.commissionStatus,
+        ValidFrom: item.validFrom?.slice(0, 10) || "N/A",
+        ValidTo: item.validTo?.slice(0, 10) || "N/A",
+        UpdatedAt: new Date(item.updatedAt).toLocaleString(),
+      }))
+    );
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Commissions");
+    XLSX.writeFile(wb, "Commissions.xlsx");
+  };
+
+  const handleView = (item) => {
+    const html = `
+      <div style="text-align: left; font-size: 14px;">
+        <p><strong>Seller:</strong> ${item.sellerName}</p>
+        <p><strong>Status:</strong> ${item.commissionStatus}</p>
+        <p><strong>Valid From:</strong> ${item.validFrom?.slice(0, 10)}</p>
+        <p><strong>Valid To:</strong> ${item.validTo?.slice(0, 10)}</p>
+        <hr style="margin: 10px 0;" />
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <thead>
+            <tr style="background-color: #f5f5f5;">
+              <th style="padding: 8px; border: 1px solid #ddd;">#</th>
+              <th style="padding: 8px; border: 1px solid #ddd;">Min Value</th>
+              <th style="padding: 8px; border: 1px solid #ddd;">Max Value</th>
+              <th style="padding: 8px; border: 1px solid #ddd;">Rate (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${item.ranges
+              .map(
+                (r, i) => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${
+                    i + 1
+                  }</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">₹${
+                    r.minValue
+                  }</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">₹${
+                    r.maxValue
+                  }</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${
+                    r.rate
+                  }%</td>
+                </tr>
+              `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+    Swal.fire({
+      title: "Commission Details",
+      html,
+      width: 700,
+      confirmButtonColor: "#000",
+      showCloseButton: true,
     });
+  };
+
+  const handleEdit = (item) => {
+    setEditCommission(item);
+    setEditRanges(item.ranges);
+    setEditModal(true);
+  };
+
+  const handleRangeChange = (i, field, value) => {
+    const updated = [...editRanges];
+    updated[i][field] = value;
+    setEditRanges(updated);
+  };
+
+ const handleRangeDelete = async (rangeId) => {
+  if (!rangeId) return;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Delete this commission range?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#000",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${baseUrl}/single-commission-delete`, {
+          data: { ids: [rangeId] },
+        });
+        setEditRanges((prev) => prev.filter((r) => r._id !== rangeId));
+        Swal.fire("Deleted!", "Range deleted successfully.", "success");
+      } catch (err) {
+        Swal.fire("Error", "Delete failed. Try again.", "error");
+      }
+    }
+  });
+};
+
+
+  const addRangeToEdit = () => {
+    setEditRanges([...editRanges, { minValue: "", maxValue: "", rate: "" }]);
+  };
+
+  const updateCommission = async () => {
+    try {
+      await axios.put(`${baseUrl}/commissions/${editCommission.setId}`, {
+        sellerId: editCommission.sellerId,
+        validFrom: editCommission.validFrom,
+        validTo: editCommission.validTo,
+        ranges: editRanges,
+      });
+      Swal.fire("Success", "Updated successfully", "success");
+      setEditModal(false);
+      const updated = await axios.get(`${baseUrl}/commissions`);
+      setCommissions(updated.data);
+    } catch (err) {
+      console.log(err)
+      Swal.fire("Error", err.response.data.error ||"Error updating", "error");
+    }
+  };
 
   return (
-    <div
-      className="w-full bg-mainbg sm:rounded-l-[30px] sm:rounded-r-md backdrop-blur-lg"
-      style={{ overflow: "auto" }}
-    >
-      <div className="md:p-4 mt-10">
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <div className="flex items-center justify-between p-3 flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white">
-            <div className="relative select-none flex justify-between w-full items-center cursor-pointer">
-              <div className="flex items-center gap-5">
-                {/* Sort Filter */}
-                <div
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-                >
-                  {filter}
-                  <svg
-                    className="w-2.5 h-2.5 ms-2.5"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 10 6"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 4 4 4-4"
-                    />
-                  </svg>
+    <>
+      <div className="mt-10 md:p-4 bg-white rounded shadow-md overflow-x-auto">
+        <div className="flex justify-between mb-4 items-center">
+          <div className="flex gap-3 items-center">
+            <div className="relative">
+              <button
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="bg-gray-100 text-sm px-4 py-2 rounded border"
+              >
+                {filter}
+              </button>
+              {isFilterOpen && (
+                <div className="absolute top-full left-0 bg-white shadow border rounded mt-1 z-10">
+                  {["Recent", "Oldest"].map((opt) => (
+                    <div
+                      key={opt}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setFilter(opt);
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      {opt}
+                    </div>
+                  ))}
                 </div>
-                <div
-                  style={{ display: isFilterOpen ? "" : "none" }}
-                  className="z-10 top-[34px] absolute bg-white divide-y divide-gray-100 rounded-lg shadow-md"
-                >
-                  <ul
-                    className="py-1 text-sm text-gray-700"
-                    aria-labelledby="dropdownActionButton"
-                  >
-                    <li>
-                      <p
-                        onClick={() => {
-                          setFilter("Recent");
-                          setIsFilterOpen(false);
-                        }}
-                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        Recent
-                      </p>
-                    </li>
-                    <li>
-                      <p
-                        onClick={() => {
-                          setFilter("Oldest");
-                          setIsFilterOpen(false);
-                        }}
-                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        Oldest
-                      </p>
-                    </li>
-                  </ul>
-                </div>
+              )}
+            </div>
+            <RiDeleteBin2Fill
+              className="text-red-600 text-xl cursor-pointer"
+              onClick={handleDelete}
+            />
+          </div>
+          <button
+            onClick={downloadExcel}
+            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
+          >
+            <FaDownload /> Export
+          </button>
+        </div>
 
-                <RiDeleteBin2Fill
-                  onClick={handleDelete}
-                  className="text-black font-medium rounded-lg text-md cursor-pointer"
+       <table className="min-w-full text-sm text-left text-gray-600">
+  <thead className="text-xs bg-gray-100 uppercase text-gray-700">
+    <tr>
+      <th className="px-4 py-3 text-left">
+        <input
+          type="checkbox"
+          checked={allSelect}
+          onChange={handleAllSelect}
+        />
+      </th>
+      <th className="px-4 py-3 text-left">Set ID</th>
+      <th className="px-4 py-3 text-left">Seller Name</th>
+      <th className="px-4 py-3 text-left">Status</th>
+      <th className="px-4 py-3 text-left"># Ranges</th>
+      <th className="px-4 py-3 text-left">Updated</th>
+      <th className="px-4 py-3 text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {groupedData.length === 0 ? (
+      <tr>
+        <td colSpan="7" className="text-center py-4">
+          No commissions found.
+        </td>
+      </tr>
+    ) : (
+      groupedData.map((item) => (
+        <tr
+          key={item.setId}
+          className="border-b hover:bg-gray-50"
+        >
+          <td className="px-4 py-2">
+            <input
+              type="checkbox"
+              checked={selectedIds.includes(item.setId)}
+              onChange={() => handleCheckboxChange(item.setId)}
+            />
+          </td>
+          <td className="px-4 py-2 text-left">{item.setId}</td>
+          <td className="px-4 py-2 text-left">{item.sellerName}</td>
+          <td className="px-4 py-2 text-left capitalize">
+            {item.commissionStatus}
+          </td>
+          <td className="px-4 py-2 text-left">{item.ranges.length}</td>
+          <td className="px-4 py-2 text-left">
+            {new Date(item.updatedAt).toLocaleDateString()}
+          </td>
+          <td className="px-4 py-2 text-center">
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={() => handleView(item)}
+                className="p-2 rounded bg-green-100 hover:bg-green-200"
+              >
+                <MdVisibility />
+              </button>
+              <button
+                onClick={() => handleEdit(item)}
+                className="p-2 rounded bg-yellow-100 hover:bg-yellow-200"
+              >
+                <MdEdit />
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
+
+      </div>
+
+      <Modal
+        isOpen={editModal}
+        onRequestClose={() => setEditModal(false)}
+        className="w-full max-w-4xl mx-auto bg-white rounded-xl p-6 shadow-xl outline-none"
+        overlayClassName="fixed inset-0 bg-black/60 z-50 flex items-center justify-center"
+      >
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          Edit Commission Ranges
+        </h2>
+
+        {/* Valid From & Valid To Inputs */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="text-sm font-medium text-gray-600">
+              Valid From
+            </label>
+            <input
+              type="date"
+              value={editCommission?.validFrom?.slice(0, 10) || ""}
+              onChange={(e) =>
+                setEditCommission((prev) => ({
+                  ...prev,
+                  validFrom: e.target.value,
+                }))
+              }
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-600">
+              Valid To
+            </label>
+            <input
+              type="date"
+              value={editCommission?.validTo?.slice(0, 10) || ""}
+              onChange={(e) =>
+                setEditCommission((prev) => ({
+                  ...prev,
+                  validTo: e.target.value,
+                }))
+              }
+              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+            />
+          </div>
+        </div>
+
+        {/* Ranges Section */}
+        <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+          {editRanges.map((range, idx) => (
+            <div key={idx} className="grid grid-cols-3 gap-4 items-center">
+              <div>
+                <label className="text-sm font-medium text-gray-600">
+                  Min Value
+                </label>
+                <input
+                  type="number"
+                  value={range.minValue}
+                  onChange={(e) =>
+                    handleRangeChange(idx, "minValue", e.target.value)
+                  }
+                  className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
                 />
               </div>
-              <p
-                onClick={downloadExcel}
-                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
-              >
-                <FaDownload /> Export{" "}
-                <span className="hidden md:inline">to Excel</span>
-              </p>
-            </div>
-          </div>
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 text-center uppercase bg-gray-50">
-              <tr>
-                <th scope="col" className="p-4">
-                  <div className="flex items-center">
-                    <input
-                      onClick={handleAllSelect}
-                      id="checkbox-all-search"
-                      type="checkbox"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="checkbox-all-search" className="sr-only">
-                      checkbox
-                    </label>
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Set ID
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Min Value ($)
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Max Value ($)
-                </th>
-                <th scope="col" className="px-6 py-3">
+              <div>
+                <label className="text-sm font-medium text-gray-600">
+                  Max Value
+                </label>
+                <input
+                  type="number"
+                  value={range.maxValue}
+                  onChange={(e) =>
+                    handleRangeChange(idx, "maxValue", e.target.value)
+                  }
+                  className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                />
+              </div>
+              <div className="relative">
+                <label className="text-sm font-medium text-gray-600">
                   Rate (%)
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Updated At
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">
-                    Loading...
-                  </td>
-                </tr>
-              ) : filteredData.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-4">
-                    No commission ranges found.
-                  </td>
-                </tr>
-              ) : (
-                filteredData.map((value, index) => (
-                  <tr
-                    key={value._id}
-                    className="bg-white border-b hover:bg-gray-50"
-                  >
-                    <td className="w-4 p-4">
-                      <div className="flex items-center">
-                        <input
-                          id={`checkbox-${value._id}`}
-                          type="checkbox"
-                          checked={selectedIds.includes(value._id)}
-                          onChange={() => handleCheckboxChange(value._id)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor={`checkbox-${value._id}`}
-                          className="sr-only"
-                        >
-                          checkbox
-                        </label>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">{value.setId}</td>
-                    <td className="px-6 py-4 text-center">₹{value.minValue}</td>
-                    <td className="px-6 py-4 text-center">₹{value.maxValue}</td>
-                    <td className="px-6 py-4 text-center">{value.rate}%</td>
-                    <td className="px-6 py-4 text-center">
-                      {new Date(value.updatedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button
-                        onClick={() => onEdit(value)}
-                        className="font-medium text-black p-1 rounded-md bg-logoBlue/10 hover:bg-logoBlue transition-all duration-700 hover:underline cursor-pointer"
-                      >
-                        <MdEdit />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                </label>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="number"
+                    value={range.rate}
+                    onChange={(e) =>
+                      handleRangeChange(idx, "rate", e.target.value)
+                    }
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                  />
+                  {range._id && (
+                    <RiDeleteBin2Fill
+                      onClick={() => handleRangeDelete(range._id)}
+                      className="text-red-500 text-xl cursor-pointer"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center mt-6">
+          <div className="flex gap-2">
+            <button
+              onClick={addRangeToEdit}
+              className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            >
+              + Add New Range
+            </button>
+            {editRanges.some((r) => !r._id) && (
+              <button
+                onClick={() =>
+                  setEditRanges((prev) =>
+                    prev.filter((r, i, arr) => i !== arr.length - 1)
+                  )
+                }
+                className="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+              >
+                Remove Last
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setEditModal(false)}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={updateCommission}
+              className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 
