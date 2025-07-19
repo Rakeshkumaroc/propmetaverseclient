@@ -35,7 +35,7 @@ const HeroSection = () => {
     fetchHeroData();
   }, []);
   return (
-    <div className="w-full relative mb-[93px]">
+    <div className="w-full relative mb-[93px] mt-[120px] md:mt-[150px] xl:mt-[150px] 2xl:mt-[200px]">
       <section className="w-full bg-white md:py-12 px-6 md:px-20 grid grid-cols-1 md:grid-cols-2  gap-8">
         {/* Left Section - Text & Buttons */}
         <div className="md:w-[610px] w-full">

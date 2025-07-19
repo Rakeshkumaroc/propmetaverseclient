@@ -61,7 +61,7 @@ const MarkerMap = ({ properties }) => {
     <MapContainer
       center={defaultCenter}
       zoom={defaultZoom}
-      className='  w-full z-0 h-96'
+      className='  w-full z-0 h-96 mt-[70px] md:mt-[110px] 2xl:mt-[160px]'
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

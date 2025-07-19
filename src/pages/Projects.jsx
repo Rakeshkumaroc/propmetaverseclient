@@ -7,6 +7,7 @@ import PropertyListing from "../components/projects/PropertyListing";
 import FilterBox from "../components/projects/FilterBox";
 import AllProjects from "../components/projects/AllProjects";
 import RealEstateBanner from "../components/global/RealEstateBanner";
+import ContactFormSection from "../components/projects/ContactFormSection";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Projects = () => {
@@ -23,7 +24,6 @@ const Projects = () => {
         const data = await response.json();
         console.log("data", data);
 
-      
         console.log("data", data);
 
         const mappedProperties = data.map((item) => ({
@@ -64,10 +64,8 @@ const Projects = () => {
         properties={properties}
       />
       <AllProjects properties={filteredData.length > 0 ? filteredData : []} />
-      {/* <PropertyListing
-        properties={filteredData.length > 0 ? filteredData : []}
-      />  */}
-
+     
+      <ContactFormSection />
       <RealEstateBanner />
       <Footer />
     </>

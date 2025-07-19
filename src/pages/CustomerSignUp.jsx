@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import customerSignupImg from "../assets/customerSignup.png";
+import Navbar from "../components/global/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 import GoogleButton from "../components/global/GoogleButton";
-import Swal from "sweetalert2"; // Import SweetAlert2
-import Navbar from "../components/global/Navbar";
-import Footer from "../components/global/Footer";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const CustomerSignUp = () => {
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
+    phone: "", // Added phone field to state
     password: "",
+    agreeTerms: false,
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Check for customerAuth on mount and redirect if present
   useEffect(() => {
@@ -29,10 +27,18 @@ const CustomerSignUp = () => {
     }
   }, [navigate]);
 
+  // Handle input changes
   const inputHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle checkbox change
+  const handleCheckboxChange = () => {
+    setFormData((prev) => ({ ...prev, agreeTerms: !prev.agreeTerms }));
+  };
+
+  // Handle form submission
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,29 +47,34 @@ const CustomerSignUp = () => {
     if (
       !formData.fullName ||
       !formData.email ||
-      !formData.phone ||
-      !formData.password
+      !formData.phone || // Added phone to validation
+      !formData.password ||
+      !formData.agreeTerms
     ) {
       setLoading(false);
       await Swal.fire({
         icon: "error",
         title: "Error",
-        text: "Please fill all required fields",
+        text: "Please fill all required fields and agree to the terms",
         confirmButtonText: "OK",
-        confirmButtonColor: "#1b639f", // Set confirm button color
+        confirmButtonColor: "#1b639f",
       });
       return;
     }
 
+    // Prepare data for API
     const signUpData = {
       fullName: formData.fullName,
       email: formData.email,
-      number: formData.phone, // Changed phone to number to match backend schema
+      number: formData.phone, // Use phone as number
       password: formData.password,
     };
 
     try {
-      const result = await axios.post(`${baseUrl}/sign-up-customer`, signUpData);
+      const result = await axios.post(
+        `${baseUrl}/sign-up-customer`,
+        signUpData
+      );
       setLoading(false);
       // Save customerAuth to localStorage
       localStorage.setItem(
@@ -73,25 +84,24 @@ const CustomerSignUp = () => {
           user: result.data.user,
         })
       );
-      // Show SweetAlert2 success modal
+      // Show success alert
       await Swal.fire({
         icon: "success",
         title: "Success",
         text: result.data.message,
         confirmButtonText: "OK",
-        confirmButtonColor: "#1b639f", // Set confirm button color
+        confirmButtonColor: "#1b639f",
       });
       navigate("/customer-sign-in");
       console.log("Sign-up response:", result.data);
     } catch (err) {
       setLoading(false);
-      // Show SweetAlert2 error modal
       await Swal.fire({
         icon: "error",
         title: "Error",
         text: err.response?.data?.message || "An error occurred",
         confirmButtonText: "OK",
-        confirmButtonColor: "#1b639f", // Set confirm button color
+        confirmButtonColor: "#1b639f",
       });
       console.error("Sign-up error:", err);
     }
@@ -100,130 +110,128 @@ const CustomerSignUp = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mt-20">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 ease-in-out">
-          <div className="py-4 px-6">
-            <h2 className="text-2xl font-semibold text-center">
-              Customer Sign Up
-            </h2>
-          </div>
-          <form className="p-6 space-y-2" onSubmit={submitHandler}>
-            {/* Full Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name <span className="text-black-500">*</span>
-              </label>
-              <div className="relative">
-                <FaUser className="absolute left-3 top-3 text-gray-400" />
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 md:pl-20 mx-auto sm:mt-24 mt-10 md:mt-[150px] xl:mt-[150px] 2xl:mt-[200px]">
+        <div className="w-full max-w-[1920px] grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-12 items-start ">
+          {/* Left Form Section */}
+          <div className="w-full col-span-1 md:col-span-2 max-w-md mx-auto md:max-w-none">
+            <h1 className="text-2xl sm:text-3xl md:text-[40px] font-bold text-logoBlue mb-6 sm:mb-8">
+              Create an Account!
+            </h1>
+
+            <form className="space-y-4 sm:space-y-5" onSubmit={submitHandler}>
+              <div>
                 <input
                   type="text"
-                  placeholder="Your Name"
-                  className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
-                  onChange={inputHandler}
+                  placeholder="Enter your name"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-sm sm:text-base"
                   name="fullName"
                   value={formData.fullName}
+                  onChange={inputHandler}
                 />
               </div>
-            </div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email <span className="text-black-500">*</span>
-              </label>
-              <div className="relative">
-                <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
+              <div>
                 <input
                   type="email"
-                  placeholder="example@gmail.com"
-                  className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
+                  placeholder="Enter your email"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-sm sm:text-base"
                   name="email"
                   value={formData.email}
                   onChange={inputHandler}
                 />
               </div>
-            </div>
 
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone <span className="text-black-500">*</span>
-              </label>
-              <div className="relative">
-                <FaPhone className="absolute left-3 top-3 text-gray-400" />
+              <div>
                 <input
                   type="tel"
-                  placeholder="123-456-7890"
-                  className="pl-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
+                  placeholder="Enter your phone"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-sm sm:text-base"
                   name="phone"
                   value={formData.phone}
                   onChange={inputHandler}
                 />
               </div>
-            </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password <span className="text-black-500">*</span>
-              </label>
-              <div className="relative">
-                <FaLock className="absolute left-3 top-3 text-gray-400" />
+              <div>
                 <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className="pl-10 pr-10 w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-1 focus:ring-logoColor"
+                  type="password"
+                  placeholder="Enter Password..."
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-sm sm:text-base"
                   name="password"
                   value={formData.password}
                   onChange={inputHandler}
                 />
-                <div
-                  className="absolute right-3 top-3 text-gray-500 cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-                </div>
               </div>
-            </div>
 
-            {/* Submit Button */}
-            <div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="mr-2 w-4 h-4 sm:w-5 sm:h-5"
+                  checked={formData.agreeTerms}
+                  onChange={handleCheckboxChange}
+                />
+                <label className="text-xs sm:text-sm text-gray-600">
+                  I agree to the{" "}
+                  <a href="#" className="text-logoBlue underline">
+                    terms & policy
+                  </a>
+                </label>
+              </div>
+
               <button
                 type="submit"
-                className="w-full bg-logoColor text-white font-medium py-2.5 px-4 rounded-lg transition duration-200"
+                className="w-full bg-logoBlue text-white py-2 sm:py-3 rounded-md font-medium hover:bg-opacity-90 transition text-sm sm:text-base"
+                disabled={loading}
               >
                 {loading ? (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center items-center">
                     <div className="w-5 h-5 border-t-2 border-white border-b-2 rounded-full animate-spin mr-2"></div>
+                    Loading...
                   </div>
                 ) : (
-                  "Create Account"
+                  "Sign In"
                 )}
               </button>
-            </div>
 
-            {/* Google Sign-Up */}
-            <GoogleButton
-              endpoint="/google-auth-sign-up-customer"
-              buttonName="Sign Up With Google"
-              navigatePathSuccess="/customer-sign-in"
-              navigatePathError="/customer-sign-in"
-            />
+              {/* OR separator */}
+              <div className="flex items-center my-4 sm:my-5">
+                <hr className="flex-grow border-t border-gray-300" />
+                <span className="mx-3 sm:mx-4 text-gray-500 text-xs sm:text-sm">
+                  Or
+                </span>
+                <hr className="flex-grow border-t border-gray-300" />
+              </div>
 
-            {/* Sign In Link */}
-            <p className="text-center text-sm text-gray-600 mt-2">
-              Already have an account?{" "}
-              <Link
-                to="/customer-sign-in"
-                className="text-blue-600 hover:text-[#64AE37] font-medium"
-              >
-                Sign in
-              </Link>
-            </p>
-          </form>
+              {/* Sign In with Google */}
+              <div className="flex gap-3 sm:gap-4">
+                <GoogleButton
+                  endpoint="/google-auth-sign-up-customer"
+                  buttonName="Sign in with Google"
+                  navigatePathSuccess="/customer-sign-in"
+                  navigatePathError="/customer-sign-in"
+                />
+              </div>
+
+              <p className="text-center text-xs sm:text-sm text-gray-700 mt-4 sm:mt-6">
+                Have an account?{" "}
+                <Link
+                  to="/customer-sign-in"
+                  className="text-logoBlue font-medium hover:underline"
+                >
+                  Log In
+                </Link>
+              </p>
+            </form>
+          </div>
+
+          {/* Right Image Section */}
+          <img
+            src={customerSignupImg}
+            alt="Modern House"
+            className="md:w-full h-auto w-[40%] mx-auto  md:col-span-3 md:row-auto row-start-1"
+          />
         </div>
       </div>
-      <Footer />
     </>
   );
 };

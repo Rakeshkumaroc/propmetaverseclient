@@ -36,7 +36,10 @@ const GoogleButton = ({
               user: result.data.user,
             };
             localStorage.setItem(storageKey, JSON.stringify(authData));
-            console.log("customerAuth saved:", localStorage.getItem("customerAuth"));
+            console.log(
+              "customerAuth saved:",
+              localStorage.getItem("customerAuth")
+            );
             // Show SweetAlert2 success modal with custom confirm button color
             await Swal.fire({
               icon: "success",
@@ -59,8 +62,10 @@ const GoogleButton = ({
             localStorage.setItem("createdAt", result.data.sellerData.createdAt);
 
             // Ensure verification fields are booleans
-            const isEmailVerified = result.data.sellerData.sellerIsEmailVerify === true;
-            const isNumberVerified = result.data.sellerData.sellerIsNumberVerify === true;
+            const isEmailVerified =
+              result.data.sellerData.sellerIsEmailVerify === true;
+            const isNumberVerified =
+              result.data.sellerData.sellerIsNumberVerify === true;
 
             console.log("Verification Status:", {
               sellerIsEmailVerify: isEmailVerified,
@@ -83,7 +88,10 @@ const GoogleButton = ({
               console.log("Both verified, redirecting to /seller");
               navigate("/seller");
             } else {
-              console.log("Verification incomplete, redirecting to", navigatePathSuccess);
+              console.log(
+                "Verification incomplete, redirecting to",
+                navigatePathSuccess
+              );
               navigate(navigatePathSuccess);
             }
           }
@@ -121,16 +129,19 @@ const GoogleButton = ({
   });
 
   return (
-    <div
-      onClick={googleSign}
-      className="bg-[#95acef61] flex justify-center gap-2 p-2 items-center cursor-pointer hover:bg-[#8ca4ed94] rounded-lg"
-    >
-      <img src={googleIcon} alt="google icon" className="h-5 w-5" />
-      <button type="button" className="font-semibold">
-        {buttonName}
+    <div onClick={googleSign} className="flex gap-3 sm:gap-4 w-full">
+      <button className="flex-1  border border-gray-300 py-2 sm:py-2.5 px-3 sm:px-4 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition">
+        <img
+          src="https://img.icons8.com/color/24/000000/google-logo.png"
+          alt="Google"
+          className="w-5 h-5 sm:w-6 sm:h-6"
+        />
+        {buttonName} 
       </button>
     </div>
   );
 };
 
 export default GoogleButton;
+
+ 
