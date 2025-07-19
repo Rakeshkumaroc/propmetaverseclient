@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
+
 const baseUrl = import.meta.env.VITE_APP_URL;
+
 const ContactForm = () => {
-  // State to store form data
   const [formData, setFormData] = useState({
     name: "",
     city: "",
@@ -10,14 +11,14 @@ const ContactForm = () => {
     email: "",
     message: "",
   });
+  const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // State to store validation errors
   const [errors, setErrors] = useState({
     name: "",
     phone: "",
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -25,7 +26,6 @@ const ContactForm = () => {
       [name]: value,
     }));
 
-    // Clear error for the field being edited
     if (name === "name" && value.trim()) {
       setErrors((prev) => ({ ...prev, name: "" }));
     }
@@ -34,23 +34,21 @@ const ContactForm = () => {
     }
   };
 
-  // Validate form inputs
   const validateForm = () => {
     let isValid = true;
     const newErrors = { name: "", phone: "" };
 
-    // Name validation (required)
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
       isValid = false;
     }
 
-    // Phone validation (required and must be digits only, 7-15 digits)
-    if (!formData.phone.trim()) {
+    const trimmedPhone = formData.phone.trim();
+    if (!trimmedPhone) {
       newErrors.phone = "Phone number is required";
       isValid = false;
-    } else if (!/^\d{7,15}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Phone number must be 7-15 digits";
+    } else if (!/^\d{10}$/.test(trimmedPhone)) {
+      newErrors.phone = "Phone number must be exactly 10 digits";
       isValid = false;
     }
 
@@ -58,13 +56,13 @@ const ContactForm = () => {
     return isValid;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
+      setLoading(true); // start loader
+
       try {
-        // API call
         const response = await fetch(`${baseUrl}/add-enquiry`, {
           method: "POST",
           headers: {
@@ -74,7 +72,6 @@ const ContactForm = () => {
         });
 
         if (response.ok) {
-          // Show success SweetAlert
           await Swal.fire({
             icon: "success",
             title: "Success!",
@@ -83,7 +80,6 @@ const ContactForm = () => {
             confirmButtonColor: "#1865a4",
           });
 
-          // Reset form
           setFormData({
             name: "",
             city: "",
@@ -92,8 +88,8 @@ const ContactForm = () => {
             message: "",
           });
           setErrors({ name: "", phone: "" });
+          setChecked(false);
         } else {
-          // Show error SweetAlert
           await Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -103,17 +99,17 @@ const ContactForm = () => {
           });
         }
       } catch (error) {
-        // Handle network or other errors
         await Swal.fire({
           icon: "error",
           title: "Error",
-          text: "API error:" || error,
+          text: "API error occurred.",
           confirmButtonText: "OK",
           confirmButtonColor: "#1865a4",
-        }); 
+        });
+      } finally {
+        setLoading(false); // stop loader
       }
     } else {
-      // Show validation error SweetAlert
       await Swal.fire({
         icon: "warning",
         title: "Validation Error",
@@ -125,21 +121,29 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="w-full md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto max-w-[1920px] mb-[93px]">
-      <h2 className="text-2xl sm:text-3xl md:text-[38px] text-logoBlue mb-[65px]">
-        Contact Us
-      </h2>
+    <section className="w-full md:py-50 px-4 sm:px-6 md:px-75 mx-auto max-w-[1920px] mb-[49px]">
+      <div>
+        <h2 className="text-[28px] md:text-[48px] font-semibold text-logoBlue mb-5 leading-tight">
+          Let's Contact
+        </h2>
+        <p className="mb-10 text-[18px] md:text[24px]">
+          We're excited to connect with you and learn more about your real estate goals. Use the form below to get in touch with Propmetaverse. Whether you're a prospective client, partner, or simply curious about our services, we're here to answer your questions and provide the assistance you need.
+        </p>
+      </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-x-[109px] md:grid-cols-2 sm:gap-[50px] gap-[40px] md:gap-[60px] lg:gap-[75px]">
+      <form
+        className="bg-white border-1 border-[#262626] rounded-2xl px-6 md:px-18 py-8 md:py-28"
+        onSubmit={handleSubmit}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
           <div>
             <input
               type="text"
               name="name"
-              placeholder="NAME"
+              placeholder="FULL NAME"
               value={formData.name}
               onChange={handleChange}
-              className={`border-b-[1px] border-black uppercase placeholder:text-[#091F5B] placeholder:font-[600] w-full focus:outline-none focus:ring-2 focus:ring-transparent ${
+              className={`w-full border-b border-black placeholder:uppercase placeholder:text-[#091F5B] placeholder:font-semibold text-sm md:text-base py-2 focus:outline-none ${
                 errors.name ? "border-red-500" : ""
               }`}
               required
@@ -155,7 +159,7 @@ const ContactForm = () => {
             placeholder="CITY"
             value={formData.city}
             onChange={handleChange}
-            className="border-b-[1px] border-black uppercase placeholder:text-[#091F5B] placeholder:font-[600] w-full focus:outline-none focus:ring-2 focus:ring-transparent"
+            className="w-full border-b border-black placeholder:uppercase placeholder:text-[#091F5B] placeholder:font-semibold text-sm md:text-base py-2 focus:outline-none"
           />
 
           <div>
@@ -165,7 +169,7 @@ const ContactForm = () => {
               placeholder="Phone No."
               value={formData.phone}
               onChange={handleChange}
-              className={`border-b-[1px] border-black uppercase placeholder:text-[#091F5B] placeholder:font-[600] w-full focus:outline-none focus:ring-2 focus:ring-transparent ${
+              className={`w-full border-b border-black placeholder:uppercase placeholder:text-[#091F5B] placeholder:font-semibold text-sm md:text-base py-2 focus:outline-none ${
                 errors.phone ? "border-red-500" : ""
               }`}
               required
@@ -181,24 +185,65 @@ const ContactForm = () => {
             placeholder="E-MAIL"
             value={formData.email}
             onChange={handleChange}
-            className="border-b-[1px] row-start-3 border-black uppercase placeholder:text-[#091F5B] placeholder:font-[600] w-full focus:outline-none focus:ring-2 focus:ring-transparent"
+            className="w-full border-b border-black placeholder:uppercase placeholder:text-[#091F5B] placeholder:font-semibold text-sm md:text-base py-2 focus:outline-none"
           />
 
           <textarea
             name="message"
-            placeholder="Enquiry details..."
+            placeholder="Enter Your Message...."
             value={formData.message}
             onChange={handleChange}
-            className="border-[#091F5B] border-[1px] rounded-[10px] p-3 uppercase placeholder:text-[#091F5B] placeholder:font-[600] row-span-2"
+            rows={4}
+            className="md:col-span-2 w-full border border-[#091F5B] rounded-[10px] p-3 placeholder:uppercase placeholder:text-[#091F5B] placeholder:font-semibold text-sm md:text-base focus:outline-none resize-none bg-[#BAD6EB]"
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-[101px] gap-4">
+        <div className="mt-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={(e) => setChecked(e.target.checked)}
+              className="md:h-5 md:w-5"
+              required
+            />
+            <span className="md:text-[20px] text-[14px] text-black">
+              I agree with Terms of Use and Privacy Policy
+            </span>
+          </div>
+
           <button
             type="submit"
-            className="bg-logoColor w-full hover:bg-logoColor/90 text-white px-8 py-3 rounded-[8px] font-medium transition-colors"
+            className="bg-[#65b137] text-white text-sm md:text-base font-medium rounded-lg py-3 px-6 tracking-wide transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            disabled={!checked || loading}
           >
-            SUBMIT
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Sending...
+              </>
+            ) : (
+              "Send Your Message"
+            )}
           </button>
         </div>
       </form>
