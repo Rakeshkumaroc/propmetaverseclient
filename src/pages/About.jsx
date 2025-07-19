@@ -7,11 +7,13 @@ import ourVision from "../assets/image/our-vision.jpg";
 import ourTeam from "../assets/image/welcome-our-teams.jpg";
 import ourHistory from "../assets/image/ourHistory.jpg";
 import ourApproach from "../assets/image/ourApproach.jpg";
+import OurJourney from "../components/about/OurJourney";
 const About = () => {
   return (
     <>
       <div className="bg-gradient-to-b from-gray-50 to-white">
         <Navbar />
+        <OurJourney />
         <Header urlName="About Us" />
 
         <main className="px-4 md:px-10 lg:px-20 xl:px-28 2xl:px-40">

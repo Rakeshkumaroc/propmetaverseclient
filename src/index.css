@@ -1,12 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
-@theme{  
-  --color-logoColor:#64ae37;
-  --color-logoBlue:#1b639f;
- 
+@theme {
+  --color-logoColor: #65b137;
+  --color-logoBlue: #1865a4;
 }
-body{
+
+* {
+  font-family: "Urbanist", sans-serif;
+  font-style: normal;
+
+  /* align-self: stretch; */
+}
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5{
+  color: #1865a4;
+  font-weight: 600;
+  line-height: 120%; /* 55.2px */
+}
+h6{
+  color: #091F5B; 
+font-size: 20px; 
+font-weight: 700;
+line-height: 150%; /* 30px */
+}
+button { 
+  padding: 14px 20px; 
+  font-size: 20px; 
+  font-weight: 700;
+  line-height: 150%; /* 30px */
+  border-radius: 8px;
+}
+p {
+  font-weight: 500;
+  line-height: 150%; /* 24px */
+}
+
+ 
+
+/* Use a media query to add a break point at 800px: */
+@media screen and (max-width: 800px) {
+  button { 
+  padding: 8px 16px; 
+  font-size: 16px;  
+}
+}

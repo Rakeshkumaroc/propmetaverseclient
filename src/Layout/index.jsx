@@ -45,10 +45,10 @@ import LeadManagement from "../components/admin/pages/LeadManagement";
 import CommissionManagement from "../components/admin/pages/CommissionManagement";
 import ListingManagement from "../components/admin/pages/ListingManagement";
 import ThankYou from "../pages/ThankYou";
-import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement"; 
+import SellerLeadManagement from "../components/seller/pages/SellerLeadManagement";
 import ManageAnnouncements from "../components/admin/pages/ManageAnnouncements";
 import ProfileSectionPage from "../components/customer/pages/ProfileSectionPage";
-import SavedPropertiesPage from "../components/customer/pages/SavedPropertiesPage"; 
+import SavedPropertiesPage from "../components/customer/pages/SavedPropertiesPage";
 import TrainingAndResources from "../components/seller/pages/TrainingAndResources";
 import AnnouncementsPage from "../components/seller/pages/AnnouncementsPage";
 import MyListing from "../components/customer/pages/MyListing";
@@ -72,7 +72,7 @@ const Layout = () => {
         <Route path="/projects" element={<Projects />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy-policy" element={<Privacy />} />
-        <Route path="/thank-you" element={<ThankYou />} /> 
+        <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/return-policy" element={<RefundPolicy />} />
         <Route path="/pricing-policy" element={<PricingPolicy />} />
         <Route path="/projects/:title/:id" element={<PropertyDetailsPage />} />
@@ -85,20 +85,38 @@ const Layout = () => {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/favorites" element={<Favorites />} />
 
-         {/* Customer Authentication Routes */}
+        {/* Customer Authentication Routes */}
         <Route path="/customer-sign-up" element={<CustomerSignUp />} />
         <Route path="/customer-sign-in" element={<CustomerLogin />} />
-        <Route path="/customer-forgot-password" element={<CustomerForgetPassword />} />
-        <Route path="/customer-reset-password/:token" element={<CustomerResetPassword />} />
+        <Route
+          path="/customer-forgot-password"
+          element={<CustomerForgetPassword />}
+        />
+        <Route
+          path="/customer-reset-password/:token"
+          element={<CustomerResetPassword />}
+        />
 
         {/* Customer Dashboard Routes - Fixed Structure */}
         <Route path="/customer" element={<CustomerDashboard />} />
         <Route path="/customer/profile" element={<ProfileSectionPage />} />
-        <Route path="/customer/saved-properties" element={<SavedPropertiesPage />} />
-        <Route path="/customer/lead-management" element={<CustomerLeadManagement />} />
+        <Route
+          path="/customer/saved-properties"
+          element={<SavedPropertiesPage />}
+        />
+        <Route
+          path="/customer/lead-management"
+          element={<CustomerLeadManagement />}
+        />
         <Route path="/customer/my-listings" element={<MyListing />} />
-        <Route path="/customer/add-property" element={<CustomerAddProperty />} />
-        <Route path="/customer/edit-property/:id" element={<CustomerAddProperty action={"edit"} />} />
+        <Route
+          path="/customer/add-property"
+          element={<CustomerAddProperty />}
+        />
+        <Route
+          path="/customer/edit-property/:id"
+          element={<CustomerAddProperty action={"edit"} />}
+        />
         <Route path="/customer/search" element={<SearchHistory />} />
 
         {/* admin  */}
@@ -135,7 +153,7 @@ const Layout = () => {
           {/* commission-management */}
           <Route
             path="commission-management"
-            element={<CommissionManagement/>}
+            element={<CommissionManagement />}
           />
           <Route path="listing-management" element={<ListingManagement />} />
 
@@ -163,7 +181,7 @@ const Layout = () => {
           <Route path="seller-leads" element={<SellerLeadManagement />} />
           <Route path="seller-training" element={<TrainingAndResources />} />
           <Route path="seller-notification" element={<AnnouncementsPage />} />
-           <Route path="seller-commission" element={<SellerCommission/>} />
+          <Route path="seller-commission" element={<SellerCommission />} />
         </Route>
       </Routes>
     </BrowserRouter>

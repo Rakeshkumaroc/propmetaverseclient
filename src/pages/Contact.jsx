@@ -1,9 +1,8 @@
-import ContactForm from "../components/contact/ContactForm";
+import ContactForm from "../components/home/ContactForm";
 import ContactInfo from "../components/contact/ContactInfo";
 import MapSection from "../components/contact/MapSection";
 import Header from "../components/contact/Header";
-import Footer from "../components/global/Footer";
-import AgentsSection from "../components/home/AgentsSection";
+import Footer from "../components/global/Footer"; 
 import Navbar from "../components/global/Navbar";
 
 const Contact = () => {
@@ -24,8 +23,7 @@ const Contact = () => {
         </section>
 
         <MapSection />
-      </main>
-      <AgentsSection />
+      </main> 
       <Footer />
     </div>
   );

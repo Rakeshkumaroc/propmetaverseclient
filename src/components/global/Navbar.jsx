@@ -1,232 +1,263 @@
-import { useState, useEffect, useContext } from "react";
-import { FaPhoneAlt, FaBars, FaTimes, FaBuilding } from "react-icons/fa";
-import { MdEmail, MdHome, MdOutlineStar } from "react-icons/md";
-import { VscDiff } from "react-icons/vsc";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/logopng.png";
-import { RiLoginBoxFill, RiUserFill } from "react-icons/ri";
-import ChatBot from "./ChatBot";
-import ActionsBtn from "./ActionsBtn";
-import { PiBuildingsFill, PiInfoFill } from "react-icons/pi";
-import { IoMdContact } from "react-icons/io";
+import { ImUser } from "react-icons/im";
+import {
+  FaBars,
+  FaTimes,
+  FaHeart,
+  FaExchangeAlt, 
+} from "react-icons/fa";
 
-const Navbar = ({ isGlass }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isSelelrExit, setIsSelelrExit] = useState(false);
+  const [isSellerExist, setIsSellerExist] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
-    const sellerid = localStorage.getItem("sellerId");
-    setIsSelelrExit(sellerid);
-
-    setIsAuthenticated(!!(customerAuth && customerAuth.token));
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    const handleScroll = () => {
-      if (window.scrollY > window.innerHeight) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    try {
+      const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
+      const sellerId = localStorage.getItem("sellerId");
+      setIsSellerExist(!!sellerId);
+      setIsAuthenticated(!!(customerAuth && customerAuth.token));
+    } catch (error) {
+      console.error("Error parsing localStorage:", error);
+      setIsAuthenticated(false);
+      setIsSellerExist(false);
+    }
   }, []);
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 ease-in-out 
-      ${
-        scrolled || !isGlass
-          ? "bg-[#061a33] shadow-lg"
-          : "bg-transparent backdrop-blur-xl"
-      } text-white `}
-      >
-        {/* Top Bar */}
-        <div className="hidden md:flex justify-between items-center px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 text-[18px] border-b border-gray-600">
-          <div className="flex items-center space-x-4 py-1">
-            <span className="flex items-center space-x-1">
-              <FaPhoneAlt />
-              <span>+91 80 5509 8000</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <MdEmail />
-              <span>support@propmetaverse.com</span>
+    <div className="bg-white md:mb-[40px] mb-[20px]   shadow-[-3px_-4px_29.2px_-1px_#1865A4]">
+      {/* Top Bar - Visible only on 2xl and above */}
+      <div className="hidden 2xl:block border-b-[1px] border-[#1865A4] text-logoBlue text-sm xl:px-24">
+        <div className="w-full max-w-[100vw] mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2 md:gap-4">
+          {/* Phone */}
+          <div className="flex items-center space-x-2 min-w-fit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+            >
+              <path
+                d="M16.95 18C14.8667 18 12.8083 17.546 10.775 16.638C8.74167 15.73 6.89167 14.4423 5.225 12.775C3.55833 11.1077 2.271 9.25767 1.363 7.225C0.455 5.19233 0.000666667 3.134 0 1.05C0 0.75 0.0999999 0.5 0.3 0.3C0.5 0.0999999 0.75 0 1.05 0H5.1C5.33333 0 5.54167 0.0793332 5.725 0.238C5.90833 0.396667 6.01667 0.584 6.05 0.8L6.7 4.3C6.73333 4.56667 6.725 4.79167 6.675 4.975C6.625 5.15833 6.53333 5.31667 6.4 5.45L3.975 7.9C4.30833 8.51667 4.704 9.11233 5.162 9.687C5.62 10.2617 6.12433 10.816 6.675 11.35C7.19167 11.8667 7.73333 12.346 8.3 12.788C8.86667 13.23 9.46667 13.634 10.1 14L12.45 11.65C12.6 11.5 12.796 11.3877 13.038 11.313C13.28 11.2383 13.5173 11.2173 13.75 11.25L17.2 11.95C17.4333 12.0167 17.625 12.1377 17.775 12.313C17.925 12.4883 18 12.684 18 12.9V16.95C18 17.25 17.9 17.5 17.7 17.7C17.5 17.9 17.25 18 16.95 18Z"
+                fill="#1865A4"
+              />
+            </svg>
+            <span className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap">
+              +91 80 5509 8000
             </span>
           </div>
-          <div className="space-x-8 flex items-center">
-            <Link
-              to="/compare"
-              className="hover:text-logoColor flex items-center gap-1"
+
+          {/* Email */}
+          <div className="flex items-center space-x-2 min-w-fit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="15"
+              viewBox="0 0 18 15"
+              fill="none"
             >
-              <VscDiff /> Compare
-            </Link>
-            {isAuthenticated && (
-              <>
-                <Link
-                  to="/favorites"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <MdOutlineStar /> Favorites
-                </Link>
-              </>
+              <path
+                d="M1.8 15C1.305 15 0.8814 14.8166 0.5292 14.4497C0.177 14.0828 0.0006 13.6412 0 13.125V1.875C0 1.35937 0.1764 0.918125 0.5292 0.55125C0.882 0.184375 1.3056 0.000625 1.8 0H16.2C16.695 0 17.1189 0.18375 17.4717 0.55125C17.8245 0.91875 18.0006 1.36 18 1.875V13.125C18 13.6406 17.8239 14.0822 17.4717 14.4497C17.1195 14.8172 16.6956 15.0006 16.2 15H1.8ZM9 8.4375L16.2 3.75V1.875L9 6.5625L1.8 1.875V3.75L9 8.4375Z"
+                fill="#1865A4"
+              />
+            </svg>
+            <span className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap sm:whitespace-normal">
+              support@propmetaverse.com
+            </span>
+          </div>
+
+          {/* Favorites */}
+          <div className="flex items-center space-x-2 cursor-pointer min-w-fit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="19"
+              height="16"
+              viewBox="0 0 19 16"
+              fill="none"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M1.46635 1.46393C2.40399 0.526577 3.67553 0 5.00135 0C6.32717 0 7.59871 0.526577 8.53635 1.46393C8.71969 1.6466 8.95569 1.87393 9.24435 2.14593C9.53235 1.87393 9.76802 1.6466 9.95135 1.46393C10.8851 0.534604 12.1478 0.0113163 13.4652 0.00778818C14.7825 0.00426003 16.0481 0.520777 16.9867 1.44509C17.9254 2.3694 18.4614 3.62682 18.4782 4.94408C18.4949 6.26135 17.9912 7.53201 17.0764 8.47993L9.95035 15.6059C9.76283 15.7934 9.50852 15.8987 9.24335 15.8987C8.97819 15.8987 8.72388 15.7934 8.53635 15.6059L1.41035 8.48093C0.496394 7.53833 -0.0101369 6.27407 0.000153785 4.96116C0.0104444 3.64826 0.53773 2.39209 1.46635 1.46393Z"
+                fill="#1865A4"
+              />
+            </svg>
+            <span className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap">
+              Favorites Properties
+            </span>
+          </div>
+
+          {/* Compare */}
+          <div className="flex items-center space-x-2 cursor-pointer min-w-fit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="13"
+              viewBox="0 0 18 13"
+              fill="none"
+            >
+              <path
+                d="M6.3 8.35714H0V10.2143H6.3V13L9.9 9.28571L6.3 5.57143V8.35714ZM11.7 7.42857V4.64286H18V2.78571H11.7V0L8.1 3.71429L11.7 7.42857Z"
+                fill="#1865A4"
+              />
+            </svg>
+            <span className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap">
+              Compare Properties
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <nav className="w-full h-[80px] md:h-[116px] flex items-center justify-between xl:px-24">
+        {/* Logo */}
+        <div className="flex items-center pl-4">
+          <Link to="/">
+            <img src={Logo} alt="logo" className="w-24 md:w-32 lg:w-[179px]" />
+          </Link>
+        </div>
+
+        {/* Hamburger Menu Icon (Visible on Mobile) */}
+        <div className="2xl:hidden pr-4">
+          <button
+            onClick={toggleMenu}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="text-logoBlue focus:outline-none focus:ring-2 focus:ring-logoBlue rounded"
+          >
+            {isMenuOpen ? (
+              <FaTimes className="w-6 h-6" />
+            ) : (
+              <FaBars className="w-6 h-6" />
             )}
-            {!isSelelrExit && (
-              <div className="flex items-center gap-1">
-                {isAuthenticated ? (
-                  <Link
-                    to="/customer"
-                    className="hover:text-logoColor flex items-center gap-1"
-                  >
-                    <RiUserFill /> Profile
-                  </Link>
-                ) : (
-                  <>
-                    <RiLoginBoxFill />
-                    <Link
-                      className="hover:text-logoColor"
-                      to="/customer-sign-up"
-                    >
-                      Client Register
-                    </Link>
-                    /
-                    <Link
-                      className="hover:text-logoColor"
-                      to="/customer-sign-in"
-                    >
-                      Login
-                    </Link>
-                  </>
-                )}
+          </button>
+        </div>
+
+        {/* Menu Items */}
+        <div
+          className={`${
+            isMenuOpen ? "flex" : "hidden"
+          } 2xl:flex flex-col 2xl:flex-row 2xl:items-center 2xl:space-x-8 text-[16px] 2xl:text-[20px] absolute 2xl:static top-[80px] left-0 w-full max-w-[100vw] 2xl:w-auto bg-white 2xl:bg-transparent shadow-md 2xl:shadow-none px-4 py-4 2xl:p-0 transition-all duration-300 ease-in-out z-50`}
+        >
+          <Link
+            to="/"
+            className={`${
+              location.pathname === "/"
+                ? "bg-logoBlue text-white"
+                : "text-logoBlue hover:text-blue-900"
+            } rounded-[8px] p-[10px_20px] my-2 2xl:my-0 text-center`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            to="/about"
+            className={`${
+              location.pathname === "/about"
+                ? "bg-logoBlue text-white"
+                : "text-logoBlue hover:text-blue-900"
+            } rounded p-[10px_20px] my-2 2xl:my-0 text-center`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            About Us
+          </Link>
+          <Link
+            to="/projects"
+            className={`${
+              location.pathname === "/projects"
+                ? "bg-logoBlue text-white"
+                : "text-logoBlue hover:text-blue-900"
+            } rounded p-[10px_20px] my-2 2xl:my-0 text-center`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Properties
+          </Link>
+          <Link
+            to="/contact-us"
+            className={`${
+              location.pathname === "/contact-us"
+                ? "bg-logoBlue text-white"
+                : "text-logoBlue hover:text-blue-900"
+            } rounded p-[10px_20px] my-2 2xl:my-0 text-center`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Contact
+          </Link>
+          {/* Favorites - Moved to Menu for Mobile */}
+          <Link
+            to="/favorites"
+            className="text-logoBlue md:hidden  hover:text-blue-900 rounded p-[10px_20px] my-2 2xl:my-0 text-center flex items-center justify-center gap-2"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <FaHeart className="w-5 h-5" />
+            <span>Favorites</span>
+          </Link>
+          {/* Compare - Moved to Menu for Mobile */}
+          <Link
+            to="/compare"
+            className="text-logoBlue md:hidden hover:text-blue-900 rounded p-[10px_20px] my-2 2xl:my-0 text-center flex items-center justify-center gap-2"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <FaExchangeAlt className="w-5 h-5" />
+            <span>Compare</span>
+          </Link>
+          {isAuthenticated && (
+            <Link
+              to="/favorites"
+              className="text-logoBlue hover:text-blue-900 md:hidden rounded p-[10px_20px] my-2 2xl:my-0 text-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Favorites
+            </Link>
+          )}
+          <button
+            className="bg-logoColor text-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] p-[10px_20px] rounded-[8px] my-2 2xl:my-0 text-center"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            {isSellerExist ? (
+              <Link to="/seller">Partner Dashboard</Link>
+            ) : (
+              <Link to="/seller-sign-up">Partner With Us</Link>
+            )}
+          </button>
+          <div className="flex items-center gap-2 my-2 2xl:my-0 justify-center">
+            {isAuthenticated ? (
+              <Link
+                to="/customer"
+                className="text-logoBlue flex items-center justify-center hover:text-blue-900 rounded p-[10px_20px]"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <ImUser className="w-6 h-6 md:size-[28px] mr-1" />
+                <span>Profile</span>
+              </Link>
+            ) : (
+              <div className="text-logoBlue flex items-center justify-center hover:text-blue-900 rounded p-[10px_20px]">
+                <ImUser className="w-6 h-6 md:size-[28px] mr-1" />
+                <Link
+                  to="/customer-sign-up"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+                <span className="mx-1">/</span>
+                <Link
+                  to="/customer-sign-in"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
               </div>
             )}
           </div>
         </div>
-
-        {/* Main Navbar */}
-        <nav className="flex justify-between items-center px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 py-4">
-          {/* Logo */}
-          <Link to="/">
-            <img src={Logo} alt="logo" className="w-32 md:w-40" />
-          </Link>
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden text-2xl"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-
-          {/* Navigation Links */}
-          <div
-            className={`${
-              menuOpen ? "flex" : "hidden"
-            } md:flex flex-col md:flex-row md:items-center absolute md:static top-[60px] left-0 w-full md:w-auto 
-        bg-[#061a33] md:bg-transparent md:space-x-5 lg:space-x-10 space-y-6 md:space-y-0 p-6 md:p-0`}
-          >
-            <ul className="flex flex-col md:flex-row md:items-center space-y-6 md:space-y-0 md:space-x-5 lg:space-x-10">
-              <li>
-                <Link to="/" className="hover:text-logoColor flex items-center gap-1">
-                  <MdHome /> Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/projects"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <PiBuildingsFill /> Projects
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/about"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <PiInfoFill /> About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact-us"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <IoMdContact /> Contact
-                </Link>
-              </li>
-              {!isAuthenticated && (
-                <li>
-                  <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded w-full md:w-auto">
-                    {isSelelrExit ? (
-                      <Link to="/seller">Partner Dashboard</Link>
-                    ) : (
-                      <Link to="/seller-sign-up">Partner With Us</Link>
-                    )}
-                  </button>
-                </li>
-              )}
-            </ul>
-            {/* Mobile Menu Additional Links */}
-            <div
-              className={`${
-                menuOpen ? "flex" : "hidden"
-              } md:hidden flex-col space-y-4 mt-4`}
-            >
-              <Link
-                to="/compare"
-                className="hover:text-logoColor flex items-center gap-1"
-              >
-                <VscDiff /> Compare
-              </Link>
-              {isAuthenticated && (
-                <Link
-                  to="/favorites"
-                  className="hover:text-logoColor flex items-center gap-1"
-                >
-                  <MdOutlineStar /> Favorites
-                </Link>
-              )}
-              <div className="flex items-center gap-1">
-                {isAuthenticated ? (
-                  <Link
-                    to="/customer"
-                    className="hover:text-logoColor flex items-center gap-1"
-                  >
-                    <RiUserFill /> Profile
-                  </Link>
-                ) : (
-                  <div className="flex items-center gap-1">
-                    <RiLoginBoxFill />
-                    <Link
-                      className="hover:text-logoColor"
-                      to="/customer-sign-up"
-                    >
-                      Client Register
-                    </Link>
-                    <span>/</span>
-                    <Link
-                      className="hover:text-logoColor"
-                      to="/customer-sign-in"
-                    >
-                      Login
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header>
-      <ChatBot />
-      <ActionsBtn />
-    </>
+      </nav>
+    </div>
   );
 };
 

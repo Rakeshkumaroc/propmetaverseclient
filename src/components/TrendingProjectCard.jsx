@@ -1,396 +1,170 @@
-import React, { useState, useEffect, useRef } from "react";
-import { MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { MdFavorite } from "react-icons/md";
-import { AiOutlineHeart } from "react-icons/ai";
-import { VscDiff } from "react-icons/vsc";
-import { FaWhatsapp, FaFacebook, FaLinkedin, FaLink } from "react-icons/fa";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { IoShareSocialOutline } from "react-icons/io5";
+import Like from "../assets/card/like.svg";
+import Share from "../assets/card/share.svg";
+import Compare from "../assets/card/compare.svg";
 
-const baseUrl = import.meta.env.VITE_APP_URL;
-
-const TrendingProjectCard = ({
-  id,
-  propertyType,
-  title,
-  location,
-  price,
-  date,
-  developer,
-  image,
-}) => {
-  const navigate = useNavigate();
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isCompared, setIsCompared] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const shareDropdownRef = useRef(null);
-
-  const propertyUrl = `${window.location.origin}/projects/${title
-    .replaceAll(" ", "-")
-    .toLowerCase()}/${id}`;
-
-  useEffect(() => {
-    try {
-      const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
-      const authStatus = !!(customerAuth && customerAuth.token);
-      setIsAuthenticated(authStatus);
-
-      const storedFavorites =
-        JSON.parse(localStorage.getItem("savedProperties")) || [];
-      setIsFavorited(storedFavorites.some((item) => item.id === id));
-
-      const storedCompare =
-        JSON.parse(localStorage.getItem("compareProperties")) || [];
-      setIsCompared(storedCompare.some((item) => item.id === id));
-    } catch (error) {
-      console.error("Error parsing localStorage:", error);
-      toast.error("Failed to load saved data.", { position: "top-left" });
-    }
-  }, [id]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        shareDropdownRef.current &&
-        !shareDropdownRef.current.contains(event.target)
-      ) {
-        setIsShareOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleFavoriteToggle = async (e) => {
-    e.stopPropagation();
-    if (!isAuthenticated) {
-      toast.error("Please log in as a customer to add to favorites.", {
-        position: "top-left",
-      });
-      return;
-    }
-
-    // Validate id
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      toast.error("Invalid property ID.", { position: "top-left" });
-      return;
-    }
-
-    try {
-      let storedFavorites =
-        JSON.parse(localStorage.getItem("savedProperties")) || [];
-      const alreadyExists = storedFavorites.some((item) => item.id === id);
-      const customerAuth = JSON.parse(localStorage.getItem("customerAuth"));
-
-      if (alreadyExists) {
-        // Remove from favorites
-        console.log("Sending remove-from-saved-properties request:", {
-          propertyId: id,
-        });
-        await axios.post(
-          `${baseUrl}/remove-from-saved-properties`,
-          { propertyId: id },
-          {
-            headers: { Authorization: `Bearer ${customerAuth.token}` },
-          }
-        );
-        storedFavorites = storedFavorites.filter((item) => item.id !== id);
-        localStorage.setItem(
-          "savedProperties",
-          JSON.stringify(storedFavorites)
-        );
-        setIsFavorited(false);
-        toast.success(`Removed "${title}" from Favorites`, {
-          position: "top-left",
-        });
-      } else {
-        // Add to favorites
-        console.log("Sending add-to-saved-properties request:", {
-          propertyId: id,
-        });
-        await axios.post(
-          `${baseUrl}/add-to-saved-properties`,
-          { propertyId: id },
-          {
-            headers: { Authorization: `Bearer ${customerAuth.token}` },
-          }
-        );
-        storedFavorites.push({ id });
-        localStorage.setItem(
-          "savedProperties",
-          JSON.stringify(storedFavorites)
-        );
-        setIsFavorited(true);
-        toast.success(`Added "${title}" to Favorites`, {
-          position: "top-left",
-        });
-      }
-    } catch (error) {
-      console.error("Error updating favorites:", {
-        message: error.response?.data?.message || error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-        request: {
-          url: alreadyExists
-            ? `${baseUrl}/remove-from-saved-properties`
-            : `${baseUrl}/add-to-saved-properties`,
-          payload: { propertyId: id },
-        },
-      });
-
-      if (error.response?.status === 401) {
-        toast.error("Session expired. Please log in again.", {
-          position: "top-left",
-        });
-        // Optionally redirect to login
-        // navigate("/login");
-        return;
-      }
-
-      if (error.response?.status === 404) {
-        toast.error("Property not found in favorites.", {
-          position: "top-left",
-        });
-        // Remove from localStorage to sync state
-        let storedFavorites =
-          JSON.parse(localStorage.getItem("savedProperties")) || [];
-        storedFavorites = storedFavorites.filter((item) => item.id !== id);
-        localStorage.setItem(
-          "savedProperties",
-          JSON.stringify(storedFavorites)
-        );
-        setIsFavorited(false);
-        return;
-      }
-
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to update favorites. Please try again.",
-        { position: "top-left" }
-      );
-    }
-  };
-
-  const handleCompareToggle = (e) => {
-    e.stopPropagation();
-    try {
-      let storedCompare =
-        JSON.parse(localStorage.getItem("compareProperties")) || [];
-      const alreadyExists = storedCompare.some((item) => item.id === id);
-
-      if (alreadyExists) {
-        storedCompare = storedCompare.filter((item) => item.id !== id);
-        toast.success(`Removed "${title}" from Compare`, {
-          position: "top-left",
-        });
-      } else {
-        if (storedCompare.length >= 4) {
-          toast.error("You can only compare up to 4 properties.", {
-            position: "top-left",
-          });
-          return;
-        }
-        storedCompare.push({ id });
-        toast.success(`Added "${title}" to Compare`, { position: "top-left" });
-      }
-
-      localStorage.setItem("compareProperties", JSON.stringify(storedCompare));
-      setIsCompared(!alreadyExists);
-    } catch (error) {
-      console.error("Error updating compare:", error);
-      toast.error("Failed to update compare.", { position: "top-left" });
-    }
-  };
-
-  const handleShare = (e) => {
-    e.stopPropagation();
-    const shareTitle = title || "Check out this property!";
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: shareTitle,
-          text: `Check out this property: ${title} at ${location}`,
-          url: propertyUrl,
-        })
-        .catch((error) => {
-          console.error("Error sharing:", error);
-          toast.error("Failed to share. Please try again.", {
-            position: "top-left",
-          });
-        });
-    } else {
-      setIsShareOpen(!isShareOpen);
-    }
-  };
-
-  const handleCopyLink = (e) => {
-    e.stopPropagation();
-    navigator.clipboard
-      .writeText(propertyUrl)
-      .then(() => {
-        toast.success("Link copied to clipboard!", {
-          position: "top-left",
-        });
-        setIsShareOpen(false);
-      })
-      .catch((error) => {
-        console.error("Error copying link:", error);
-        toast.error("Failed to copy link.", { position: "top-left" });
-      });
-  };
-
-  const shareLinks = [
-    {
-      name: "WhatsApp",
-      icon: <FaWhatsapp size={20} />,
-      url: `https://api.whatsapp.com/send?text=Check%20out%20this%20property:%20${encodeURIComponent(
-        title
-      )}%20${encodeURIComponent(propertyUrl)}`,
-    },
-    {
-      name: "Facebook",
-      icon: <FaFacebook size={20} />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        propertyUrl
-      )}`,
-    },
-    {
-      name: "LinkedIn",
-      icon: <FaLinkedin size={20} />,
-      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-        propertyUrl
-      )}&title=${encodeURIComponent(title)}`,
-    },
-    {
-      name: "Copy Link",
-      icon: <FaLink size={20} />,
-      action: handleCopyLink,
-    },
-  ];
-
+const TrendingProjectCard = ({ prop }) => {
   return (
     <div
-      onClick={() => {
-        navigate(`/projects/${title.replaceAll(" ", "-").toLowerCase()}/${id}`);
-      }}
-      className="group cursor-pointer w-full bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden max-w-sm mx-auto"
+      
+      className="card-container bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-4 sm:p-6 md:p-[30px]"
     >
-      <div className="relative overflow-hidden">
+      {/* Image Placeholder */}
+      <div className="relative w-full h-[200px] sm:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-4">
+        <button
+          className="absolute top-4 left-4 bg-[#ACACAC] text-white"
+          style={{
+            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+            padding: "2px 10px",
+          }}
+        >
+          {prop.tag}
+        </button>
         <img
-          src={image}
-          alt={title}
-          className="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300"
+          src={prop.galleryImg}
+          alt={prop.name}
+          className="card-image w-full h-full"
         />
-        <span className="absolute top-3 left-3 bg-gradient-to-r from-black/80 to-black/60 text-white text-xs font-medium px-3 py-1 rounded-full uppercase tracking-wide">
-          {propertyType}
-        </span>
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+      <div className="flex flex-col flex-grow">
+        <div className="space-y-2 sm:space-y-3 md:space-y-[11px]">
+          <h6 className="font-semibold text-lg sm:text-xl md:text-[20px] text-[#091F5B]">
+            {prop.name}
+          </h6>
+          <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base">
+            <span className="flex items-center gap-1 mb-2 sm:mb-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="20"
+                viewBox="0 0 16 20"
+                fill="none"
+              >
+                <path
+                  d="M8 2.50002C6.4529 2.50002 4.96917 3.1146 3.87521 4.20856C2.78125 5.30253 2.16667 6.78626 2.16667 8.33335C2.16667 10.7184 3.65167 13.0192 5.28167 14.8017C6.11512 15.7097 7.02453 16.545 8 17.2984C8.14556 17.1867 8.31639 17.0506 8.5125 16.89C9.29567 16.2469 10.0328 15.5496 10.7183 14.8034C12.3483 13.0192 13.8333 10.7192 13.8333 8.33335C13.8333 6.78626 13.2188 5.30253 12.1248 4.20856C11.0308 3.1146 9.5471 2.50002 8 2.50002ZM8 19.345L7.5275 19.02L7.525 19.0184L7.52 19.0142L7.50333 19.0025L7.44083 18.9584L7.21583 18.7942C6.07572 17.9373 5.01656 16.9778 4.05167 15.9275C2.34833 14.0625 0.5 11.3634 0.5 8.33252C0.5 6.3434 1.29018 4.43574 2.6967 3.02922C4.10322 1.6227 6.01088 0.83252 8 0.83252C9.98912 0.83252 11.8968 1.6227 13.3033 3.02922C14.7098 4.43574 15.5 6.3434 15.5 8.33252C15.5 11.3634 13.6517 14.0634 11.9483 15.9259C10.9837 16.9761 9.92483 17.9356 8.785 18.7925C8.69005 18.8634 8.5942 18.9332 8.4975 19.0017L8.48 19.0134L8.475 19.0175L8.47333 19.0184L8 19.345ZM8 6.66669C7.55797 6.66669 7.13405 6.84228 6.82149 7.15484C6.50893 7.4674 6.33333 7.89133 6.33333 8.33335C6.33333 8.77538 6.50893 9.1993 6.82149 9.51186C7.13405 9.82442 7.55797 10 8 10C8.44203 10 8.86595 9.82442 9.17851 9.51186C9.49107 9.1993 9.66667 8.77538 9.66667 8.33335C9.66667 7.89133 9.49107 7.4674 9.17851 7.15484C8.86595 6.84228 8.44203 6.66669 8 6.66669ZM4.66667 8.33335C4.66667 7.4493 5.01786 6.60145 5.64298 5.97633C6.2681 5.35121 7.11594 5.00002 8 5.00002C8.88406 5.00002 9.7319 5.35121 10.357 5.97633C10.9821 6.60145 11.3333 7.4493 11.3333 8.33335C11.3333 9.21741 10.9821 10.0653 10.357 10.6904C9.7319 11.3155 8.88406 11.6667 8 11.6667C7.11594 11.6667 6.2681 11.3155 5.64298 10.6904C5.01786 10.0653 4.66667 9.21741 4.66667 8.33335Z"
+                  fill="black"
+                />
+              </svg>
+              {prop.location}
+            </span>
+            <span>
+              Completion: <span className="ml-2">{prop.completion}</span>
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:justify-between mt-2">
+          <p className="text-sm sm:text-base">
+            By: <span className="ml-2">{prop.developer}</span>
+          </p>
+          <div className="flex justify-end items-center gap-4 sm:gap-7 mt-2 text-green-700">
+            <img src={Like} alt="Like" className="size-5 sm:size-6" />
+            <img src={Compare} alt="Compare" className="size-5 sm:size-6" />
+            <img src={Share} alt="Share" className="size-5 sm:size-6" />
+          </div>
+        </div>
       </div>
 
-      <div className="p-5 space-y-3">
-        <h3 className="font-bold text-xl text-gray-800 group-hover:text-logoBlue transition-colors duration-200">
-          {title.length > 30 ? title.slice(0, 30) + ".." : title}
-        </h3>
-        <p className="flex items-center text-sm text-gray-600">
-          <MapPin size={16} className="mr-2 text-logoBlue" />
-          <span className="line-clamp-1">{location}</span>
-        </p>
-
-        <div className="grid grid-cols-2 gap-4 text-sm mt-3">
-          <div>
-            <p className="text-gray-500 text-xs">Starting Price</p>
-            <p className="font-semibold text-gray-800">{price}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-xs">Completion</p>
-            <p className="font-semibold text-gray-800">{date}</p>
-          </div>
-        </div>
-
-        <p className="text-sm text-gray-600">
-          <span className="font-medium text-gray-800">By: </span>
-          <span className="italic">{developer}</span>
-        </p>
-
-        <div className="flex justify-between items-center pt-4 border-t border-gray-100 relative">
-          <div className="flex gap-2" ref={shareDropdownRef}>
-            {isAuthenticated && (
-              <button
-                onClick={handleFavoriteToggle}
-                className="group focus:outline-none"
-                title={
-                  isFavorited ? "Remove from Favorites" : "Add to Favorites"
-                }
-                aria-label={
-                  isFavorited ? "Remove from Favorites" : "Add to Favorites"
-                }
-              >
-                {isFavorited ? (
-                  <MdFavorite className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
-                ) : (
-                  <AiOutlineHeart className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
-                )}
-              </button>
-            )}
-
-            <button
-              onClick={handleCompareToggle}
-              className="group focus:outline-none"
-              title={isCompared ? "Remove from Compare" : "Add to Compare"}
-              aria-label={isCompared ? "Remove from Compare" : "Add to Compare"}
-            >
-              <VscDiff
-                className={`h-6 w-6 bg-logoBlue/10 rounded p-1 transition-all duration-300 ${
-                  isCompared
-                    ? "text-red-500 group-hover:bg-red-500 group-hover:text-white"
-                    : "text-logoBlue group-hover:bg-logoBlue group-hover:text-white"
-                }`}
+      {/* Tags */}
+      <div className="my-4 sm:my-6 md:my-[31px] flex flex-wrap gap-2 text-white text-xs sm:text-sm">
+        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="18"
+            viewBox="0 0 20 18"
+            fill="none"
+          >
+            <g clipPath="url(#clip0_1129_3698)">
+              <path
+                d="M10.0119 15.9599C7.01369 15.9599 4.01627 15.9599 1.01806 15.9599C0.714934 15.9599 0.574786 16.0987 0.574786 16.3979C0.574786 16.4754 0.578723 16.553 0.573999 16.6297C0.5677 16.7227 0.558252 16.8157 0.54093 16.9064C0.476368 17.2374 0.159068 17.5026 -0.220432 17.4987C-0.601507 17.4948 -0.917233 17.2119 -0.974709 16.8483C-0.988094 16.763 -0.99518 16.6754 -0.99518 16.5894C-0.995967 14.8281 -1.00778 13.0661 -0.991243 11.3049C-0.981795 10.2785 -0.602295 9.38551 0.125212 8.6421C0.566913 8.19094 1.09207 7.87001 1.69282 7.66536C2.16522 7.50489 2.65338 7.45605 3.15098 7.45605C7.76246 7.45761 12.3739 7.45373 16.9854 7.45915C18.3365 7.46071 19.4309 7.99714 20.2419 9.06381C20.6403 9.58861 20.8781 10.1847 20.9592 10.8359C20.9867 11.0553 20.9985 11.2785 20.9993 11.5002C21.0025 13.2103 21.0017 14.9204 21.0009 16.6305C21.0009 16.8979 20.934 17.1413 20.7104 17.3181C20.4741 17.5049 20.2104 17.5537 19.9293 17.4398C19.66 17.3297 19.49 17.1274 19.4514 16.8382C19.4317 16.6925 19.4341 16.5429 19.4301 16.3956C19.4238 16.1576 19.3238 16.0142 19.1239 15.97C19.0798 15.9599 19.0333 15.9607 18.9876 15.9607C15.9965 15.9607 13.0054 15.9607 10.0135 15.9607L10.0119 15.9599Z"
+                fill="white"
               />
-            </button>
+              <path
+                d="M9.90197 0.5C11.8467 0.5 13.7907 0.5 15.7346 0.5C16.3858 0.5 16.9944 0.643411 17.5195 1.03953C18.1951 1.54884 18.5895 2.21938 18.6226 3.06124C18.651 3.77519 18.6384 4.4907 18.6415 5.20543C18.6439 5.66589 18.6415 6.12636 18.6415 6.58682C18.6415 6.62791 18.6391 6.67132 18.6281 6.71085C18.5943 6.83566 18.5258 6.88527 18.3966 6.86124C18.2557 6.83488 18.1195 6.77829 17.9786 6.76279C17.6471 6.72713 17.3148 6.70233 16.9818 6.68527C16.7597 6.67364 16.6913 6.63411 16.6598 6.41938C16.559 5.73876 15.9189 5.12636 15.1 5.13566C14.1867 5.14574 13.2734 5.13798 12.3609 5.13798C11.6814 5.13798 11.1011 5.53643 10.8704 6.16434C10.8373 6.25426 10.8247 6.35194 10.8074 6.44651C10.7751 6.61628 10.7114 6.67984 10.5397 6.68217C10.1799 6.68605 9.8193 6.68605 9.45949 6.68217C9.29414 6.68062 9.22879 6.61628 9.19887 6.42791C9.15715 6.16357 9.05322 5.92791 8.88315 5.72093C8.5753 5.34574 8.1769 5.14186 7.6856 5.13953C6.74315 5.13488 5.80069 5.13721 4.85745 5.13876C4.06538 5.13953 3.44574 5.74884 3.34496 6.41783C3.31268 6.63411 3.24733 6.67209 3.0253 6.68605C2.65761 6.71008 2.28992 6.74419 1.92302 6.78295C1.81043 6.79457 1.70256 6.84264 1.59076 6.86124C1.4703 6.88062 1.41439 6.84031 1.38054 6.72403C1.36715 6.67829 1.36085 6.62946 1.36085 6.5814C1.36007 5.47674 1.34511 4.37209 1.364 3.26744C1.38369 2.11163 1.92617 1.26202 2.98751 0.748062C3.40795 0.545736 3.86382 0.5 4.32521 0.5C6.18413 0.5 8.04305 0.5 9.90197 0.5Z"
+                fill="white"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_1129_3698">
+                <rect
+                  width="22"
+                  height="17"
+                  fill="white"
+                  transform="translate(-1 0.5)"
+                />
+              </clipPath>
+            </defs>
+          </svg>
+          {prop.bedrooms}-Bedroom
+        </span>
+        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="21"
+            viewBox="0 0 20 21"
+            fill="none"
+          >
+            <g clipPath="url(#clip0_1129_3704)">
+              <path
+                d="M0.269455 14.2617H10.11V16.0698H16.2615V14.2657H18.7054C18.8637 16.416 18.8761 18.3305 16.6707 19.7899C16.6437 19.8076 16.6221 19.8319 16.5623 19.8851C16.8335 20.1104 17.1009 20.333 17.3655 20.5531C17.0082 20.8946 16.7212 21.1691 16.3922 21.4844C16.1019 21.1849 15.7879 20.8374 15.4458 20.5209C15.3453 20.4276 15.1673 20.3895 15.0215 20.3803C14.7831 20.3659 14.5414 20.4046 14.301 20.4053C11.1057 20.4072 7.91048 20.4066 4.71457 20.4066C4.56154 20.4066 4.398 20.4361 4.25679 20.3935C3.83054 20.2654 3.55994 20.4631 3.30642 20.7685C3.09034 21.0286 2.84405 21.263 2.61877 21.5008C2.31468 21.1809 2.03949 20.8919 1.73474 20.5708C1.939 20.3902 2.19843 20.1603 2.49004 19.9015C2.28906 19.7577 2.13866 19.6579 1.99614 19.5475C0.928209 18.7246 0.350896 17.633 0.275366 16.2925C0.23793 15.6285 0.268798 14.9605 0.268798 14.2617H0.269455Z"
+                fill="white"
+              />
+              <path
+                d="M0.275543 9.28721C0.270288 9.16834 0.261093 9.06128 0.261093 8.95423C0.260437 7.21375 0.258466 5.47393 0.261093 3.73345C0.26372 1.8209 1.59108 0.486313 3.50101 0.500106C4.14203 0.504703 4.80275 0.491568 5.41882 0.636717C6.5117 0.894833 7.20001 1.65276 7.53235 2.72069C7.59671 2.92824 7.68012 3.02872 7.90803 3.09046C9.19401 3.43921 10.0964 4.64113 10.1128 5.98228C10.1155 6.19836 10.1128 6.41444 10.1128 6.64891H4.02578C3.73548 5.11401 4.56959 3.52985 6.31335 3.03529C6.15573 2.35027 5.48121 1.7723 4.7732 1.74734C4.23792 1.72829 3.70067 1.72632 3.16539 1.74734C2.24261 1.78346 1.50044 2.63071 1.4965 3.64676C1.48994 5.39774 1.49453 7.14938 1.49453 8.90037C1.49453 9.0199 1.49453 9.13944 1.49453 9.28656H0.274229L0.275543 9.28721Z"
+                fill="white"
+              />
+              <path
+                d="M10.0926 13.0328C9.96387 13.0328 9.86732 13.0328 9.77077 13.0328C6.64317 13.0328 3.51491 13.0335 0.387306 13.0321C-0.285898 13.0321 -0.769947 12.7136 -0.940054 12.1698C-1.1962 11.3514 -0.61626 10.5633 0.267771 10.5515C1.20829 10.539 2.1488 10.5482 3.08931 10.5482C5.29873 10.5482 7.5075 10.5482 9.71692 10.5482C9.83514 10.5482 9.95336 10.5482 10.0926 10.5482V13.0321V13.0328Z"
+                fill="white"
+              />
+              <path
+                d="M15.0237 14.8712H11.3634C11.3575 14.7556 11.3477 14.6506 11.3477 14.5455C11.3464 13.2772 11.3464 12.0083 11.3477 10.7401C11.3483 9.82254 11.8494 9.31813 12.763 9.31419C13.1019 9.31288 13.4408 9.30565 13.7797 9.31616C14.5409 9.34046 15.0381 9.85209 15.0401 10.6153C15.044 11.9387 15.0414 13.2615 15.0401 14.5849C15.0401 14.6709 15.0309 14.7563 15.0237 14.8712Z"
+                fill="white"
+              />
+              <path
+                d="M16.2832 13.0208V10.548C16.8782 10.548 17.4648 10.546 18.0506 10.5486C18.356 10.5499 18.668 10.525 18.9668 10.5742C19.619 10.682 20.0433 11.2159 20.0164 11.8392C19.9901 12.4507 19.5389 12.9754 18.8985 13.0089C18.0394 13.0543 17.1764 13.0201 16.2839 13.0201L16.2832 13.0208Z"
+                fill="white"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_1129_3704">
+                <rect
+                  width="21.0171"
+                  height="21"
+                  fill="white"
+                  transform="translate(-1 0.5)"
+                />
+              </clipPath>
+            </defs>
+          </svg>
+          {prop.bathrooms}-Bathroom
+        </span>
+        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="21"
+            viewBox="0 0 20 21"
+            fill="none"
+          >
+            <path
+              d="M16.25 2.5C16.6642 2.5 17 2.83579 17 3.25C17 3.66421 16.6642 4 16.25 4H16V17H16.25C16.6642 17 17 17.3358 17 17.75C17 18.1642 16.6642 18.5 16.25 18.5H12.75C12.3358 18.5 12 18.1642 12 17.75V15.25C12 14.8358 11.6642 14.5 11.25 14.5H8.75C8.33579 14.5 8 14.8358 8 15.25V17.75C8 18.1642 7.66421 18.5 7.25 18.5H3.75C3.33579 18.5 3 18.1642 3 17.75C3 17.3358 3.33579 17 3.75 17H4V4H3.75C3.33579 4 3 3.66421 3 3.25C3 2.83579 3.33579 2.5 3.75 2.5H16.25ZM7.5 9.5C7.22386 9.5 7 9.72386 7 10V11C7 11.2761 7.22386 11.5 7.5 11.5H8.5C8.77614 11.5 9 11.2761 9 11V10C9 9.72386 8.77614 9.5 8.5 9.5H7.5ZM11.5 9.5C11.2239 9.5 11 9.72386 11 10V11C11 11.2761 11.2239 11.5 11.5 11.5H12.5C12.7761 11.5 13 11.2761 13 11V10C13 9.72386 12.7761 9.5 12.5 9.5H11.5ZM7.5 5.5C7.22386 5.5 7 5.72386 7 6V7C7 7.27614 7.22386 7.5 7.5 7.5H8.5C8.77614 7.5 9 7.27614 9 7V6C9 5.72386 8.77614 5.5 8.5 5.5H7.5ZM11.5 5.5C11.2239 5.5 11 5.72386 11 6V7C11 7.27614 11.2239 7.5 11.5 7.5H12.5C12.7761 7.5 13 7.27614 13 7V6C13 5.72386 12.7761 5.5 12.5 5.5H11.5Z"
+              fill="white"
+            />
+          </svg>
+          {prop.type}
+        </span>
+      </div>
 
-            <button
-              onClick={handleShare}
-              className="group focus:outline-none"
-              title="Share Property"
-              aria-label="Share Property"
-            >
-              <IoShareSocialOutline className="h-6 w-6 text-logoBlue bg-logoBlue/10 rounded p-1 group-hover:bg-logoBlue group-hover:text-white transition-all duration-300" />
-            </button>
-          </div>
-
-          {isShareOpen && (
-            <div className="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2 z-10">
-              {shareLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  onClick={(e) => {
-                    if (link.action) {
-                      link.action(e);
-                    } else {
-                      e.stopPropagation();
-                    }
-                    setIsShareOpen(false);
-                  }}
-                  target={link.url ? "_blank" : undefined}
-                  rel={link.url ? "noopener noreferrer" : undefined}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  {link.icon}
-                  {link.name}
-                </a>
-              ))}
-            </div>
-          )}
-
-          <button className="flex items-center gap-2 bg-logoBlue text-white px-5 py-2 rounded hover:bg-logoBlue/90 font-medium transition-all duration-200 transform hover:scale-105">
-            <span className="font-medium">Read More</span>
-          </button>
+      <div className="mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-between sm:items-center">
+        <div className="text-sm text-[#000] mb-2 sm:mb-0">
+          Starting Price
+          <br />
+          <h6 className="text-base sm:text-lg">{prop.price}</h6>
         </div>
+        <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded-md text-sm sm:text-base font-[600] transition">
+          View Property Details
+        </button>
       </div>
     </div>
   );

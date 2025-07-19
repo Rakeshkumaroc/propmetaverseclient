@@ -1,20 +1,23 @@
- 
 import Navbar from "../components/global/Navbar";
 import HeroSection from "../components/home/HeroSection";
-import AgentsSection from "../components/home/AgentsSection";
+import TrendingProjects from "../components/home/TrendingProjects";
+import FeaturesSection from "../components/home/FeaturesSection";
+import Testimonials from "../components/home/Testimonials";
+import Faq from "../components/home/Faq";
+import ContactForm from "../components/home/ContactForm";
+import RealEstateBanner from "../components/global/RealEstateBanner";
 import Footer from "../components/global/Footer";
-import RealEstateDeals from "../components/home/RealEstateDeals"; 
-import ContactUs from "../components/home/ContactUs"; 
-import TrendingProjects from "../components/home/TrendingProjects";  
-const Home = () => { 
+const Home = () => {
   return (
     <>
-      <Navbar isGlass={true}/>
-      <HeroSection  />
-      <TrendingProjects/>
-      <RealEstateDeals /> 
-      <ContactUs />
-      <AgentsSection />
+      <Navbar />
+      <HeroSection />
+      <TrendingProjects />
+      <FeaturesSection />
+      <Testimonials />
+      <Faq />
+      <ContactForm />
+      <RealEstateBanner />
       <Footer />
     </>
   );

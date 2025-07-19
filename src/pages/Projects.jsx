@@ -1,11 +1,12 @@
 // components/Projects.js
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/global/Navbar";
-import AgentsSection from "../components/home/AgentsSection";
 import Footer from "../components/global/Footer";
 import MarkerMap from "../components/projects/MarkerMap";
 import PropertyListing from "../components/projects/PropertyListing";
 import FilterBox from "../components/projects/FilterBox";
+import AllProjects from "../components/projects/AllProjects";
+import RealEstateBanner from "../components/global/RealEstateBanner";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Projects = () => {
@@ -20,13 +21,29 @@ const Projects = () => {
           throw new Error("Failed to fetch properties");
         }
         const data = await response.json();
+        console.log("data", data);
 
-        // Filter for approved properties only
-        const approvedProperties = Array.isArray(data)
-          ? data.filter((item) => item.approveStatus === "approved")
-          : [];
-        setProperties(approvedProperties);
-        setFilteredData(approvedProperties); // Initialize filteredData with approved properties
+      
+        console.log("data", data);
+
+        const mappedProperties = data.map((item) => ({
+          tag: item.propertyType,
+          name: item.title,
+          location: `${item.city}, ${item.state}`,
+          completion: item.constructionYear.toString(),
+          developer: item.developer,
+          bedrooms: item.floorPlan[0]?.type.split(" ")[0] || "N/A",
+          bathrooms: item.floorPlan[0]?.balcony || 0,
+          type: item.floorPlan[0]?.type || "Apartment",
+          galleryImg:
+            item.galleryImg[0] ||
+            "https://propmetaverse.com/assets/logopng-BXERHkCM.png",
+          price: `Rs. ${item.floorPlan[0]?.price.toLocaleString("en-IN")}/-`,
+        }));
+        console.log("mappedProperties", mappedProperties);
+
+        setProperties(mappedProperties);
+        setFilteredData(mappedProperties); // Initialize filteredData with approved properties
       } catch (err) {
         console.log("Error:", err);
       }
@@ -46,10 +63,12 @@ const Projects = () => {
         setFilteredData={setFilteredData}
         properties={properties}
       />
-      <PropertyListing
+      <AllProjects properties={filteredData.length > 0 ? filteredData : []} />
+      {/* <PropertyListing
         properties={filteredData.length > 0 ? filteredData : []}
-      />
-      <AgentsSection />
+      />  */}
+
+      <RealEstateBanner />
       <Footer />
     </>
   );

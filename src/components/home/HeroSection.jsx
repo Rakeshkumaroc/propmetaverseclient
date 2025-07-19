@@ -1,85 +1,29 @@
-import Slider from "react-slick";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useContext, useEffect, useRef, useState } from "react";
-import Herobg from "../../assets/image/herobg.jpg";
-import SliderImg1 from "../../assets/image/herosecimg.jpeg";
+import heroimg1 from "../../assets/image/heroimg1.png";
 import { MyContext } from "../../App";
-import SearchBox from "./SearchBox";
 import { scrollPage } from "../../utils/utils";
+import SearchBox from "./SearchBox";
 import { Link } from "react-router-dom";
 const baseUrl = import.meta.env.VITE_APP_URL;
-
-const HeroSection = () => {
-  const { enquiryRef } = useContext(MyContext);
-  const [heroData, setHeroData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const sliderRef = useRef(null);
-
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    autoplay: true,
-    autoplaySpeed: 5000,
-  };
-
-  // Dummy data for when no data is fetched
- const dummyData = [
+const dummyData = [
   {
-    title: "Welcome to Prop Metaverse",
+    title: " Discover Your Dream Property with Propmetaverse",
     description:
-      "Your trusted partner in real estate consulting, brokering, investment, and asset management. Operating across India and UAE with full RERA compliance, we deliver bespoke solutions and exceptional service through innovation and integrity.",
-    image_url: SliderImg1, // Replace this with the appropriate image import or path
-    property_type: "Real Estate Consulting",
-    price: "Since November 2022",
-  },
-  {
-    title: "Our Mission",
-    description:
-      "To Redefine and Simplify the Real Estate Experience for Everyone. From first homes to commercial ventures, we guide clients with clarity and confidence at every step.",
-    image_url: SliderImg1,
-    property_type: "Mission-Driven",
-    price: "Empowering Every Client",
-  },
-  {
-    title: "Our Vision",
-    description:
-      "To become a leading global real estate company—recognized for innovation, integrity, and excellence—while contributing to community growth and responsible investment.",
-    image_url: SliderImg1,
-    property_type: "Global Leadership",
-    price: "Future-Ready & Ethical",
-  },
-  {
-    title: "Profit with Purpose",
-    description:
-      "We believe success is measured not only in revenue but also in impact. From empowering women to fostering sustainable communities, we prioritize purpose alongside profit.",
-    image_url: SliderImg1,
-    property_type: "Impact-Oriented  ",
-    price: "Empowerment & Inclusion",
-  },
-  {
-    title: "Expert Team",
-    description:
-      "A highly skilled team across five primary and one secondary Indian market, with global insight and local expertise. We bring real-time analytics, client-first focus, and market excellence.",
-    image_url: SliderImg1,
-    property_type: "Brokering Experts",
-    price: "Driven by Professionals",
+      "Your trusted partner in real estate consulting, brokering, investment, and asset management. Operating across India and UAE with full RERA compliance, we deliver bespoke solutions and exceptional service through innovation and integrity.   Your journey to finding the perfect property begins here. Explore our listings to find the home that matches your dreams.",
+    image_url: heroimg1,
   },
 ];
-
-
-  // Fetch hero data from API
+const HeroSection = () => {
+  const { enquiryRef } = useContext(MyContext);
+  const [heroData, setHeroData] = useState(dummyData);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   useEffect(() => {
     const fetchHeroData = async () => {
       setIsLoading(true); // Set loading to true before fetching
       try {
         const response = await fetch(`${baseUrl}/hero`);
         const data = await response.json();
-        setHeroData(data.length > 0 ? data : dummyData); // Use dummy data if no data is fetched
-        console.log("data", data);
+        setHeroData(dummyData); // Use dummy
       } catch (error) {
         console.error("Error fetching hero data:", error);
         setHeroData(dummyData); // Set dummy data on error
@@ -90,182 +34,62 @@ const HeroSection = () => {
 
     fetchHeroData();
   }, []);
-
-  // Skeleton loader component
-  const SkeletonLoader = () => (
-    <div className="flex z-50 relative flex-col-reverse md:flex-row items-center h-full justify-between p-4 sm:p-6 md:p-8 lg:p-10 gap-6 md:gap-10 animate-pulse">
-      <div className="w-full md:w-1/2 lg:max-w-[670px] text-white">
-        <div className="h-8 sm:h-10 md:h-12 lg:h-14 bg-gray-300 rounded w-3/4 mb-4"></div>
-        <div className="h-4 sm:h-5 md:h-6 bg-gray-300 rounded w-full mb-2"></div>
-        <div className="h-4 sm:h-5 md:h-6 bg-gray-300 rounded w-5/6 mb-2"></div>
-        <div className="h-4 sm:h-5 md:h-6 bg-gray-300 rounded w-4/5"></div>
-        <div className="mt-4 sm:mt-6 flex flex-wrap gap-3 sm:gap-4">
-          <div className="h-10 sm:h-12 bg-gray-300 rounded w-24 sm:w-28"></div>
-          <div className="h-10 sm:h-12 bg-gray-300 rounded w-36 sm:w-40"></div>
-        </div>
-      </div>
-      <div className="w-52 h-52 sm:w-72 md:w-80 lg:w-96 sm:h-72 md:h-80 lg:h-96 relative rounded-full">
-        <div className="relative rounded-full overflow-hidden w-full h-full bg-gray-300 border-4 sm:border-5 border-white shadow-lg"></div>
-        <div className="absolute bottom-10 sm:bottom-14 md:bottom-16 left-0 right-0 px-3 sm:px-4 text-center text-xs sm:text-sm md:text-base lg:text-lg font-bold text-gray-400 bg-white bg-opacity-80 py-2">
-          <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto"></div>
-        </div>
-        <div className="absolute -bottom-5 -left-5 sm:bottom-5 sm:-left-0 border-4 sm:border-5 border-white bg-gray-300 w-20 sm:w-24 md:w-32 h-20 sm:h-24 md:h-32 flex items-center justify-center z-10 rounded-full">
-          <div className="h-4 bg-white rounded w-3/4"></div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div
-      className="relative w-full pt-6 sm:pt-10 md:pt-20 lg:pt-40 pb-5 md:pb-0 min-h-[100vh] md:min-h-screen bg-cover bg-center px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40"
-      style={{ backgroundImage: `url(${Herobg})` }}
-    >
-      <div className="bg-gradient-to-t absolute inset-0 to-[#061a33] from-[#173306]/80"></div>
-
-      {isLoading ? (
-        <SkeletonLoader />
-      ) : heroData.length > 0 ? (
-        heroData.length > 1 ? (
-          <Slider ref={sliderRef} {...settings}>
-            {heroData.map((item, index) => (
-              <div key={index}>
-                <div className="flex flex-col-reverse md:flex-row items-center h-full justify-between p-4 sm:p-6 md:p-8 lg:p-10 gap-6 md:gap-10">
-                  <div className="w-full md:w-1/2 lg:max-w-[670px] text-white">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
-                      {item.title}
-                    </h2>
-                      <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg">
-                      {item.description}
-                    </p>
-                    <div className=" mt-4 sm:mt-6 flex flex-wrap gap-3 sm:gap-4">
-                      <button
-                        onClick={() => {
-                          scrollPage(enquiryRef);
-                        }}
-                        className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 sm:px-6 sm:py-3 rounded text-sm sm:text-base"
-                      >
-                        Enquiry
-                      </button>
-                      <Link
-                        to={"/projects"}
-                        className="px-4 py-2 sm:px-6 sm:py-3 rounded hover:bg-white md:bg-transparent bg-white md:text-white text-black hover:text-black text-sm sm:text-base"
-                      >
-                        See All Apartments
-                      </Link>
-                    </div>
-                  </div>
-
-                  <div className="w-52 h-52 sm:w-72 md:w-80 lg:w-96 sm:h-72 md:h-80 lg:h-96 relative rounded-full shadow-[0_0_20px] shadow-white/80">
-                    {/* Circular Image */}
-                    <div className="relative rounded-full overflow-hidden w-full h-full">
-                      <img
-                        src={`${item.image_url}`}
-                        alt={item.title}
-                        className="w-full h-full object-cover border-4 sm:border-5 border-white shadow-lg rounded-full"
-                      />
-
-                      {/* Property Type Text Inside Circle */}
-                      <div className="absolute bottom-10 text-center   sm:bottom-14 md:bottom-16 left-0 right-0 px-3 sm:px-4   text-xs sm:text-sm md:text-base lg:text-md font-bold text-gray-400 bg-white bg-opacity-80 py-2">
-                        {item.property_type.toUpperCase()}
-                      </div>
-                    </div>
-
-                    {/* Price Badge Overlapping Bottom Left */}
-                    <div className="absolute -bottom-5 -left-5 sm:bottom-5 sm:-left-0 border-4 sm:border-5 border-white bg-logoColor w-20 sm:w-24 md:w-32 h-20 sm:h-24 md:h-32 flex items-center justify-center z-10 text-white px-3 py-2 rounded-full text-xs sm:text-sm md:text-base font-semibold shadow-md">
-                      <div className="flex flex-col items-center justify-center leading-tight text-center">
-                        <span>₹ {item.price}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Slider>
-        ) : (
-          heroData.map((item, index) => (
-            <div key={index}>
-              <div className="flex z-50 relative flex-col-reverse md:flex-row items-center h-full justify-between p-4 sm:p-6 md:p-8 lg:p-10 gap-6 md:gap-10">
-                <div className="w-full md:w-1/2 lg:max-w-[670px] text-white">
-                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
-                    {item.title}
-                  </h2>
-                  <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg">
-                    {item.description}
-                  </p>
-                  <div className="mt-4 sm:mt-6 flex flex-wrap gap-3 sm:gap-4">
-                    <button
-                      onClick={() => {
-                        scrollPage(enquiryRef);
-                      }}
-                      className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 sm:px-6 sm:py-3 rounded text-sm sm:text-base"
-                    >
-                      Enquiry
-                    </button>
-                    <Link
-                      to={"/projects"}
-                      className="px-4 py-2 sm:px-6 sm:py-3 rounded hover:bg-white md:bg-transparent bg-white md:text-white text-black hover:text-black text-sm sm:text-base"
-                    >
-                      See All Apartments
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="w-52 h-52 sm:w-72 md:w-80 lg:w-96 sm:h-72 md:h-80 lg:h-96 relative rounded-full shadow-[0_0_20px] shadow-white/80">
-                  {/* Circular Image */}
-                  <div className="relative rounded-full overflow-hidden w-full h-full">
-                    <img
-                      src={`${item.image_url}`}
-                      alt={item.title}
-                      className="w-full h-full object-cover border-4 sm:border-5 border-white shadow-lg rounded-full"
-                    />
-
-                    {/* Property Type Text Inside Circle */}
-                    <div className="absolute bottom-10 sm:bottom-14 md:bottom-16 left-0 right-0 px-3 sm:px-4 text-center text-xs sm:text-sm md:text-base lg:text-lg font-bold text-gray-400 bg-white bg-opacity-80 py-2">
-                      {item.property_type.toUpperCase()}
-                    </div>
-                  </div>
-
-                  {/* Price Badge Overlapping Bottom Left */}
-                  <div className="absolute -bottom-5 -left-5 sm:bottom-5 sm:-left-0 border-4 sm:border-5 border-white bg-logoColor w-20 sm:w-24 md:w-32 h-20 sm:h-24 md:h-32 flex items-center justify-center z-10 text-white px-3 py-2 rounded-full text-xs sm:text-sm md:text-base font-semibold shadow-md">
-                    <div className="flex flex-col items-center justify-center leading-tight text-center">
-                      <span>₹ {item.price}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )
-      ) : null}
-
-      {/* Custom Arrows */}
-      {heroData.length > 1 ? (
-        <div className="md:block flex flex-col items-center">
-          <div className="relative md:static">
-            <button
-              className="md:absolute md:top-1/2 md:left-20 md:transform md:-translate-y-1/2 bg-black/50 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full md:rounded-none"
-              onClick={() => sliderRef.current.slickPrev()}
+    <div className="w-full relative mb-[93px]">
+      <section className="w-full bg-white md:py-12 px-6 md:px-20 grid grid-cols-1 md:grid-cols-2  gap-8">
+        {/* Left Section - Text & Buttons */}
+        <div className="md:w-[610px] w-full">
+          <div className="w-full flex flex-col items-start gap-[10px] md:gap-[10px]">
+            <h1 className="text-3xl md:text-[46px] ">{heroData[0].title}</h1>
+            <p className="text-gray-600 mt-4 ">{heroData[0].description}</p>
+          </div>
+          {/* CTA Buttons */}
+          <div className=" flex gap-4 flex-wrap mt-[20px] md:mt-[25px]">
+            <Link
+              to={"/projects"}
+              className="border-[1px] border-[#262626] text-logoBlue p-[14px_20px] md:text-[20px] rounded-[8px] hover:bg-blue-50 transition"
             >
-              <FaChevronLeft size={20} sm:size={24} />
-            </button>
+              Browse Properties
+            </Link>
             <button
-              className="md:absolute md:top-1/2 md:right-20 md:transform md:-translate-y-1/2 bg-black/50 hover:bg-white/40 text-white p-2 sm:p-3 rounded-full md:rounded-none"
-              onClick={() => sliderRef.current.slickNext()}
+              style={{ fontWeight: 700 }}
+              onClick={() => {
+                scrollPage(enquiryRef);
+              }}
+              className="bg-logoColor md:text-[20px] text-white    rounded-[8px] p-[14px_20px] shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.25)] hover:bg-logoColor/90 transition"
             >
-              <FaChevronRight size={20} sm:size={24} />
+              Enquiry
             </button>
           </div>
 
-          {/* Search Form */}
-          <SearchBox />
+          {/* Stats */}
+          <div className="md:mt-[59px] mt-[29px] flex gap-4 flex-wrap">
+            <div className="bg-logoBlue space-y-[2px] text-white rounded-[10px]  p-[14px_20px] w-full md:w-[192.6667px]   text-start">
+              <p className="text-[30px] font-[700]">200+</p>
+              <p className="">Happy Customers</p>
+            </div>
+            <div className="bg-logoBlue space-y-[2px] text-white rounded-[10px]  p-[14px_20px] w-full md:w-[192.6667px]   text-start">
+              <p className="text-[30px] font-[700]">10k+</p>
+              <p className="">Properties For Clients</p>
+            </div>
+            <div className="bg-logoBlue space-y-[2px] text-white rounded-[10px]  p-[14px_20px] w-full md:w-[192.6667px]   text-start">
+              <p className="text-[30px] font-[700]">3+</p>
+              <p className="">Years of Experience</p>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="md:block flex flex-col items-center">
-          {/* Search Form */}
-          <SearchBox />
+
+        {/* Right Section - Image */}
+        <div className="w-[817px] h-[700px] hidden md:flex justify-end items-end    -ml-20">
+          <img
+            src={heroimg1} // Replace with your actual image path
+            alt="House in hand"
+            className="w-full h-full -mr-[106px]"
+          />
         </div>
-      )}
+      </section>
+
+      <SearchBox />
     </div>
   );
 };

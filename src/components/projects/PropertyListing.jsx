@@ -108,30 +108,9 @@ const PropertyListing = ({ properties }) => {
       {/* Property Cards */}
       {currentProperties.length > 0 ? (
         <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-          {currentProperties.map((proj) => (
-            <TrendingProjectCard
-              key={proj._id}
-              id={proj._id}
-              propertyType={proj.propertyType}
-              title={proj.title}
-              location={`${proj.city}, ${proj.state}`}
-              price={ proj.floorPlan?.[0]?.price
-                  ? `₹${proj.floorPlan[0].price.toLocaleString("en-IN")}`
-                  : "Price on Request"} 
-            
-              date={
-                proj.constructionYear ? proj.constructionYear.toString() : "N/A"
-              }
-              developer={proj.developer || "Unknown"}
-              image={
-                proj.galleryImg[0]
-                  ? `${proj.galleryImg[0]}`
-                  : "https://via.placeholder.com/400"
-              }
-              amenities={proj.amenities.slice(0, 3)} // Show top 3 amenities
-              keywords={
-                proj.keywords.flatMap((k) => k.keyword).slice(0, 3) // Show top 3 keywords
-              }
+          {currentProperties.map((prop) => (
+            <TrendingProjectCard prop={prop}
+               
               
             />
           ))}

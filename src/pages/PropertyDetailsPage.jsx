@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { MyContext } from "../App";
-import Navbar from "../components/global/Navbar";
-import AgentsSection from "../components/home/AgentsSection";
+import Navbar from "../components/global/Navbar"; 
 import Footer from "../components/global/Footer";
 import Header from "../components/property-details/Header";
 import Enquiry from "../components/property-details/Enquiry";
@@ -165,8 +164,7 @@ const PropertyDetailsPage = () => {
              <Enquiry />
           </div>
         </div>
-      </div>
-      <AgentsSection />
+      </div> 
       <Footer />
       <EnquiryPopup
         isOpen={isEnquiryFormOpen}
