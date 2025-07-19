@@ -3,9 +3,9 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
 const Header = () => {
   return (
-    <div className="md:pl-12 md:pr-12 pb-16">
+    <div className="pb-16 mt-[70px]  xl:mt-[120px] 2xl:mt-[160px]">
       {/* Header Text */}
-      <div className="py-30 mt-1 text-[#000] bg-gradient-to-r from-[#74aedd] via-[#f9f9f9] to-white">
+      <div className="py-30 px-3 md:px-0 mt-1 text-[#000] bg-gradient-to-r from-[#74aedd] via-[#f9f9f9] to-white">
         <div className="md:pl-[80px] md:pr-[200px]">
           <h1 className="text-[25px] md:text-[40px] font-semibold">
             Get in Touch with Propmetaverse
@@ -21,7 +21,7 @@ const Header = () => {
       </div>
 
       {/* Contact Cards Grid */}
-      <div className="mt-14">
+      <div className="mt-14 md:pl-12 md:pr-12 px-3 md:px-0">
         <div className="grid md:grid-cols-4 gap-4 md:text-xl">
           {/* Email Card */}
           <div className="md:h-[160px] h-[120px] rounded-md bg-[#BAD6EB] flex justify-center items-center flex-col gap-2 border border-[#262626]">

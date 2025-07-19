@@ -212,7 +212,7 @@ const CompareTable = () => {
   }
 
   return (
-    <div className="mb-10">
+    <div className="mb-10 mt-20">
       <div className="md:text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold text-logoColor">
           Property Comparison
