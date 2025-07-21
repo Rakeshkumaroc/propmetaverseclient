@@ -53,3 +53,65 @@ p {
   font-size: 16px;  
 }
 }
+
+
+
+
+ 
+
+ /* Ensure Google Translate dropdown fits within your styled container */
+#google_translate_element,
+#google_translate_element_mobile {
+  width: 100%;
+}
+
+#google_translate_element select,
+#google_translate_element_mobile select {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+}
+
+#google_translate_element .goog-te-combo,
+#google_translate_element_mobile .goog-te-combo {
+  width: 100%;
+  border: none;
+  outline: none;
+}
+
+/* Hide unnecessary Google Translate branding */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+body {
+  top: 0 !important; /* Prevent Google Translate from adding top offset */
+}
+
+/* Ensure dropdown is properly styled */
+.translate-dropdown {
+  min-width: 150px;
+}
+
+
+.VIpgJd-ZVi9od-ORHb-OEVmcd{
+  visibility: hidden !important;
+}
+
+.goog-te-gadget-simple{
+  /* min-width: 150px; */
+  /* background: #000; */
+  display: flex !important;
+  padding: 10px !important;
+}
+
+.VIpgJd-ZVi9od-xl07Ob-lTBxed{
+  display: flex;
+}
+#goog-gt-vt{
+  visibility: hidden !important;
+  display: none !important;
+}

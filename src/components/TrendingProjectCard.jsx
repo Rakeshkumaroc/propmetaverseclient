@@ -1,12 +1,18 @@
 import Like from "../assets/card/like.svg";
 import Share from "../assets/card/share.svg";
 import Compare from "../assets/card/compare.svg";
-
+import { useNavigate } from "react-router-dom";
 const TrendingProjectCard = ({ prop }) => {
+  const navigate = useNavigate();
+
   return (
     <div
-      
-      className="card-container bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-4 sm:p-6 md:p-[30px]"
+      onClick={() => {
+        navigate(
+          `/projects/${prop.name.replaceAll(" ", "-").toLowerCase()}/${prop.id}`
+        );
+      }}
+      className="card-container cursor-pointer bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-4 sm:p-6 md:p-[30px]"
     >
       {/* Image Placeholder */}
       <div className="relative w-full h-[200px] sm:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-4">

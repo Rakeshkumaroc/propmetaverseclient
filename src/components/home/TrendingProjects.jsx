@@ -27,6 +27,7 @@ export default function TrendingProjects2() {
         const data = await response.json();
 
         const mappedProperties = data.map((item) => ({
+          id:item._id,
           tag: item.propertyType,
           name: item.title,
           location: `${item.city}, ${item.state}`,

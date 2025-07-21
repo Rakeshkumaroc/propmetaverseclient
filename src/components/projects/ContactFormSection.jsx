@@ -22,7 +22,6 @@ const ContactFormSection = () => {
 
   // Base URL for the API (replace with your actual API endpoint)
 
-
   // Handle focus event
   const handleFocus = (field) => {
     setFormState((prev) => ({
@@ -275,7 +274,9 @@ const ContactFormSection = () => {
               </label>
               <select
                 value={formState.preferredLocation.value}
-                onChange={(e) => handleSelectChange("preferredLocation", e.target.value)}
+                onChange={(e) =>
+                  handleSelectChange("preferredLocation", e.target.value)
+                }
                 className="w-full bg-[#BAD6EB] border border-black/30 rounded-md p-[8px_12px] sm:p-[12px_16px] md:p-[16px_20px] text-xs sm:text-sm md:text-base"
               >
                 <option value="">Select Location</option>
@@ -290,7 +291,9 @@ const ContactFormSection = () => {
               </label>
               <select
                 value={formState.propertyType.value}
-                onChange={(e) => handleSelectChange("propertyType", e.target.value)}
+                onChange={(e) =>
+                  handleSelectChange("propertyType", e.target.value)
+                }
                 className="w-full bg-[#BAD6EB] border border-black/30 rounded-md p-[8px_12px] sm:p-[12px_16px] md:p-[16px_20px] text-xs sm:text-sm md:text-base"
               >
                 <option value="">Select Property Type</option>
@@ -305,7 +308,9 @@ const ContactFormSection = () => {
               </label>
               <select
                 value={formState.bathrooms.value}
-                onChange={(e) => handleSelectChange("bathrooms", e.target.value)}
+                onChange={(e) =>
+                  handleSelectChange("bathrooms", e.target.value)
+                }
                 className="w-full bg-[#BAD6EB] border border-black/30 rounded-md p-[8px_12px] sm:p-[12px_16px] md:p-[16px_20px] text-xs sm:text-sm md:text-base"
               >
                 <option value="">Select no. of Bathrooms</option>
@@ -349,7 +354,21 @@ const ContactFormSection = () => {
                 Preferred Contact Method
               </label>
               <div className="flex items-center bg-[#BAD6EB] border border-black/30 rounded-md p-[8px_12px] sm:p-[12px_16px] md:p-[16px_20px] gap-2">
-                <FaPhone className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-black" />
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 text-black"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="21"
+                  height="20"
+                  viewBox="0 0 21 20"
+                  fill="none"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M1.75 3.75C1.75 2.36929 2.86929 1.25 4.25 1.25H5.39302C6.11 1.25 6.73498 1.73796 6.90887 2.43354L7.83037 6.11952C7.98284 6.72942 7.75495 7.37129 7.25202 7.74849L6.174 8.557C6.06206 8.64096 6.03772 8.7639 6.06917 8.84974C7.01542 11.4329 9.0671 13.4846 11.6503 14.4308C11.7361 14.4623 11.859 14.4379 11.943 14.326L12.7515 13.248C13.1287 12.7451 13.7706 12.5172 14.3805 12.6696L18.0665 13.5911C18.762 13.765 19.25 14.39 19.25 15.107V16.25C19.25 17.6307 18.1307 18.75 16.75 18.75H14.875C7.62626 18.75 1.75 12.8737 1.75 5.625V3.75Z"
+                    fill="black"
+                  />
+                </svg>
                 <input
                   type="tel"
                   placeholder="Enter Your Number"

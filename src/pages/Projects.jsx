@@ -27,6 +27,7 @@ const Projects = () => {
         console.log("data", data);
 
         const mappedProperties = data.map((item) => ({
+          id: item._id,
           tag: item.propertyType,
           name: item.title,
           location: `${item.city}, ${item.state}`,

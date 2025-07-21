@@ -56,6 +56,7 @@ import CustomerAddProperty from "../components/customer/pages/CustomerAddPropert
 import CustomerLeadManagement from "../components/customer/pages/CustomerLeadManagement";
 import SearchHistory from "../components/customer/pages/SearchHistory";
 import SellerCommission from "../components/seller/pages/SellerCommission";
+import ComparisonList2 from "../pages/ComparisonList2";
 const Layout = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -76,7 +77,7 @@ const Layout = () => {
         <Route path="/return-policy" element={<RefundPolicy />} />
         <Route path="/pricing-policy" element={<PricingPolicy />} />
         <Route path="/projects/:title/:id" element={<PropertyDetailsPage />} />
-        <Route path="/compare" element={<ComparisonList />} />
+        <Route path="/compare" element={<ComparisonList2 />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="/seller-sign-up" element={<SellerSignUp />} />
         <Route path="/seller-sign-in" element={<SellerLoginPage />} />

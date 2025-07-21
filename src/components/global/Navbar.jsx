@@ -8,6 +8,7 @@ import {
   FaHeart,
   FaExchangeAlt, 
 } from "react-icons/fa";
+import LanguageSelector from "./LanguageSelector";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,6 +35,7 @@ const Navbar = () => {
   return (
     <div className="bg-white md:mb-[40px] mb-[20px] fixed top-0 left-0 right-0 z-[99]  shadow-[-3px_-4px_29.2px_-1px_#1865A4]">
       {/* Top Bar - Visible only on 2xl and above */}
+      
       <div className="hidden 2xl:block border-b-[1px] border-[#1865A4] text-logoBlue text-sm xl:px-24">
         <div className="w-full max-w-[100vw] mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2 md:gap-4">
           {/* Phone */}
@@ -109,10 +111,11 @@ const Navbar = () => {
                 fill="#1865A4"
               />
             </svg>
-            <span className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap">
+            <Link to={'/compare'} className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px] font-[500] whitespace-nowrap">
               Compare Properties
-            </span>
+            </Link>
           </div>
+          <LanguageSelector/>
         </div>
       </div>
 

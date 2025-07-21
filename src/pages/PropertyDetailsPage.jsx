@@ -19,6 +19,7 @@ import RatingSystem from "../components/property-details/RatingSystem";
 import EmiCalculator from "../components/property-details/EmiCalculator";
 import Pricing from "../components/property-details/Pricing";  
 import EnquiryPopup from "../components/global/EnquiryPopup";
+import PropertyGallery from "../components/property-details/PropertyGallery";
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -67,6 +68,7 @@ const PropertyDetailsPage = () => {
   return (
     <div>
       <Navbar />
+      <PropertyGallery galleryImg={propertyDetails.galleryImg ? propertyDetails.galleryImg : []}/>
       <Header
         galleryImg={propertyDetails.galleryImg ? propertyDetails.galleryImg : []}
       />
