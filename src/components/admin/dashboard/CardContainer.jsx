@@ -1,3 +1,4 @@
+ 
 import { BsChatDots } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
@@ -5,144 +6,140 @@ import { Link } from "react-router-dom";
 import { CiCreditCard1 } from "react-icons/ci";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
-import { FaUserTie, FaUsers, FaAddressBook} from "react-icons/fa6"; // Added FaBookOpen for Training Materials
+import { FaUserTie, FaUsers, FaAddressBook} from "react-icons/fa6";   
 
 const baseUrl = import.meta.env.VITE_APP_URL;
 
 const CardContainer = () => {
-  const [enquiryData, setEnquiryData] = useState([]); 
-  const [heroData, setHeroData] = useState([]);
-  const [announcementData, setAnnouncementData] = useState([]);
-  const [listedPropertyData, setListedPropertyData] = useState([]);
-  const [sellersData, setSellersData] = useState([]);
-  const [customersData, setCustomersData] = useState([]);
-  const [leadsData, setLeadsData] = useState([]); 
+  const [stats, setStats] = useState({
+    enquiry: 0,
+    hero: 0,
+    announcement: 0,
+    sellers: 0,
+    customers: 0,
+    leads: 0,
+    listed: 0,
+  });
 
   const dashboardItems = [
-  
     {
-      label: "Website Enquiry",
+      label: "Website Inquiry",
       link: "/admin/enquiry",
-      value: enquiryData || 0,
-      icon: <BsChatDots className="text-2xl transition-all duration-700" />,
+      value: stats.enquiry,
+      icon: <BsChatDots />,
+      note: "10% increase from last week",
     },
     {
       label: "Hero Cards",
       link: "/admin/hero",
-      value: heroData || 0,
-      icon: <CiCreditCard1 className="text-2xl transition-all duration-700" />,
+      value: stats.hero,
+      icon: <CiCreditCard1 />,
+      note: "10% increase from last week",
     },
     {
       label: "Announcement",
       link: "/admin/announcements",
-      value: announcementData || 0,
-      icon: (
-        <TfiAnnouncement className="text-2xl transition-all duration-700" />
-      ),
+      value: stats.announcement,
+      icon: <TfiAnnouncement />,
+      note: "10% increase from last week",
     },
     {
       label: "Sellers",
       link: "/admin/manage-sellers",
-      value: sellersData || 0,
-      icon: <FaUserTie className="text-2xl transition-all duration-700" />,
+      value: stats.sellers,
+      icon: <FaUserTie />,
+      note: "2 new listings this week",
     },
     {
       label: "Customers",
       link: "/admin/view-customers",
-      value: customersData || 0,
-      icon: <FaUsers className="text-2xl transition-all duration-700" />,
+      value: stats.customers,
+      icon: <FaUsers />,
+      note: "10% increase from last week",
     },
     {
       label: "Buyer Leads",
       link: "/admin/lead-management",
-      value: leadsData || 0,
-      icon: <FaAddressBook className="text-2xl transition-all duration-700" />,
+      value: stats.leads,
+      icon: <FaAddressBook />,
+      note: "10% increase from last week",
     },
-
     {
-      label: "Listed Property",
+      label: "Listed Properties",
       link: "/admin/listing-management",
-      value: listedPropertyData || 0,
-      icon: (
-        <HiOutlineBuildingOffice2 className="text-2xl transition-all duration-700" />
-      ),
+      value: stats.listed,
+      icon: <HiOutlineBuildingOffice2 />,
+      note: "10% increase from last week",
     },
- 
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAll = async () => {
       try {
         const [
-          
-          enquiryRes,
-          heroRes,
-          announcementRes,
-          propertyRes,
-          sellersRes,
-          customersRes,
-          leadsRes, 
-        ] = await Promise.all([ 
+          e, h, a, l, s, c, b
+        ] = await Promise.all([
           fetch(`${baseUrl}/enquiry`),
           fetch(`${baseUrl}/hero`),
           fetch(`${baseUrl}/announcements`),
           fetch(`${baseUrl}/property`),
           fetch(`${baseUrl}/sellers`),
           fetch(`${baseUrl}/customers`),
-          fetch(`${baseUrl}/lead`), 
+          fetch(`${baseUrl}/lead`),
         ]);
 
         const [
-         
-          enquiryResult,
-          heroResult,
-          announcementResult,
-          propertyResult,
-          sellersResult,
-          customersResult,
-          leadsResult, 
-        ] = await Promise.all([ 
-          enquiryRes.json(),
-          heroRes.json(),
-          announcementRes.json(),
-          propertyRes.json(),
-          sellersRes.json(),
-          customersRes.json(),
-          leadsRes.json(), 
+          enquiryData,
+          heroData,
+          announcementData,
+          listedData,
+          sellersData,
+          customersData,
+          leadsData,
+        ] = await Promise.all([
+          e.json(),
+          h.json(),
+          a.json(),
+          l.json(),
+          s.json(),
+          c.json(),
+          b.json(),
         ]);
 
-        
-        setEnquiryData(enquiryResult.length);
-        setHeroData(heroResult.length);
-        setAnnouncementData(announcementResult.length);
-        setListedPropertyData(propertyResult.length);
-        setSellersData(sellersResult.length);
-        setCustomersData(customersResult.length);
-        setLeadsData(leadsResult.length); 
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setStats({
+          enquiry: enquiryData.length,
+          hero: heroData.length,
+          announcement: announcementData.length,
+          sellers: sellersData.length,
+          customers: customersData.length,
+          leads: leadsData.length,
+          listed: listedData.length,
+        });
+      } catch (err) {
+        console.error("Dashboard data fetch error:", err);
       }
     };
 
-    fetchData();
+    fetchAll();
   }, []);
 
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 xl:grid-cols-4 gap-5 my-16">
-      {dashboardItems.map((item, index) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {dashboardItems.map((item, i) => (
         <Link
           to={item.link}
-          key={index}
-          className="bg-white group p-6 cursor-pointer flex items-center hover:shadow-xl transition-all justify-between rounded-2xl shadow-sm w-full"
+          key={i}
+          className="p-5 bg-[#BAD6EB] hover:bg-logoBlue/50 transition rounded-2xl shadow-sm flex flex-col justify-between min-h-[130px]"
         >
-          <div>
-            <p className="text-sm font-semibold">{item.label}</p>
-            <p className="text-4xl font-semibold leading-[54px]">
-              {item.value}
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="text-3xl font-bold text-logoBlue">{item.value}</div>
+            <div className="bg-white p-2 rounded-full text-logoBlue text-xl">
+              {item.icon}
+            </div>
           </div>
-          <div className="h-[70px] w-[70px] mb-3 bg-gray-100 transition-all duration-700 rounded-full flex items-center justify-center">
-            {item.icon}
+          <div className="mt-3">
+            <p className="text-sm font-medium text-gray-800">{item.label}</p>
+            <p className="text-xs text-gray-600">{item.note}</p>
           </div>
         </Link>
       ))}

@@ -10,9 +10,10 @@ import {
   FiHome,
   FiUserPlus,
 } from "react-icons/fi";
-import Swal from "sweetalert2";
-const baseUrl = import.meta.env.VITE_APP_URL;
 import { TbStatusChange } from "react-icons/tb";
+import Swal from "sweetalert2";
+
+const baseUrl = import.meta.env.VITE_APP_URL;
 
 const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
   const {
@@ -28,11 +29,9 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
     created_at,
   } = isOpenLead;
 
-  // State for selected seller and seller data
   const [selectedSeller, setSelectedSeller] = useState(seller_id || "");
   const [seller, setSeller] = useState([]);
 
-  // Fetch sellers from the server
   useEffect(() => {
     const fetchSellers = async () => {
       try {
@@ -45,7 +44,11 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
           icon: "error",
           title: "Error!",
           text: "Failed to fetch sellers. Please try again later.",
-          confirmButtonColor: "#1b639f",
+          confirmButtonColor: "#000",
+          customClass: {
+            confirmButton:
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+          },
         });
       }
     };
@@ -53,17 +56,19 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
     fetchSellers();
   }, []);
 
-  // Find the current seller's name
   const currentSeller = seller.find((s) => s._id === seller_id)?.fullName || "No Seller Assigned";
 
-  // Update seller
   const handleUpdateSeller = async () => {
     if (!selectedSeller) {
       Swal.fire({
         icon: "warning",
         title: "Warning!",
         text: "Please select a seller.",
-        confirmButtonColor: "#1b639f",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
       });
       return;
     }
@@ -82,7 +87,11 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
           icon: "success",
           title: "Success!",
           text: "Seller updated successfully.",
-          confirmButtonColor: "#1b639f",
+          confirmButtonColor: "#000",
+          customClass: {
+            confirmButton:
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+          },
         });
         setIsOpenLead(false);
       } else {
@@ -91,7 +100,11 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
           icon: "error",
           title: "Error!",
           text: errorData.message || "Failed to update seller. Please try again.",
-          confirmButtonColor: "#1b639f",
+          confirmButtonColor: "#000",
+          customClass: {
+            confirmButton:
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+          },
         });
       }
     } catch (error) {
@@ -99,76 +112,88 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
         icon: "error",
         title: "Error!",
         text: "Something went wrong. Please try again later.",
-        confirmButtonColor: "#1b639f",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
       });
       console.error("Error updating seller:", error);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30">
-      <div className="w-[70vw] max-w-[800px] bg-white rounded-lg shadow-2xl p-8">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999]">
+      <div className="w-[90vw] max-w-[800px] bg-white rounded-xl shadow-2xl p-6 md:p-8">
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">Lead Details</h2>
-          <p className="text-black">Review the details of the lead below</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Lead Details</h2>
+          <p className="text-base text-gray-600 mt-2">
+            Review the details of the lead below
+          </p>
         </div>
 
         {/* Content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
           {[
-            { icon: FiUser, label: "Name", value: name },
-            { icon: FiMail, label: "Email", value: email },
-            { icon: FiPhone, label: "Phone", value: phone },
+            { icon: FiUser, label: "Name", value: name || "No name" },
+            { icon: FiMail, label: "Email", value: email || "No email" },
+            { icon: FiPhone, label: "Phone", value: phone || "No phone" },
             {
               icon: FiCalendar,
               label: "Date",
               value: created_at
-                ? new Date(created_at)
-                    .toLocaleDateString("en-GB")
-                    .replace(/\//g, "-")
+                ? new Date(created_at).toLocaleDateString("en-GB").replace(/\//g, "-")
                 : "No date",
             },
-            { icon: FiFileText, label: "Notes", value: notes },
+            { icon: FiFileText, label: "Notes", value: notes || "No notes" },
             {
               icon: FiUsers,
               label: "Customer",
-              value: (
+              value: customer_id ? (
                 <Link
-                  className="text-blue-500 hover:underline"
+                  className="text-purple-600 hover:text-purple-800 transition font-medium"
                   target="_blank"
                   to={`/admin/customer-details/${customer_id}`}
                 >
                   View
                 </Link>
+              ) : (
+                <span className="text-gray-400">No customer</span>
               ),
             },
             {
               icon: FiHome,
               label: "Property",
-              value: (
+              value: property_id ? (
                 <Link
-                  className="text-blue-500 hover:underline"
+                  className="text-purple-600 hover:text-purple-800 transition font-medium"
                   target="_blank"
                   to={`/projects/property-details/${property_id}`}
                 >
                   View
                 </Link>
+              ) : (
+                <span className="text-gray-400">No property</span>
               ),
             },
-            { icon: TbStatusChange, label: "Status", value: status },
+            {
+              icon: TbStatusChange,
+              label: "Status",
+              value: status || <span className="text-gray-400">No status</span>,
+            },
             {
               icon: FiUserPlus,
               label: "Assign Seller",
               value: (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-600">
-                      Current Seller: <span className="font-semibold text-gray-800">{currentSeller}</span>
+                    <p className="text-base text-gray-600">
+                      Current Seller: <span className="font-medium text-gray-800">{currentSeller}</span>
                     </p>
                     {seller_id && currentSeller !== "No Seller Assigned" && (
                       <Link
-                        className="text-blue-500 hover:underline text-sm"
+                        className="text-purple-600 hover:text-purple-800 transition text-base font-medium"
                         target="_blank"
                         to={`/admin/seller-details/${seller_id}`}
                       >
@@ -179,16 +204,16 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
                   <select
                     value={selectedSeller}
                     onChange={(e) => setSelectedSeller(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-gray-700"
+                    className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                   >
-                    <option value="">Select Seller</option>
+                    <option value="" className="text-gray-600">Select Seller</option>
                     {seller?.map(({ _id, fullName }) => (
                       <option
                         key={_id}
                         value={_id}
                         className={`p-2 ${
                           _id === seller_id
-                            ? "bg-blue-100 text-blue-800 font-semibold"
+                            ? "bg-purple-100 text-purple-800 font-medium"
                             : "hover:bg-gray-100"
                         }`}
                       >
@@ -203,27 +228,25 @@ const LeadDetails = ({ setIsOpenLead, isOpenLead }) => {
           ].map(({ icon: Icon, label, value, isFullWidth }, index) => (
             <div key={index} className={isFullWidth ? "sm:col-span-2" : ""}>
               <div className="flex items-center gap-3">
-                <Icon className="text-black bg-gray-200 p-1 rounded-md text-2xl" />
-                <p>
-                  <strong className="block font-medium">{label}:</strong>
-                </p>
+                <Icon className="text-gray-700 bg-gray-100 p-1.5 rounded-md text-xl" />
+                <p className="text-base font-medium text-gray-800">{label}:</p>
               </div>
-              <div>{value || "No value"}</div>
+              <div className="mt-1 text-base text-gray-700">{value}</div>
             </div>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex justify-center gap-4 mt-8">
           <button
             onClick={() => setIsOpenLead(false)}
-            className="bg-gray-600 cursor-pointer text-white px-6 py-2 rounded-md shadow-md hover:bg-gray-700"
+            className="px-6 py-2.5 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition text-base font-medium"
           >
             Close
           </button>
           <button
             onClick={handleUpdateSeller}
-            className="px-6 py-2 rounded-md cursor-pointer shadow-md bg-black hover:bg-black/90 text-white"
+            className="px-6 py-2.5 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
           >
             Update Seller
           </button>

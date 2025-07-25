@@ -138,6 +138,9 @@ const Layout = () => {
           <Route index element={<Dashboard />} />
 
           <Route path="enquiry" element={<Enquiry />} />
+             <Route path="hero" element={<Hero />} />
+          <Route path="add-hero" element={<AddHero />} />
+          <Route path="hero/:id" element={<AddHero action={"edit"} />} />
           <Route path="announcements" element={<ManageAnnouncements />} />
           {/* User Management */}
           <Route path="manage-sellers" element={<ManageSeller />} />
@@ -158,9 +161,7 @@ const Layout = () => {
           />
           <Route path="listing-management" element={<ListingManagement />} />
 
-          <Route path="hero" element={<Hero />} />
-          <Route path="add-hero" element={<AddHero />} />
-          <Route path="hero/:id" element={<AddHero action={"edit"} />} />
+       
           <Route path="my-profile" element={<MyProfile />} />
           <Route path="*" element={<NotFound />} />
         </Route>

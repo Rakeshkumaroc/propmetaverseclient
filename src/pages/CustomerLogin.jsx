@@ -10,7 +10,7 @@ const baseUrl = import.meta.env.VITE_APP_URL;
 
 const CustomerLogin = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    identifier: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const CustomerLogin = () => {
     setLoading(true);
 
     // Validate required fields
-    if (!formData.email || !formData.password) {
+    if (!formData.identifier || !formData.password) {
       setLoading(false);
       await Swal.fire({
         icon: "error",
@@ -50,7 +50,7 @@ const CustomerLogin = () => {
 
     // Prepare data for API
     const signInData = {
-      email: formData.email,
+      identifier: formData.identifier,
       password: formData.password,
     };
 
@@ -105,8 +105,8 @@ const CustomerLogin = () => {
                   type="email"
                   placeholder="Enter your email"
                   className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-sm sm:text-base"
-                  name="email"
-                  value={formData.email}
+                  name="identifier"
+                  value={formData.identifier}
                   onChange={inputHandler}
                 />
               </div>

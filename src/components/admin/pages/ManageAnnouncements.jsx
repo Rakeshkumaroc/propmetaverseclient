@@ -1,9 +1,10 @@
-// components/ManageAnnouncements.js
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import AnnouncementTable from "../announcements/AnnouncementTable";
 import { FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
+import AnnouncementTable from "../announcements/AnnouncementTable";
+
+const baseUrl = import.meta.env.VITE_APP_URL;
 
 const ManageAnnouncements = () => {
   const [search, setSearch] = useState("");
@@ -13,7 +14,6 @@ const ManageAnnouncements = () => {
     content: "",
     sendEmail: false,
   });
-  const baseUrl = import.meta.env.VITE_APP_URL;
 
   // Handle form submission
   const handleCreateAnnouncement = async (e) => {
@@ -35,6 +35,11 @@ const ManageAnnouncements = () => {
           title: "Success!",
           text: "Announcement created successfully!",
           confirmButtonColor: "#000",
+          customClass: {
+            confirmButton:
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+          },
+          buttonsStyling: false,
         });
       } else {
         throw new Error("Failed to create announcement");
@@ -42,54 +47,61 @@ const ManageAnnouncements = () => {
     } catch (error) {
       console.error("Error creating announcement:", error);
       Swal.fire({
-        title: "Error!",
-        text: "Failed to delete announcements. Please try again.",
         icon: "error",
-        confirmButtonColor: "#1b639f",
+        title: "Error!",
+        text: "Failed to create announcement. Please try again.",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
       });
     }
   };
 
   return (
-    <div className="bg-gray-100 overflow-y-auto text-black sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 w-full">
-      <div className="flex items-center flex-wrap gap-4 justify-between">
-        <div className="space-y-1">
-          <p className="text-[30px] font-semibold leading-[45px]">
+    <div className="bg-white rounded-xl shadow-md overflow-y-auto text-gray-800 sm:mx-8 px-4 md:px-6 2xl:mx-16 mt-6 md:mt-36 w-full">
+      <div className="flex items-center flex-wrap gap-6 justify-between py-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
             Announcements
-          </p>
-          <p className="text-sm leading-[25.9px]">
+          </h1>
+          <p className="text-base text-gray-600">
             Manage and send announcements to sub-brokers
           </p>
         </div>
         <div className="flex items-center flex-wrap gap-4">
-          <div className="flex md:w-fit w-full items-center gap-1 bg-white px-2 md:px-5 rounded-lg py-4 border-[1px] border-gray-300">
-            <CiSearch className="text-xl" />
+          <div className="flex w-full md:w-fit items-center gap-2 bg-gray-50 px-4 py-3 rounded-lg border-[1px] border-gray-300 shadow-sm hover:shadow-md transition">
+            <CiSearch className="text-2xl text-gray-700" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               type="text"
-              placeholder="Search announcements"
-              className="w-40 outline-none text-sm"
+              placeholder="Search announcements..."
+              className="w-48 outline-none text-base text-gray-700 placeholder-gray-400"
             />
           </div>
           <button
             onClick={() => setIsFormOpen(!isFormOpen)}
-            className="flex items-center gap-2 bg-black text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition"
+            className="flex items-center gap-2 px-4 py-3 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
           >
-            <FaPlus /> New Announcement
+            <FaPlus className="text-lg" />
+            New Announcement
           </button>
         </div>
       </div>
 
       {/* Create Announcement Form */}
       {isFormOpen && (
-        <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">
+        <div className="mt-6 bg-white rounded-lg shadow-md p-6 z-[9999] relative">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6">
             Create New Announcement
           </h3>
-          <form onSubmit={handleCreateAnnouncement} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Title</label>
+          <form onSubmit={handleCreateAnnouncement} className="space-y-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-base font-medium text-gray-800">
+                Title
+              </label>
               <input
                 type="text"
                 value={newAnnouncement.title}
@@ -100,12 +112,14 @@ const ManageAnnouncements = () => {
                   })
                 }
                 placeholder="Enter announcement title"
-                className="w-full px-3 py-2 border rounded-lg outline-none"
+                className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none"
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Content</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-base font-medium text-gray-800">
+                Content
+              </label>
               <textarea
                 value={newAnnouncement.content}
                 onChange={(e) =>
@@ -115,7 +129,7 @@ const ManageAnnouncements = () => {
                   })
                 }
                 placeholder="Enter announcement content"
-                className="w-full px-3 py-2 border rounded-lg outline-none h-32"
+                className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none h-32"
                 required
               />
             </div>
@@ -129,21 +143,23 @@ const ManageAnnouncements = () => {
                     sendEmail: e.target.checked,
                   })
                 }
-                className="h-4 w-4"
+                className="w-5 h-5 text-purple-600 focus:ring-purple-500"
               />
-              <label className="text-sm">Send as email to sub-brokers</label>
+              <label className="text-base text-gray-700">
+                Send as email to sub-brokers
+              </label>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 justify-center">
               <button
                 type="submit"
-                className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+                className="px-6 py-2.5 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
               >
                 Send Announcement
               </button>
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+                className="px-6 py-2.5 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition text-base font-medium"
               >
                 Cancel
               </button>

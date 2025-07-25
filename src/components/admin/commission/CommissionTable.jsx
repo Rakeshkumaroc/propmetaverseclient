@@ -19,6 +19,8 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
   const [editModal, setEditModal] = useState(false);
   const [editCommission, setEditCommission] = useState(null);
   const [editRanges, setEditRanges] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const groupedData = commissions
     .map((c) => ({
@@ -58,17 +60,23 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
     );
+    setAllSelect(false);
   };
 
   const handleDelete = () => {
     if (!selectedIds.length) return;
     Swal.fire({
       title: "Are you sure?",
+      text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#000",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
+      customClass: {
+        confirmButton:
+          "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+      },
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -79,9 +87,31 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
             prev.filter((c) => !selectedIds.includes(c._id))
           );
           setSelectedIds([]);
-          Swal.fire("Deleted!", "Selected commission(s) deleted.", "success");
+          setAllSelect(false);
+          if (groupedData.length - selectedIds.length <= (currentPage - 1) * itemsPerPage) {
+            setCurrentPage((prev) => Math.max(prev - 1, 1));
+          }
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Selected commission(s) deleted.",
+            confirmButtonColor: "#000",
+            customClass: {
+              confirmButton:
+                "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+            },
+          });
         } catch (err) {
-          Swal.fire("Error", "Failed to delete. Try again.", "error");
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Failed to delete. Try again.",
+            confirmButtonColor: "#000",
+            customClass: {
+              confirmButton:
+                "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+            },
+          });
         }
       }
     });
@@ -109,53 +139,48 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
   };
 
   const handleView = (item) => {
-    const html = `
-      <div style="text-align: left; font-size: 14px;">
-        <p><strong>Seller:</strong> ${item.sellerName}</p>
-        <p><strong>Status:</strong> ${item.commissionStatus}</p>
-        <p><strong>Valid From:</strong> ${item.validFrom?.slice(0, 10)}</p>
-        <p><strong>Valid To:</strong> ${item.validTo?.slice(0, 10)}</p>
-        <hr style="margin: 10px 0;" />
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-          <thead>
-            <tr style="background-color: #f5f5f5;">
-              <th style="padding: 8px; border: 1px solid #ddd;">#</th>
-              <th style="padding: 8px; border: 1px solid #ddd;">Min Value</th>
-              <th style="padding: 8px; border: 1px solid #ddd;">Max Value</th>
-              <th style="padding: 8px; border: 1px solid #ddd;">Rate (%)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${item.ranges
-              .map(
-                (r, i) => `
-                <tr>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${
-                    i + 1
-                  }</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">₹${
-                    r.minValue
-                  }</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">₹${
-                    r.maxValue
-                  }</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${
-                    r.rate
-                  }%</td>
-                </tr>
-              `
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </div>
-    `;
     Swal.fire({
       title: "Commission Details",
-      html,
+      html: `
+        <div style="text-align: left; font-size: 16px;">
+          <p><strong>Seller:</strong> ${item.sellerName}</p>
+          <p><strong>Status:</strong> ${item.commissionStatus}</p>
+          <p><strong>Valid From:</strong> ${item.validFrom?.slice(0, 10)}</p>
+          <p><strong>Valid To:</strong> ${item.validTo?.slice(0, 10)}</p>
+          <hr style="margin: 10px 0;" />
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background-color: #f5f5f5;">
+                <th style="padding: 8px; border: 1px solid #ddd;">#</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Min Value</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Max Value</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Rate (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${item.ranges
+                .map(
+                  (r, i) => `
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${i + 1}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">₹${r.minValue}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">₹${r.maxValue}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${r.rate}%</td>
+                  </tr>
+                `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      `,
       width: 700,
       confirmButtonColor: "#000",
       showCloseButton: true,
+      customClass: {
+        confirmButton:
+          "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+      },
     });
   };
 
@@ -171,32 +196,53 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
     setEditRanges(updated);
   };
 
- const handleRangeDelete = async (rangeId) => {
-  if (!rangeId) return;
+  const handleRangeDelete = async (rangeId) => {
+    if (!rangeId) return;
 
-  Swal.fire({
-    title: "Are you sure?",
-    text: "Delete this commission range?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#000",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`${baseUrl}/single-commission-delete`, {
-          data: { ids: [rangeId] },
-        });
-        setEditRanges((prev) => prev.filter((r) => r._id !== rangeId));
-        Swal.fire("Deleted!", "Range deleted successfully.", "success");
-      } catch (err) {
-        Swal.fire("Error", "Delete failed. Try again.", "error");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Delete this commission range?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#000",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      customClass: {
+        confirmButton:
+          "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`${baseUrl}/single-commission-delete`, {
+            data: { ids: [rangeId] },
+          });
+          setEditRanges((prev) => prev.filter((r) => r._id !== rangeId));
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Range deleted successfully.",
+            confirmButtonColor: "#000",
+            customClass: {
+              confirmButton:
+                "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+            },
+          });
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Delete failed. Try again.",
+            confirmButtonColor: "#000",
+            customClass: {
+              confirmButton:
+                "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+            },
+          });
+        }
       }
-    }
-  });
-};
-
+    });
+  };
 
   const addRangeToEdit = () => {
     setEditRanges([...editRanges, { minValue: "", maxValue: "", rate: "" }]);
@@ -210,143 +256,268 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
         validTo: editCommission.validTo,
         ranges: editRanges,
       });
-      Swal.fire("Success", "Updated successfully", "success");
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Updated successfully",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
       setEditModal(false);
       const updated = await axios.get(`${baseUrl}/commissions`);
       setCommissions(updated.data);
     } catch (err) {
-      console.log(err)
-      Swal.fire("Error", err.response.data.error ||"Error updating", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: err.response?.data?.error || "Error updating",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
+    }
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(groupedData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = groupedData.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
     }
   };
 
   return (
     <>
-      <div className="mt-10 md:p-4 bg-white rounded shadow-md overflow-x-auto">
-        <div className="flex justify-between mb-4 items-center">
-          <div className="flex gap-3 items-center">
-            <div className="relative">
-              <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="bg-gray-100 text-sm px-4 py-2 rounded border"
-              >
-                {filter}
-              </button>
-              {isFilterOpen && (
-                <div className="absolute top-full left-0 bg-white shadow border rounded mt-1 z-10">
-                  {["Recent", "Oldest"].map((opt) => (
-                    <div
-                      key={opt}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setFilter(opt);
-                        setIsFilterOpen(false);
-                      }}
-                    >
-                      {opt}
-                    </div>
-                  ))}
+      <div className="w-full overflow-auto mt-8">
+        <div className="bg-white rounded-xl shadow-md p-6">
+          {/* Header Actions */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div
+                  onClick={() => setIsFilterOpen((prev) => !prev)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border-[1px] border-gray-300 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-100 transition shadow-sm"
+                >
+                  {filter}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path d="M7 10L12 15L17 10H7Z" fill="black" />
+                  </svg>
                 </div>
-              )}
+                {isFilterOpen && (
+                  <div className="absolute z-[9999] mt-2 w-32 bg-white border-[1px] border-gray-300 rounded-lg shadow-sm">
+                    <ul className="text-base text-gray-700">
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          setFilter("Recent");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        Recent
+                      </li>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          setFilter("Oldest");
+                          setIsFilterOpen(false);
+                        }}
+                      >
+                        Oldest
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <RiDeleteBin2Fill
+                className="text-2xl text-gray-700 cursor-pointer hover:scale-105 transition"
+                onClick={handleDelete}
+              />
             </div>
-            <RiDeleteBin2Fill
-              className="text-red-600 text-xl cursor-pointer"
-              onClick={handleDelete}
-            />
+            <div
+              onClick={downloadExcel}
+              className="flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg text-base font-medium hover:bg-black/90 transition shadow-md"
+            >
+              <FaDownload className="text-lg" />
+              Export
+            </div>
           </div>
-          <button
-            onClick={downloadExcel}
-            className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition"
-          >
-            <FaDownload /> Export
-          </button>
-        </div>
 
-       <table className="min-w-full text-sm text-left text-gray-600">
-  <thead className="text-xs bg-gray-100 uppercase text-gray-700">
-    <tr>
-      <th className="px-4 py-3 text-left">
-        <input
-          type="checkbox"
-          checked={allSelect}
-          onChange={handleAllSelect}
-        />
-      </th>
-      <th className="px-4 py-3 text-left">Set ID</th>
-      <th className="px-4 py-3 text-left">Seller Name</th>
-      <th className="px-4 py-3 text-left">Status</th>
-      <th className="px-4 py-3 text-left"># Ranges</th>
-      <th className="px-4 py-3 text-left">Updated</th>
-      <th className="px-4 py-3 text-center">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {groupedData.length === 0 ? (
-      <tr>
-        <td colSpan="7" className="text-center py-4">
-          No commissions found.
-        </td>
-      </tr>
-    ) : (
-      groupedData.map((item) => (
-        <tr
-          key={item.setId}
-          className="border-b hover:bg-gray-50"
-        >
-          <td className="px-4 py-2">
-            <input
-              type="checkbox"
-              checked={selectedIds.includes(item.setId)}
-              onChange={() => handleCheckboxChange(item.setId)}
-            />
-          </td>
-          <td className="px-4 py-2 text-left">{item.setId}</td>
-          <td className="px-4 py-2 text-left">{item.sellerName}</td>
-          <td className="px-4 py-2 text-left capitalize">
-            {item.commissionStatus}
-          </td>
-          <td className="px-4 py-2 text-left">{item.ranges.length}</td>
-          <td className="px-4 py-2 text-left">
-            {new Date(item.updatedAt).toLocaleDateString()}
-          </td>
-          <td className="px-4 py-2 text-center">
-            <div className="flex justify-center gap-2">
+          {/* Table */}
+          <table className="w-full text-base text-gray-700">
+            <thead className="bg-gray-50 text-sm text-gray-500 uppercase text-left">
+              <tr>
+                <th className="p-4">
+                  <input
+                    type="checkbox"
+                    checked={allSelect}
+                    onChange={handleAllSelect}
+                    className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                  />
+                </th>
+                <th className="p-4">Set ID</th>
+                <th className="p-4">Seller Name</th>
+                <th className="p-4">Status</th>
+                <th className="p-4"># Ranges</th>
+                <th className="p-4">Updated</th>
+                <th className="p-4 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-6 text-base text-gray-700">
+                    No commissions found.
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((item) => (
+                  <tr
+                    key={item.setId}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="p-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item.setId)}
+                        onChange={() => handleCheckboxChange(item.setId)}
+                        className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                      />
+                    </td>
+                    <td className="p-4 text-base text-gray-700">{item.setId}</td>
+                    <td className="p-4 text-base text-gray-700">
+                      {item.sellerName === "N/A" ? (
+                        <span className="text-gray-400">N/A</span>
+                      ) : (
+                        item.sellerName
+                      )}
+                    </td>
+                    <td className="p-4 text-base text-gray-700 capitalize">
+                      {item.commissionStatus}
+                    </td>
+                    <td className="p-4 text-base text-gray-700">{item.ranges.length}</td>
+                    <td className="p-4 text-base text-gray-700">
+                      {new Date(item.updatedAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleView(item)}
+                          className="p-1.5 rounded-md bg-gray-100 hover:bg-purple-100 hover:text-purple-700 transition"
+                        >
+                          <MdVisibility className="text-xl" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="p-1.5 rounded-md bg-gray-100 hover:bg-purple-100 hover:text-purple-700 transition"
+                        >
+                          <MdEdit className="text-xl" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-4 mt-6">
               <button
-                onClick={() => handleView(item)}
-                className="p-2 rounded bg-green-100 hover:bg-green-200"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2.5 rounded-lg border-[1px] border-gray-300 text-base font-medium text-gray-700 hover:bg-gray-100 transition ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <MdVisibility />
+                ← Previous
               </button>
+              <div className="flex items-center gap-2">
+                {(() => {
+                  const delta = 2;
+                  const range = [];
+                  let lastPage = 0;
+
+                  for (let i = 1; i <= totalPages; i++) {
+                    if (
+                      i === 1 ||
+                      i === totalPages ||
+                      (i >= currentPage - delta && i <= currentPage + delta)
+                    ) {
+                      if (lastPage && i - lastPage > 1) {
+                        range.push("...");
+                      }
+                      range.push(i);
+                      lastPage = i;
+                    }
+                  }
+
+                  return range.map((page, idx) =>
+                    page === "..." ? (
+                      <span
+                        key={`ellipsis-${idx}`}
+                        className="px-3 py-1 text-gray-500 text-base"
+                      >
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-1 rounded-md text-base ${
+                          currentPage === page
+                            ? "bg-purple-100 text-purple-700 font-medium"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  );
+                })()}
+              </div>
               <button
-                onClick={() => handleEdit(item)}
-                className="p-2 rounded bg-yellow-100 hover:bg-yellow-200"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2.5 rounded-lg border-[1px] border-gray-300 text-base font-medium text-gray-700 hover:bg-gray-100 transition ${
+                  currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <MdEdit />
+                Next →
               </button>
             </div>
-          </td>
-        </tr>
-      ))
-    )}
-  </tbody>
-</table>
-
+          )}
+        </div>
       </div>
 
       <Modal
         isOpen={editModal}
         onRequestClose={() => setEditModal(false)}
-        className="w-full max-w-4xl mx-auto bg-white rounded-xl p-6 shadow-xl outline-none"
-        overlayClassName="fixed inset-0 bg-black/60 z-50 flex items-center justify-center"
+        className="w-[90vw] max-w-4xl mx-auto bg-white rounded-xl p-6 md:p-8 shadow-2xl outline-none"
+        overlayClassName="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center"
       >
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 border-b pb-3">
           Edit Commission Ranges
         </h2>
 
         {/* Valid From & Valid To Inputs */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div>
-            <label className="text-sm font-medium text-gray-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          <div className="flex flex-col gap-2">
+            <label className="text-base font-medium text-gray-800">
               Valid From
             </label>
             <input
@@ -358,11 +529,11 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
                   validFrom: e.target.value,
                 }))
               }
-              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+              className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-600">
+          <div className="flex flex-col gap-2">
+            <label className="text-base font-medium text-gray-800">
               Valid To
             </label>
             <input
@@ -374,18 +545,18 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
                   validTo: e.target.value,
                 }))
               }
-              className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+              className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
             />
           </div>
         </div>
 
         {/* Ranges Section */}
-        <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-1">
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           {editRanges.map((range, idx) => (
-            <div key={idx} className="grid grid-cols-3 gap-4 items-center">
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Min Value
+            <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
+                  Min Value (₹)
                 </label>
                 <input
                   type="number"
@@ -393,12 +564,12 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
                   onChange={(e) =>
                     handleRangeChange(idx, "minValue", e.target.value)
                   }
-                  className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                  className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 />
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Max Value
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
+                  Max Value (₹)
                 </label>
                 <input
                   type="number"
@@ -406,26 +577,26 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
                   onChange={(e) =>
                     handleRangeChange(idx, "maxValue", e.target.value)
                   }
-                  className="w-full mt-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                  className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 />
               </div>
-              <div className="relative">
-                <label className="text-sm font-medium text-gray-600">
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
                   Rate (%)
                 </label>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={range.rate}
                     onChange={(e) =>
                       handleRangeChange(idx, "rate", e.target.value)
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-black"
+                    className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                   />
                   {range._id && (
                     <RiDeleteBin2Fill
                       onClick={() => handleRangeDelete(range._id)}
-                      className="text-red-500 text-xl cursor-pointer"
+                      className="text-2xl text-gray-700 cursor-pointer hover:scale-105 transition"
                     />
                   )}
                 </div>
@@ -435,41 +606,37 @@ const CommissionTable = ({ searchValue, commissions, setCommissions }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-between items-center mt-6">
-          <div className="flex gap-2">
+        <div className="flex justify-center gap-4 mt-8">
+          <button
+            onClick={addRangeToEdit}
+            className="px-6 py-2.5 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition text-base font-medium"
+          >
+            + Add New Range
+          </button>
+          {editRanges.some((r) => !r._id) && (
             <button
-              onClick={addRangeToEdit}
-              className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              onClick={() =>
+                setEditRanges((prev) =>
+                  prev.filter((r, i, arr) => i !== arr.length - 1)
+                )
+              }
+              className="px-6 py-2.5 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition text-base font-medium"
             >
-              + Add New Range
+              - Remove Last
             </button>
-            {editRanges.some((r) => !r._id) && (
-              <button
-                onClick={() =>
-                  setEditRanges((prev) =>
-                    prev.filter((r, i, arr) => i !== arr.length - 1)
-                  )
-                }
-                className="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-              >
-                Remove Last
-              </button>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setEditModal(false)}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={updateCommission}
-              className="bg-black hover:bg-gray-900 text-white px-4 py-2 rounded"
-            >
-              Save Changes
-            </button>
-          </div>
+          )}
+          <button
+            onClick={() => setEditModal(false)}
+            className="px-6 py-2.5 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition text-base font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={updateCommission}
+            className="px-6 py-2.5 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
+          >
+            Save Changes
+          </button>
         </div>
       </Modal>
     </>

@@ -8,10 +8,12 @@ import {
   FiFlag,
 } from "react-icons/fi";
 import { IoLocationOutline } from "react-icons/io5";
-import Swal from "sweetalert2";
-const baseUrl = import.meta.env.VITE_APP_URL;
 import { TbStatusChange } from "react-icons/tb";
 import { LuMapPinned } from "react-icons/lu";
+import Swal from "sweetalert2";
+
+const baseUrl = import.meta.env.VITE_APP_URL;
+
 const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
   const {
     _id,
@@ -24,28 +26,17 @@ const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
     pincode,
     workExperience,
     status,
-    assignUser,
   } = isOpenEnquiry;
 
-  const [selectedStatus, setSelectedStatus] = useState(status);
-  const [selectedUser, setSelectedUser] = useState(assignUser); 
+  const [selectedStatus, setSelectedStatus] = useState(status || "Pending");
 
-  // Handle status change locally
-  const handleCheckboxChange = (newStatus) => {
+  // Handle status change (radio-like behavior for single selection)
+  const handleStatusChange = (newStatus) => {
     setSelectedStatus(newStatus);
   };
-  const handleAssignCheckboxChange = (userType) => {
-    setSelectedUser(
-      (prevSelected) =>
-        prevSelected.includes(userType)
-          ? prevSelected.filter((user) => user !== userType) // Remove if already selected
-          : [...prevSelected, userType] // Add if not selected
-    );
-  };
 
-  // Update status when "Update" button is clicked
+  // Update status
   const handleStatusUpdate = async () => {
-  
     try {
       const response = await fetch(`${baseUrl}/edit-enquiry/${_id}`, {
         method: "PUT",
@@ -54,7 +45,6 @@ const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
         },
         body: JSON.stringify({
           status: selectedStatus,
-          assignUser: selectedUser,
         }),
       });
 
@@ -62,16 +52,15 @@ const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
         Swal.fire({
           icon: "success",
           title: "Success!",
-          text: "Status updated successfully.",
+          text: "Enquiry updated successfully.",
           confirmButtonColor: "#000",
         });
-
-        setIsOpenEnquiry(false); // Close the modal
+        setIsOpenEnquiry(false);
       } else {
         Swal.fire({
           icon: "error",
           title: "Error!",
-          text: "Failed to update status. Please try again.",
+          text: "Failed to update enquiry. Please try again.",
         });
       }
     } catch (error) {
@@ -80,19 +69,21 @@ const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
         title: "Error!",
         text: "Something went wrong. Please try again later.",
       });
-      console.error("Error updating status:", error);
-    } 
+      console.error("Error updating enquiry:", error);
+    }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30">
-      <div className="w-[70vw] max-w-[800px] bg-white rounded-lg shadow-2xl p-8">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-[9999]">
+      <div className="w-[90vw] max-w-[900px] bg-white rounded-xl shadow-2xl p-6 md:p-8 m-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">
-            Enquiry Details {console.log(selectedUser)}
+        <div className="mb-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+            Enquiry Details
           </h2>
-          <p className="text-black">Review the details of the enquiry below</p>
+          <p className="text-base text-gray-600 mt-2">
+            Review and update the enquiry details below
+          </p>
         </div>
 
         {/* Content */}
@@ -111,78 +102,66 @@ const EnquiryDetails = ({ setIsOpenEnquiry, isOpenEnquiry }) => {
             { icon: LuMapPinned, label: "City", value: city },
             { icon: IoLocationOutline, label: "Pincode", value: pincode },
           ].map(({ icon: Icon, label, value }, index) => (
-            <div>
-              <div key={index} className="flex items-center gap-3">
-                <Icon className="text-black bg-gray-200 p-1 rounded-md text-2xl" />
-                <p>
-                  <strong className="block font-medium">{label}:</strong>{" "}
+            <div key={index} className="flex items-start gap-3">
+              <Icon className="text-gray-700 bg-gray-100 p-2 rounded-md text-2xl flex-shrink-0" />
+              <div>
+                <strong className="block font-medium text-base text-gray-800">
+                  {label}:
+                </strong>
+                <p className="text-base text-gray-600">
+                  {value || <span className="text-gray-400">N/A</span>}
                 </p>
               </div>
-              <p>{value ? value : "No Value"}</p>
             </div>
           ))}
+        </div>
 
-          {/* Status Checkboxes */}
-          <div className="space-y-2 w-full col-span-1 md:col-span-2">
-            <div className="flex items-center gap-3">
-              <TbStatusChange className="text-black bg-gray-200 p-1 rounded-md text-2xl" />
-              <strong className="block font-medium">Status:</strong>
-            </div>
-            <div className="flex gap-5 border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3 justify-between">
-              {["Pending", "Responded", "Closed"].map((statusOption) => (
-                <label
-                  key={statusOption}
-                  className="flex items-center gap-2 w-[30%]"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedStatus === statusOption}
-                    onChange={() => handleCheckboxChange(statusOption)}
-                    className="w-5 h-5 cursor-pointer"
-                  />
-                  {statusOption}
-                </label>
-              ))}
-            </div>
+        {/* Status Selection */}
+        <div className="mt-8 space-y-3">
+          <div className="flex items-center gap-3">
+            <TbStatusChange className="text-gray-700 bg-gray-100 p-2 rounded-md text-2xl" />
+            <strong className="font-medium text-base text-gray-800">Status:</strong>
           </div>
-
-          {/* User assign Checkboxes */}
-          {/* <div className="space-y-2 w-full col-span-1 md:col-span-2">
-            <div className="flex items-center gap-3">
-              <TbStatusChange className="text-black bg-gray-200 p-1 rounded-md text-2xl" />
-              <strong className="block font-medium">User Assign:</strong>
-            </div>
-            <div className="flex gap-5 border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3 justify-between">
-              {["Admin", "Content", "Sales"].map((type) => (
-                <label key={type} className="flex items-center gap-2 w-[30%]">
-                  <input
-                    type="checkbox"
-                    checked={selectedUser.includes(type)}
-                    onChange={() => handleAssignCheckboxChange(type)}
-                    className="w-5 h-5 cursor-pointer"
-                  />
-
-                  {type}
-                </label>
-              ))}
-            </div>
-          </div> */}
+          <div className="flex flex-wrap gap-4 border-[1px] border-gray-300 rounded-lg p-4 bg-gray-50">
+            {["Pending", "Responded", "Closed"].map((statusOption) => (
+              <label
+                key={statusOption}
+                className="flex items-center gap-2 text-base cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  checked={selectedStatus === statusOption}
+                  onChange={() => handleStatusChange(statusOption)}
+                  className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                />
+                <span
+                  className={`${
+                    selectedStatus === statusOption
+                      ? "text-purple-700 font-medium"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {statusOption}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center mt-6">
+        <div className="flex flex-wrap justify-between items-center mt-8 gap-4">
           <button
             onClick={() => setIsOpenEnquiry(false)}
-            className="bg-gray-600 cursor-pointer text-white px-6 py-2 rounded-md shadow-md hover:bg-gray-700"
+            className="px-6 py-2.5 bg-gray-600 text-white rounded-md shadow-md hover:bg-gray-700 transition text-base font-medium"
           >
             Close
           </button>
-
           <button
             onClick={handleStatusUpdate}
-            className={`px-6 py-2 rounded-md cursor-pointer shadow-md  bg-black hover:bg-black/90 text-white`}
+            className="px-6 py-2.5 bg-black text-white rounded-md shadow-md hover:bg-black/90 transition text-base font-medium"
           >
-            Update
+            Update Enquiry
           </button>
         </div>
       </div>

@@ -4,8 +4,7 @@ import { FiCompass, FiUsers } from "react-icons/fi";
 import { IoMenu } from "react-icons/io5";
 import { MdContentCopy, MdOutlineMarkUnreadChatAlt } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logopng.png";
+import { Link, useNavigate } from "react-router-dom"; 
 import { useLocation } from "react-router-dom";
 import { FaTasks } from "react-icons/fa";
 import { LiaMoneyCheckAltSolid } from "react-icons/lia";
@@ -129,48 +128,56 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="thin-scrollbar hidden lg:block w-[490px] min-h-screen bg-white text-black overflow-auto shadow-lg">
-        <div className="p-5">
-          <Link to={"/"}>
-            <img src={Logo} alt="logo" className="w-40 mb-5" />
-          </Link>
+      <div className="thin-scrollbar hidden pt-[50px] lg:block w-[590px] min-h-screen bg-white text-black overflow-auto shadow-lg">
+        <div className=" px-4 sm:px-6 md:px-20 ">
+         
           {sections.map((section, index) => (
-            <div key={index} className="pb-6">
-              <p className="text-gray-900 uppercase mb-3">{section.title}</p>
-              <div className="space-y-1">
+            <div key={index} className="pb-[94px]">
+              <h6
+                style={{
+                  color: "#1865A4",
+                  fontSize:"24px"
+                }}
+                className=" uppercase  mb-3"
+              >
+                {section.title}
+              </h6>
+              <div className="space-y-[16px]">
                 {section.items.map((item, idx) => {
                   if (item.nested) {
                     return (
-                      <div key={idx}>
-                        <button
+                      <ul key={idx}>
+                        <li
                           onClick={() =>
                             setOpenDropdown(
                               openDropdown === item.label ? null : item.label
                             )
                           }
-                          className={`flex items-center w-full py-4 px-6 rounded-lg font-medium hover:bg-black hover:text-white transition duration-500 gap-3 ${
+                          className={`flex items-center gap-2 p-[17px]  rounded-full  ${
                             item.nested.some(
                               (nest) =>
                                 location.pathname === `/admin${nest.link}`
                             )
-                              ? "bg-black text-white"
-                              : ""
+                              ? "bg-[#BAD6EB] text-white"
+                              : "bg-gray-100"
                           }`}
+                         
                         >
                           {item.icon}
-                          <span>{item.label}</span>
-                        </button>
+                          <span className="text-[20px] leading-[20px] font-[400]">{item.label}</span>
+                        </li>
+                        
                         {openDropdown === item.label && (
-                          <div className="pl-10 space-y-1">
+                          <div className="pl-10 space-y-[16px]">
                             {item.nested.map((nestedItem, nestedIdx) => (
                               <Link
                                 key={nestedIdx}
                                 to={`/admin${nestedItem.link}`}
-                                className={`flex items-center py-3 mt-1 px-6 rounded-lg font-medium hover:bg-black hover:text-white transition duration-500 ${
+                                className={`text-[20px] font-[400] flex items-center py-3 mt-1 px-6 rounded-lg hover:bg-logoBlue hover:text-white transition duration-500 ${
                                   location.pathname ===
                                   `/admin${nestedItem.link}`
-                                    ? "bg-black text-white"
-                                    : ""
+                                    ? "bg-logoBlue text-white"
+                                    : "bg-gray-100"
                                 }`}
                               >
                                 {nestedItem.label}
@@ -178,34 +185,36 @@ const Sidebar = () => {
                             ))}
                           </div>
                         )}
-                      </div>
+                      </ul>
                     );
                   }
                   return (
                     <Link
                       to={`/admin${item.link}`}
                       key={idx}
-                      className={`flex items-center py-4 px-6 rounded-lg font-medium hover:bg-black hover:text-white transition duration-500 gap-3 ${
-                        location.pathname === `/admin${item.link}`
-                          ? "bg-black text-white"
-                          : ""
-                      }`}
+                     
+
+                       className={`flex items-center gap-2 p-[17px]  rounded-full  ${ 
+                                location.pathname === `/admin${item.link}` 
+                              ? "bg-logoBlue text-white"
+                              : "bg-gray-100"
+                          }`}
                     >
                       {item.icon}
-                      <span>{item.label}</span>
+                      <span className="text-[20px] leading-[20px] font-[400]">{item.label}</span>
                     </Link>
                   );
                 })}
                 {index === sections.length - 1 && (
-                  <button
+                  <p
                     onClick={() => {
                       localStorage.removeItem("user");
                       navigate("/");
                     }}
-                    className="flex items-center py-4 px-6 rounded-lg w-full font-medium hover:bg-black hover:text-white transition duration-500 gap-3"
+                    className="flex text-[20px] leading-[20px] font-[400] items-center py-4 px-6 rounded-lg w-full   hover:bg-black hover:text-white transition duration-500 gap-3"
                   >
                     <RiLogoutCircleLine /> Logout
-                  </button>
+                  </p>
                 )}
               </div>
             </div>
@@ -226,7 +235,7 @@ const Sidebar = () => {
             {sections.map((section, index) => (
               <div key={index} className="pb-6">
                 <p className="text-gray-500 uppercase mb-3">{section.title}</p>
-                <div className="space-y-1">
+                <div className="space-y-[16px]">
                   {section.items.map((item, idx) => {
                     if (item.nested) {
                       return (
@@ -250,7 +259,7 @@ const Sidebar = () => {
                             <span>{item.label}</span>
                           </button>
                           {openDropdown === item.label && (
-                            <div className="pl-10 space-y-1">
+                            <div className="pl-10 space-y-[16px]">
                               {item.nested.map((nestedItem, nestedIdx) => (
                                 <Link
                                   key={nestedIdx}
@@ -288,7 +297,7 @@ const Sidebar = () => {
                     );
                   })}
                   {index === sections.length - 1 && (
-                    <button
+                    <p
                       onClick={() => {
                         localStorage.removeItem("user");
                         navigate("/");
@@ -296,7 +305,7 @@ const Sidebar = () => {
                       className="flex w-full items-center py-4 px-6 rounded-lg hover:bg-black hover:text-white transition duration-500 gap-3"
                     >
                       <RiLogoutCircleLine /> Logout
-                    </button>
+                    </p>
                   )}
                 </div>
               </div>

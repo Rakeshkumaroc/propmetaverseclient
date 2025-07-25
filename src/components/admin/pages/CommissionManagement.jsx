@@ -43,11 +43,29 @@ const CommissionManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedSeller) {
-      Swal.fire("Error", "Please select a seller", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Please select a seller",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
       return;
     }
     if (!validFrom || !validTo) {
-      Swal.fire("Error", "Please select validFrom and validTo", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Please select validFrom and validTo",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
       return;
     }
 
@@ -65,7 +83,16 @@ const CommissionManagement = () => {
     try {
       await axios.post(`${baseUrl}/set-commission-range`, payload);
 
-      Swal.fire("Success", "Commission range saved", "success");
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Commission range saved",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
 
       // Reset
       setSelectedSeller("");
@@ -77,27 +104,38 @@ const CommissionManagement = () => {
       const updated = await axios.get(`${baseUrl}/commissions`);
       setCommissions(updated.data);
     } catch (err) {
-      Swal.fire("Error", err.response?.data?.error || "Error saving commission", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: err.response?.data?.error || "Error saving commission",
+        confirmButtonColor: "#000",
+        customClass: {
+          confirmButton:
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+        },
+      });
     }
   };
 
   return (
-    <div className="bg-gray-100 text-black sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 w-full max-h-[calc(100vh-100px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-      <div className="flex items-center flex-wrap gap-4 justify-between">
-        <div>
-          <p className="text-[30px] font-semibold leading-[45px]">Commission Management</p>
-          <p className="text-sm leading-[25.9px]">
+    <div className="bg-white rounded-xl shadow-md overflow-y-auto text-gray-800 sm:mx-8 px-4 md:px-6 2xl:mx-16 mt-6 md:mt-36 w-full">
+      <div className="flex items-center flex-wrap gap-6 justify-between py-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+            Commission Management
+          </h1>
+          <p className="text-base text-gray-600">
             Manage commission rates and track earnings for sellers
           </p>
         </div>
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2 bg-white px-4 py-3 border rounded-lg">
-            <CiSearch className="text-xl" />
+        <div className="flex items-center flex-wrap gap-4">
+          <div className="flex w-full md:w-fit items-center gap-2 bg-gray-50 px-4 py-3 rounded-lg border-[1px] border-gray-300 shadow-sm hover:shadow-md transition">
+            <CiSearch className="text-2xl text-gray-700" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search commissions"
-              className="outline-none text-sm"
+              placeholder="Search commissions..."
+              className="w-48 outline-none text-base text-gray-700 placeholder-gray-400"
             />
           </div>
           <button
@@ -106,9 +144,10 @@ const CommissionManagement = () => {
               setSelectedSeller("");
               setInputRanges([{ minValue: "", maxValue: "", rate: "" }]);
             }}
-            className="flex items-center gap-2 bg-black text-white px-4 py-3 rounded-lg"
+            className="flex items-center gap-2 px-4 py-3 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
           >
-            <FaPlus /> New Commission Range
+            <FaPlus className="text-lg" />
+            New Commission Range
           </button>
         </div>
       </div>
@@ -116,20 +155,26 @@ const CommissionManagement = () => {
       {isFormOpen && (
         <form
           onSubmit={handleSubmit}
-          className="bg-white mt-6 p-6 rounded-lg shadow-md space-y-6"
+          className="bg-white mt-6 p-6 rounded-lg shadow-md space-y-6 z-[9999] relative"
         >
-          <h3 className="text-xl font-semibold">Set Commission Range</h3>
+          <h3 className="text-2xl font-bold text-gray-800">
+            Set Commission Range
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Select Seller</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-base font-medium text-gray-800">
+                Select Seller
+              </label>
               <select
                 value={selectedSeller}
                 onChange={(e) => setSelectedSeller(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg outline-none"
+                className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 required
               >
-                <option value="">-- Select Seller --</option>
+                <option value="" className="text-gray-600">
+                  -- Select Seller --
+                </option>
                 {sellers.map((seller) => (
                   <option key={seller._id} value={seller._id}>
                     {seller.fullName}
@@ -138,33 +183,39 @@ const CommissionManagement = () => {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Valid From</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-base font-medium text-gray-800">
+                Valid From
+              </label>
               <input
                 type="date"
                 value={validFrom}
                 onChange={(e) => setValidFrom(e.target.value)}
                 required
-                className="w-full px-3 py-2 border rounded-lg outline-none"
+                className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Valid To</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-base font-medium text-gray-800">
+                Valid To
+              </label>
               <input
                 type="date"
                 value={validTo}
                 onChange={(e) => setValidTo(e.target.value)}
                 required
-                className="w-full px-3 py-2 border rounded-lg outline-none"
+                className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
               />
             </div>
           </div>
 
           {inputRanges.map((range, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm mb-1">Min Value (₹)</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
+                  Min Value (₹)
+                </label>
                 <input
                   type="number"
                   value={range.minValue}
@@ -173,11 +224,13 @@ const CommissionManagement = () => {
                   }
                   step="0.01"
                   required
-                  className="w-full px-3 py-2 border rounded-lg outline-none"
+                  className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 />
               </div>
-              <div>
-                <label className="block text-sm mb-1">Max Value (₹)</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
+                  Max Value (₹)
+                </label>
                 <input
                   type="number"
                   value={range.maxValue}
@@ -186,11 +239,13 @@ const CommissionManagement = () => {
                   }
                   step="0.01"
                   required
-                  className="w-full px-3 py-2 border rounded-lg outline-none"
+                  className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 />
               </div>
-              <div>
-                <label className="block text-sm mb-1">Rate (%)</label>
+              <div className="flex flex-col gap-2">
+                <label className="text-base font-medium text-gray-800">
+                  Rate (%)
+                </label>
                 <input
                   type="number"
                   value={range.rate}
@@ -199,17 +254,17 @@ const CommissionManagement = () => {
                   }
                   step="0.1"
                   required
-                  className="w-full px-3 py-2 border rounded-lg outline-none"
+                  className="w-full p-3 border-[1px] border-gray-300 rounded-lg text-base text-gray-700 bg-gray-50 focus:ring-2 focus:ring-purple-500 outline-none transition"
                 />
               </div>
             </div>
           ))}
 
-          <div className="flex gap-3 flex-wrap">
+          <div className="flex gap-4 justify-center">
             <button
               type="button"
               onClick={addNewRange}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg"
+              className="px-6 py-2.5 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition text-base font-medium"
             >
               + Add Range
             </button>
@@ -218,7 +273,7 @@ const CommissionManagement = () => {
               <button
                 type="button"
                 onClick={removeLastRange}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg"
+                className="px-6 py-2.5 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition text-base font-medium"
               >
                 - Remove Range
               </button>
@@ -226,7 +281,7 @@ const CommissionManagement = () => {
 
             <button
               type="submit"
-              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+              className="px-6 py-2.5 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium"
             >
               Save Commission
             </button>

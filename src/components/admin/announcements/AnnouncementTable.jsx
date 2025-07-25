@@ -1,18 +1,20 @@
-// components/AnnouncementTable.js
 import React, { useEffect, useState } from "react";
 import { RiDeleteBin2Fill } from "react-icons/ri";
+import { FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import * as XLSX from "xlsx";
-import { FaDownload } from "react-icons/fa";
+
 const baseUrl = import.meta.env.VITE_APP_URL;
 
-const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
+const AnnouncementTable = ({ searchValue, isFormOpen }) => {
   const [filter, setFilter] = useState("Recent");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [allSelect, setAllSelect] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Handle select all checkboxes
   const handleAllSelect = () => {
@@ -28,9 +30,7 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
   const handleCheckboxChange = (id) => {
     setAllSelect(false);
     setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((selectedId) => selectedId !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((selectedId) => selectedId !== id) : [...prev, id]
     );
   };
 
@@ -57,8 +57,8 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#1b639f",
-      cancelButtonColor: "#000",
+      confirmButtonColor: "#000",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -72,15 +72,21 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
           });
 
           if (response.ok) {
-            setData((prev) =>
-              prev.filter((item) => !selectedIds.includes(item._id))
-            );
+            setData((prev) => prev.filter((item) => !selectedIds.includes(item._id)));
             setSelectedIds([]);
+            setAllSelect(false);
+            if (data.length - selectedIds.length <= (currentPage - 1) * itemsPerPage) {
+              setCurrentPage((prev) => Math.max(prev - 1, 1));
+            }
             Swal.fire({
               title: "Deleted!",
               text: "Selected announcements have been deleted.",
               icon: "success",
-              confirmButtonColor: "#1b639f",
+              confirmButtonColor: "#000",
+              customClass: {
+                confirmButton:
+                  "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+              },
             });
           } else {
             throw new Error("Failed to delete announcements");
@@ -91,7 +97,11 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
             title: "Error!",
             text: "Failed to delete announcements. Please try again.",
             icon: "error",
-            confirmButtonColor: "#1b639f",
+            confirmButtonColor: "#000",
+            customClass: {
+              confirmButton:
+                "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+            },
           });
         }
       }
@@ -126,13 +136,18 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
         });
 
         setData(filteredData);
+        setCurrentPage(1);
       } catch (error) {
         console.error("Error fetching announcements:", error);
         Swal.fire({
           title: "Error!",
           text: "Failed to fetch announcements. Please try again.",
           icon: "error",
-          confirmButtonColor: "#1b639f",
+          confirmButtonColor: "#000",
+          customClass: {
+            confirmButton:
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
+          },
         });
       } finally {
         setLoading(false);
@@ -140,168 +155,221 @@ const AnnouncementTable = ({ searchValue ,isFormOpen}) => {
     };
 
     fetchData();
-  }, [filter, searchValue,isFormOpen]);
+  }, [filter, searchValue, isFormOpen]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
-    <div
-      className="w-full bg-mainbg sm:rounded-l-[30px] sm:rounded-r-md backdrop-blur-lg"
-      style={{ overflow: "auto" }}
-    >
-      <div className="md:p-4 mt-10">
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <div className="flex items-center justify-between p-3 flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white">
-            <div className="relative select-none flex justify-between w-full items-center cursor-pointer">
-              <div className="flex items-center gap-5">
-                {/* Sort Filter */}
-                <div
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+    <div className="w-full overflow-auto mt-8">
+      <div className="bg-white rounded-xl shadow-md p-6">
+        {/* Header Actions */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div
+                onClick={() => setIsFilterOpen((prev) => !prev)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 border-[1px] border-gray-300 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-100 transition shadow-sm"
+              >
+                {filter}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
                 >
-                  {filter}
-                  <svg
-                    className="w-2.5 h-2.5 ms-2.5"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 10 6"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 4 4 4-4"
-                    />
-                  </svg>
-                </div>
-                <div
-                  style={{ display: isFilterOpen ? "" : "none" }}
-                  className="z-10 top-[34px] absolute bg-white divide-y divide-gray-100 rounded-lg shadow-md"
-                >
-                  <ul
-                    className="py-1 text-sm text-gray-700"
-                    aria-labelledby="dropdownActionButton"
-                  >
-                    <li>
-                      <p
-                        onClick={() => {
-                          setFilter("Recent");
-                          setIsFilterOpen(false);
-                        }}
-                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        Recent
-                      </p>
+                  <path d="M7 10L12 15L17 10H7Z" fill="black" />
+                </svg>
+              </div>
+              {isFilterOpen && (
+                <div className="absolute z-[9999] mt-2 w-32 bg-white border-[1px] border-gray-300 rounded-lg shadow-sm">
+                  <ul className="text-base text-gray-700">
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setFilter("Recent");
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      Recent
                     </li>
-                    <li>
-                      <p
-                        onClick={() => {
-                          setFilter("Oldest");
-                          setIsFilterOpen(false);
-                        }}
-                        className="block px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      >
-                        Oldest
-                      </p>
+                    <li
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setFilter("Oldest");
+                        setIsFilterOpen(false);
+                      }}
+                    >
+                      Oldest
                     </li>
                   </ul>
                 </div>
-
-                <RiDeleteBin2Fill
-                  onClick={handleDelete}
-                  className="text-black font-medium rounded-lg text-md cursor-pointer"
-                />
-              </div>
-              <p
-                onClick={downloadExcel}
-                className="cursor-pointer flex items-center gap-2 bg-black text-white py-2 px-4 rounded-md hover:scale-105 transition-all duration-200 hover:shadow-lg"
-              >
-                <FaDownload /> Export <span className="hidden md:inline">to Excel</span>
-              </p>
-            </div>
-          </div>
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 text-center uppercase bg-gray-50">
-              <tr>
-                <th scope="col" className="p-4">
-                  <div className="flex items-center">
-                    <input
-                      onClick={handleAllSelect}
-                      id="checkbox-all-search"
-                      type="checkbox"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="checkbox-all-search" className="sr-only">
-                      checkbox
-                    </label>
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  ID
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Title
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Content
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Sent via Email
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Created At
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    Loading...
-                  </td>
-                </tr>
-              ) : data.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    No announcements found.
-                  </td>
-                </tr>
-              ) : (
-                data.map((value, index) => (
-                  <tr
-                    key={value._id}
-                    className="bg-white border-b hover:bg-gray-50"
-                  >
-                    <td className="w-4 p-4">
-                      <div className="flex items-center">
-                        <input
-                          id={`checkbox-${value._id}`}
-                          type="checkbox"
-                          checked={selectedIds.includes(value._id)}
-                          onChange={() => handleCheckboxChange(value._id)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor={`checkbox-${value._id}`}
-                          className="sr-only"
-                        >
-                          checkbox
-                        </label>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">{index + 1}</td>
-                    <td className="px-6 py-4">{value.title}</td>
-                    <td className="px-6 py-4">{value.content}</td>
-                    <td className="px-6 py-4 text-center">
-                      {value.sendEmail ? "Yes" : "No"}
-                    </td>
-                    <td className="px-6 py-4 text-center">{value.createdAt}</td>
-                  </tr>
-                ))
               )}
-            </tbody>
-          </table>
+            </div>
+            <RiDeleteBin2Fill
+              className="text-2xl text-gray-700 cursor-pointer hover:scale-105 transition"
+              onClick={handleDelete}
+            />
+          </div>
+          <div
+            onClick={downloadExcel}
+            className="flex items-center gap-2 px-4 py-2.5 bg-black text-white rounded-lg text-base font-medium hover:bg-black/90 transition shadow-md"
+          >
+            <FaDownload className="text-lg" />
+            Export
+          </div>
         </div>
+
+        {/* Table */}
+        <table className="w-full text-base text-gray-700">
+          <thead className="bg-gray-50 text-sm text-gray-500 uppercase text-left">
+            <tr>
+              <th className="p-4">
+                <input
+                  type="checkbox"
+                  checked={allSelect}
+                  onChange={handleAllSelect}
+                  className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                />
+              </th>
+              <th className="p-4">ID</th>
+              <th className="p-4">Title</th>
+              <th className="p-4">Content</th>
+              <th className="p-4">Sent via Email</th>
+              <th className="p-4">Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-base text-gray-700">
+                  Loading...
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-base text-gray-700">
+                  No announcements found.
+                </td>
+              </tr>
+            ) : (
+              paginatedData.map((value, index) => (
+                <tr
+                  key={value._id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
+                  <td className="p-4">
+                    <input
+                      id={`checkbox-${value._id}`}
+                      type="checkbox"
+                      checked={selectedIds.includes(value._id)}
+                      onChange={() => handleCheckboxChange(value._id)}
+                      className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                    />
+                  </td>
+                  <td className="p-4 text-base text-gray-700">{startIndex + index + 1}</td>
+                  <td className="p-4 text-base text-gray-700">
+                    {value.title
+                      ? value.title.length > 20
+                        ? value.title.slice(0, 20) + "..."
+                        : value.title
+                      : <span className="text-gray-400">N/A</span>}
+                  </td>
+                  <td className="p-4 text-base text-gray-700">
+                    {value.content
+                      ? value.content.length > 30
+                        ? value.content.slice(0, 30) + "..."
+                        : value.content
+                      : <span className="text-gray-400">N/A</span>}
+                  </td>
+                  <td className="p-4 text-base text-gray-700">
+                    {value.sendEmail ? "Yes" : "No"}
+                  </td>
+                  <td className="p-4 text-base text-gray-700">
+                    {value.createdAt || <span className="text-gray-400">N/A</span>}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between gap-4 mt-6">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2.5 rounded-lg border-[1px] border-gray-300 text-base font-medium text-gray-700 hover:bg-gray-100 transition ${
+                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              ← Previous
+            </button>
+            <div className="flex items-center gap-2">
+              {(() => {
+                const delta = 2;
+                const range = [];
+                let lastPage = 0;
+
+                for (let i = 1; i <= totalPages; i++) {
+                  if (
+                    i === 1 ||
+                    i === totalPages ||
+                    (i >= currentPage - delta && i <= currentPage + delta)
+                  ) {
+                    if (lastPage && i - lastPage > 1) {
+                      range.push("...");
+                    }
+                    range.push(i);
+                    lastPage = i;
+                  }
+                }
+
+                return range.map((page, idx) =>
+                  page === "..." ? (
+                    <span
+                      key={`ellipsis-${idx}`}
+                      className="px-3 py-1 text-gray-500 text-base"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-1 rounded-md text-base ${
+                        currentPage === page
+                          ? "bg-purple-100 text-purple-700 font-medium"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                );
+              })()}
+            </div>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2.5 rounded-lg border-[1px] border-gray-300 text-base font-medium text-gray-700 hover:bg-gray-100 transition ${
+                currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

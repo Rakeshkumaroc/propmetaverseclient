@@ -11,15 +11,15 @@ const HeroForm = ({ action }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const id = pathname.split("/").pop();
-    const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     price: "",
     property_type: "",
-    image: null, // Changed from image_url to image for file handling
+    image: null,
   });
-  const [preview, setPreview] = useState(null); // For image preview
+  const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -36,7 +36,7 @@ const HeroForm = ({ action }) => {
         ...prevData,
         image: file,
       }));
-      setPreview(URL.createObjectURL(file)); // Generate preview URL
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -49,36 +49,36 @@ const HeroForm = ({ action }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  setLoading(true); // Start loading
+    setLoading(true);
+
     const apiUrl =
       action === "edit" ? `${baseUrl}/edit-hero/${id}` : `${baseUrl}/add-hero`;
     const method = action === "edit" ? "PUT" : "POST";
 
-    // Use FormData to send file and other data
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("property_type", formData.property_type);
     if (formData.image) {
-      data.append("image", formData.image); // Append the file
+      data.append("image", formData.image);
     }
 
     try {
       const response = await fetch(apiUrl, {
         method,
-        body: data, // Send FormData instead of JSON
+        body: data,
       });
 
       if (response.ok) {
         Swal.fire({
           title: "Success!",
           text: `${action === "edit" ? "Hero updated" : "Hero added"} successfully!`,
-          confirmButtonColor: "#000",
           icon: "success",
+          confirmButtonColor: "#000",
           customClass: {
             confirmButton:
-              "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
           },
           buttonsStyling: false,
         }).then(() => {
@@ -100,7 +100,7 @@ const HeroForm = ({ action }) => {
           text: `Failed to ${action === "edit" ? "update" : "add"} hero: ${errorData.message}`,
           customClass: {
             confirmButton:
-              "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+              "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
           },
         });
       }
@@ -112,11 +112,11 @@ const HeroForm = ({ action }) => {
         text: "An error occurred",
         customClass: {
           confirmButton:
-            "bg-black shadow-gray-600 hover:shadow-lg transition-all duration-200 py-2 px-10 mt-4 text-white rounded-md hover:scale-110",
+            "bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition px-6 py-2.5 text-base font-medium",
         },
       });
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -130,10 +130,10 @@ const HeroForm = ({ action }) => {
           description: data.description,
           price: data.price,
           property_type: data.property_type,
-          image: null, // Reset image for edit, backend will keep old image unless replaced
+          image: null,
         });
         if (data.image_url) {
-          setPreview(`${data.image_url}`); // Assuming image_url is now the filename
+          setPreview(`${data.image_url}`);
         }
       } else {
         console.error("Error fetching data");
@@ -150,94 +150,102 @@ const HeroForm = ({ action }) => {
   }, [action]);
 
   return (
-    <div className="w-full rounded-lg bg-white">
-      <div className="p-8 md:mt-10">
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="title" className="text-[14px] font-semibold leading-[26px]">
-                  Title
-                </label>
-                <input
-                  required
-                  type="text"
-                  id="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Title"
-                  className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="price" className="text-[14px] font-semibold leading-[26px]">
-                  Price
-                </label>
-                <input
-                  type="text"
-                  id="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder="Price"
-                  className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
-                />
-              </div>
-            </div>
+    <div className="w-full bg-white rounded-xl shadow-md p-6 md:p-8">
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
-              <label htmlFor="description" className="text-[14px] font-semibold leading-[26px]">
-                Description
-              </label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="border-[1px] px-2 rounded-lg h-20 border-gray-300 text-sm py-3"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="image" className="text-[14px] font-semibold leading-[26px]">
-                Hero Image
+              <label htmlFor="title" className="text-base font-medium text-gray-800">
+                Title
               </label>
               <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3"
+                required
+                type="text"
+                id="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter hero title"
+                className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none"
               />
-              {preview && (
-                <div className="mt-3">
-                  <img
-                    src={preview}
-                    alt="Hero Preview"
-                    className="w-32 h-32 object-cover rounded-md"
-                  />
-                </div>
-              )}
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-semibold leading-[26px]">
-                Property Type
+              <label htmlFor="price" className="text-base font-medium text-gray-800">
+                Price
               </label>
-              <div className="flex gap-5 border-[1px] px-2 rounded-lg h-14 border-gray-300 text-sm py-3 justify-between">
-                {propertyTypes.map((type) => (
-                  <label key={type} className="flex items-center gap-2 w-[30%]">
-                    <input
-                      type="checkbox"
-                      checked={formData.property_type === type}
-                      onChange={() => handlePropertyTypeChange(type)}
-                    />
-                    {type}
-                  </label>
-                ))}
-              </div>
+              <input
+                type="text"
+                id="price"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="Enter price"
+                className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none"
+              />
             </div>
           </div>
-          <div className="flex cursor-pointer justify-center">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="description" className="text-base font-medium text-gray-800">
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter description"
+              className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none h-28"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="image" className="text-base font-medium text-gray-800">
+              Hero Image
+            </label>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="border-[1px] border-gray-300 rounded-lg px-4 py-3 text-base text-gray-700 file:bg-gray-50 file:border-0 file:mr-4 file:py-2 file:px-4 file:rounded-md file:text-base file:text-gray-700"
+            />
+            {preview && (
+              <div className="mt-4">
+                <img
+                  src={preview}
+                  alt="Hero Preview"
+                  className="w-40 h-40 object-cover rounded-lg shadow-sm"
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-base font-medium text-gray-800">
+              Property Type
+            </label>
+            <div className="flex flex-wrap gap-4 border-[1px] border-gray-300 rounded-lg p-4 bg-gray-50">
+              {propertyTypes.map((type) => (
+                <label key={type} className="flex items-center gap-2 text-base cursor-pointer">
+                  <input
+                    type="radio"
+                    name="property_type"
+                    checked={formData.property_type === type}
+                    onChange={() => handlePropertyTypeChange(type)}
+                    className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                  />
+                  <span
+                    className={`${
+                      formData.property_type === type
+                        ? "text-purple-700 font-medium"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {type}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center mt-8">
             <button
               type="submit"
-              className="text-[15px] px-2 md:px-5 py-4 flex mt-7 items-center bg-black rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-lg shadow-md hover:bg-black/90 transition text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading ? (
@@ -247,13 +255,14 @@ const HeroForm = ({ action }) => {
                 </div>
               ) : (
                 <>
-                  {action === "edit" ? "Edit Hero" : "Add Hero"} <GoArrowUpRight className="text-xl" />
+                  {action === "edit" ? "Update Hero" : "Add Hero"}
+                  <GoArrowUpRight className="text-xl" />
                 </>
               )}
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
