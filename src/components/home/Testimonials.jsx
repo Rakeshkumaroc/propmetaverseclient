@@ -47,7 +47,7 @@ const testimonials = [
 const Testimonials = () => {
   const sliderRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
- const [filteredProperties, setFilteredProperties] = useState(testimonials);
+  const [filteredProperties, setFilteredProperties] = useState(testimonials);
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -58,21 +58,35 @@ const Testimonials = () => {
     afterChange: (index) => setCurrentSlide(index),
     responsive: [
       {
-        breakpoint: 1280,
+        breakpoint: 1536, // xl
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 1024,
+        breakpoint: 1280, // lg
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 1024, // md
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768, // sm
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 640, // base
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -92,77 +106,90 @@ const Testimonials = () => {
       sliderRef.current.slickNext();
     }
   };
+
   return (
-    <section className="w-full md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto   max-w-[1920px] mb-[93px]">
-      <h2 className="text-2xl sm:text-3xl md:text-[38px] text-logoBlue mb-2">
+    <section className="w-full py-6 sm:py-8 md:py-10 overflow-hidden lg:py-12 xl:py-12 2xl:py-12 px-4 sm:px-4 md:px-6 lg:px-12 xl:px-20 2xl:px-20 mx-auto max-w-[1920px] mb-12 sm:mb-14 md:mb-16 lg:mb-[93px] xl:mb-[93px] 2xl:mb-[93px]">
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-[38px] 2xl:text-[38px] text-logoBlue mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2">
         What Our Clients Say
       </h2>
-      <p className="text-sm sm:text-base mb-8 md:mb-[47px]">
+      <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base mb-4 sm:mb-6 md:mb-8 lg:mb-8 xl:mb-[47px] 2xl:mb-[47px]">
         Read the success stories and heartfelt testimonials from our valued
         clients. Discover why they chose Estatein for their real estate needs.
       </p>
 
       <Slider ref={sliderRef} {...sliderSettings}>
         {testimonials.map((t, i) => (
-          <div
-            key={i}
-            className="bg-[#BAD6EB] p-[40px] rounded-[10px] border-[1px] border-[#262626] flex flex-col gap-[30px] shadow-sm"
-          >
-            {/* Stars */}
-            <div className="flex mb-4 space-x-1">
-              {Array(5)
-                .fill(0)
-                .map((_, index) => (
-                  <div key={index} className="bg-black rounded-full p-[8px_9px] flex gap-[10px] items-start">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
+        
+            <div key={i} className="bg-[#BAD6EB] p-4  sm:p-6 md:p-8 lg:p-8 xl:p-[40px] 2xl:p-[40px] rounded-[10px] border-[1px] border-[#262626] flex flex-col gap-4 sm:gap-6 md:gap-8 lg:gap-8 xl:gap-[30px] 2xl:gap-[30px] shadow-sm">
+              {/* Stars */}
+              <div className="flex mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4 space-x-1">
+                {Array(5)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div
+                      key={index}
+                      className="bg-black rounded-full p-[6px_7px] sm:p-[6px_7px] md:p-[8px_9px] lg:p-[8px_9px] xl:p-[8px_9px] 2xl:p-[8px_9px] flex gap-[10px] items-start"
                     >
-                      <path
-                        d="M8.15861 1.30996C8.55219 0.697193 9.44781 0.697195 9.84139 1.30996L12.1986 4.97987C12.334 5.19071 12.5436 5.34302 12.786 5.40666L17.0047 6.51442C17.7091 6.69938 17.9859 7.55117 17.5247 8.11484L14.7628 11.4907C14.6042 11.6847 14.5241 11.9311 14.5385 12.1813L14.7886 16.5358C14.8303 17.2629 14.1058 17.7893 13.4272 17.5249L9.36304 15.9415C9.12956 15.8505 8.87044 15.8505 8.63696 15.9415L4.57282 17.5249C3.89423 17.7893 3.16966 17.2629 3.21142 16.5358L3.46153 12.1813C3.4759 11.9311 3.39582 11.6847 3.23716 11.4907L0.475274 8.11484C0.0141246 7.55117 0.290888 6.69938 0.995283 6.51442L5.21399 5.40666C5.45636 5.34302 5.66599 5.19071 5.80141 4.97987L8.15861 1.30996Z"
-                        fill="#FFE600"
-                      />
-                    </svg>
-                  </div>
-                ))}
-            </div>
-            <div>
-              {/* Title */}
-              <h3 style={{ color: "#091F5B" }} className="text-[20px]   mb-2">
-                {t.title}
-              </h3>
-
-              {/* Message */}
-              <p className="text-[#091F5B] mb-4">{t.message}</p>
-            </div>
-            {/* Profile */}
-            <div className="flex items-center gap-3 mt-auto">
-              <img
-                src={t.image}
-                alt={t.name}
-                className="w-10 h-10 rounded-full object-cover"
-              />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 18 18"
+                        fill="none"
+                        className="size-3 sm:size-4 md:size-4 lg:size-4 xl:size-[18px] 2xl:size-[18px]"
+                      >
+                        <path
+                          d="M8.15861 1.30996C8.55219 0.697193 9.44781 0.697195 9.84139 1.30996L12.1986 4.97987C12.334 5.19071 12.5436 5.34302 12.786 5.40666L17.0047 6.51442C17.7091 6.69938 17.9859 7.55117 17.5247 8.11484L14.7628 11.4907C14.6042 11.6847 14.5241 11.9311 14.5385 12.1813L14.7886 16.5358C14.8303 17.2629 14.1058 17.7893 13.4272 17.5249L9.36304 15.9415C9.12956 15.8505 8.87044 15.8505 8.63696 15.9415L4.57282 17.5249C3.89423 17.7893 3.16966 17.2629 3.21142 16.5358L3.46153 12.1813C3.4759 11.9311 3.39582 11.6847 3.23716 11.4907L0.475274 8.11484C0.0141246 7.55117 0.290888 6.69938 0.995283 6.51442L5.21399 5.40666C5.45636 5.34302 5.66599 5.19071 5.80141 4.97987L8.15861 1.30996Z"
+                          fill="#FFE600"
+                        />
+                      </svg>
+                    </div>
+                  ))}
+              </div>
               <div>
-                <p className="font-medium text-[18px] text-[#091F5B]">
-                  {t.name}
+                {/* Title */}
+                <h3
+                  style={{ color: "#091F5B" }}
+                  className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-[20px] 2xl:text-[20px] mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2"
+                >
+                  {t.title}
+                </h3>
+
+                {/* Message */}
+                <p className="text-[#091F5B] text-xs line-clamp-3 sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4">
+                  {t.message}
                 </p>
-                <p className=" text-black">{t.location}</p>
+              </div>
+              {/* Profile */}
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-3 lg:gap-3 xl:gap-3 2xl:gap-3 mt-auto">
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 xl:h-10 2xl:w-10 2xl:h-10 rounded-full object-cover"
+                  width={40}
+                  height={40}
+                />
+                <div>
+                  <p className="font-medium text-sm sm:text-base md:text-lg lg:text-lg xl:text-[18px] 2xl:text-[18px] text-[#091F5B]">
+                    {t.name}
+                  </p>
+                  <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base text-black">
+                    {t.location}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          
         ))}
       </Slider>
 
       {/* Footer with navigation */}
-      <div className="  sm:mt-10 flex justify-between items-center text-sm   mt-10 border-t pt-4">
+      <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-10 xl:mt-10 2xl:mt-10 flex justify-between items-center text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm border-t pt-2 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-4 2xl:pt-4">
         <span>
           {String(currentSlide + 1).padStart(2, "0")} of{" "}
           {String(filteredProperties.length).padStart(2, "0")}
         </span>
-        <div className="flex gap-2 justify-end  items-center">
+        <div className="flex gap-2 sm:gap-3 md:gap-3 lg:gap-3 xl:gap-3 2xl:gap-3 justify-end items-center">
           <div
             onClick={handlePrev}
             className="p-2 size-10 sm:size-[44px] rounded-full border border-gray-300 cursor-pointer"

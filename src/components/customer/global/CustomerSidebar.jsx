@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import {
-  FiHeart,
+import { 
   FiTrendingUp,
 } from "react-icons/fi";
 import { MdContentPaste, MdOutlineDashboard } from "react-icons/md";
@@ -9,9 +8,7 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { BsBuildingAdd } from "react-icons/bs";
-import { FaTasks } from "react-icons/fa";
-
-const baseUrl = import.meta.env.VITE_APP_URL;
+import { FaTasks } from "react-icons/fa"; 
 
 const CustomerSidebar = () => {
   const location = useLocation();
@@ -23,11 +20,7 @@ const CustomerSidebar = () => {
       title: "Main",
       items: [
         { icon: <MdOutlineDashboard />, label: "Dashboard", link: "/customer" },
-        // {
-        // icon: <FiHeart />,
-        // label: "Saved Properties",
-        // link: "/customer/saved-properties",
-        // },
+      
         {
           icon: <MdContentPaste />,
           label: "My Listings",
@@ -74,7 +67,7 @@ const CustomerSidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("customerAuth");
-    navigate("/");
+     window.location.href = "https://propmetaverse.com"; // Opens in same tab
   };
 
   return (

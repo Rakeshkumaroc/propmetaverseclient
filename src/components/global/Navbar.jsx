@@ -33,11 +33,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-white md:mb-[40px] mb-[20px] fixed top-0 left-0 right-0 z-[99]  shadow-[-3px_-4px_29.2px_-1px_#1865A4]">
+     <div className="bg-white md:mb-[40px] mb-[20px] fixed top-0 left-0 right-0 z-[99]  shadow-[-3px_-4px_29.2px_-1px_#1865A4] ">
       {/* Top Bar - Visible only on 2xl and above */}
       
-      <div className="hidden 2xl:block border-b-[1px] border-[#1865A4] text-logoBlue text-sm xl:px-24">
-        <div className="w-full max-w-[100vw] mx-auto px-4 py-2 flex flex-wrap justify-between items-center gap-2 md:gap-4">
+      <div className="hidden 2xl:block border-b-[1px] border-[#1865A4] text-logoBlue text-sm px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-20 mx-auto max-w-[1920px] ">
+        <div className="w-full max-w-[100vw] mx-auto   py-2 flex flex-wrap justify-between items-center gap-2 md:gap-4">
           {/* Phone */}
           <div className="flex items-center space-x-2 min-w-fit">
             <svg
@@ -119,9 +119,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav className="w-full h-[80px] md:h-[116px] flex items-center justify-between xl:px-24">
+      <nav className="w-full h-[80px] md:h-[116px] flex items-center justify-between px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-20 mx-auto max-w-[1920px]">
         {/* Logo */}
-        <div className="flex items-center pl-4">
+        <div className="flex items-center  ">
           <Link to="/">
             <img src={Logo} alt="logo" className="w-24 md:w-32 lg:w-[179px]" />
           </Link>

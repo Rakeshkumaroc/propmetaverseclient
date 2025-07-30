@@ -1,9 +1,8 @@
 // components/Projects.js
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/global/Navbar";
 import Footer from "../components/global/Footer";
-import MarkerMap from "../components/projects/MarkerMap";
-import PropertyListing from "../components/projects/PropertyListing";
+import MarkerMap from "../components/projects/MarkerMap"; 
 import FilterBox from "../components/projects/FilterBox";
 import AllProjects from "../components/projects/AllProjects";
 import RealEstateBanner from "../components/global/RealEstateBanner";
@@ -12,18 +11,16 @@ const baseUrl = import.meta.env.VITE_APP_URL;
 
 const Projects = () => {
   const [properties, setProperties] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); 
 
   useEffect(() => {
     const fetchProperties = async () => {
-      try {
+      try { 
         const response = await fetch(`${baseUrl}/property`);
         if (!response.ok) {
           throw new Error("Failed to fetch properties");
         }
         const data = await response.json();
-        console.log("data", data);
-
         console.log("data", data);
 
         const mappedProperties = data.map((item) => ({
@@ -37,19 +34,17 @@ const Projects = () => {
           bathrooms: item.floorPlan[0]?.balcony || 0,
           type: item.floorPlan[0]?.type || "Apartment",
           galleryImg:
-            item.galleryImg[0] ||
-            "https://propmetaverse.com/assets/logopng-BXERHkCM.png",
+            item.galleryImg[0] || "https://propmetaverse.com/assets/logopng-BXERHkCM.png",
           price: `Rs. ${item.floorPlan[0]?.price.toLocaleString("en-IN")}/-`,
         }));
-        console.log("mappedProperties", mappedProperties);
 
+        console.log("mappedProperties", mappedProperties);
         setProperties(mappedProperties);
-        setFilteredData(mappedProperties); // Initialize filteredData with approved properties
+        setFilteredData(mappedProperties);  
       } catch (err) {
-        console.log("Error:", err);
+        console.log("Error:", err); 
       }
     };
-
     fetchProperties();
   }, []);
 

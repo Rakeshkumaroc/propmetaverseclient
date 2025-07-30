@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaEnvelope} from "react-icons/fa";
 import Swal from "sweetalert2"; // Import SweetAlert2
 const baseUrl = import.meta.env.VITE_APP_URL;
 const ContactFormSection = () => {
@@ -84,19 +84,19 @@ const ContactFormSection = () => {
       lastName: formState.lastName.value,
       email: formState.email.value,
       phone: formState.phone.value,
-      contactPhone: formState.contactPhone.value,
-      contactEmail: formState.contactEmail.value,
+      preferredContactMethod: formState.contactPhone.value,
+      preferredEmailId: formState.contactEmail.value,
       preferredLocation: formState.preferredLocation.value,
       propertyType: formState.propertyType.value,
-      bathrooms: formState.bathrooms.value,
-      bedrooms: formState.bedrooms.value,
+      noOfBathrooms: formState.bathrooms.value,
+      noOfBedrooms: formState.bedrooms.value,
       budget: formState.budget.value,
       message: formState.message.value,
     };
 
     try {
       // API call
-      const response = await fetch(`${baseUrl}/add-enquiry`, {
+      const response = await fetch(`${baseUrl}/add-property-enquiry`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -153,13 +153,13 @@ const ContactFormSection = () => {
   };
 
   return (
-    <section className="w-full px-2 sm:px-4 md:px-10 lg:px-24 py-8 sm:py-10 md:py-12 bg-white mb-[93px] sm:mb-[60px]">
+    <section className="w-full  py-8 sm:py-10 md:py-12 bg-white mb-[93px] sm:mb-[60px] px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-[75px] mx-auto max-w-[1920px]">
       {/* Header */}
-      <div className="mb-6 sm:mb-8 md:mb-[60px]">
-        <h2 className="text-[24px] sm:text-[32px] md:text-[38px] font-bold text-logoBlue mb-2 sm:mb-4">
+      <div className="mb-6 sm:mb-8 md:mb-[60px] ">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-[38px] 2xl:text-[38px] text-logoBlue mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2">
           Let’s Make it Happen
         </h2>
-        <p className="text-xs sm:text-sm md:text-base text-black font-medium leading-[150%] max-w-3xl">
+        <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base mb-4 sm:mb-6 md:mb-8 lg:mb-8 xl:mb-[47px] 2xl:mb-[47px]">
           Ready to take the first step toward your dream property? Fill out the
           form below, and our real estate wizards will work their magic to find
           your perfect match. Don’t wait; let’s embark on this exciting journey
@@ -363,8 +363,8 @@ const ContactFormSection = () => {
                   fill="none"
                 >
                   <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
                     d="M1.75 3.75C1.75 2.36929 2.86929 1.25 4.25 1.25H5.39302C6.11 1.25 6.73498 1.73796 6.90887 2.43354L7.83037 6.11952C7.98284 6.72942 7.75495 7.37129 7.25202 7.74849L6.174 8.557C6.06206 8.64096 6.03772 8.7639 6.06917 8.84974C7.01542 11.4329 9.0671 13.4846 11.6503 14.4308C11.7361 14.4623 11.859 14.4379 11.943 14.326L12.7515 13.248C13.1287 12.7451 13.7706 12.5172 14.3805 12.6696L18.0665 13.5911C18.762 13.765 19.25 14.39 19.25 15.107V16.25C19.25 17.6307 18.1307 18.75 16.75 18.75H14.875C7.62626 18.75 1.75 12.8737 1.75 5.625V3.75Z"
                     fill="black"
                   />

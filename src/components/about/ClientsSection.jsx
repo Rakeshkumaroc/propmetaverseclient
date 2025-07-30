@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
-import Slider from "react-slick";
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import Slider from "react-slick"; 
 
 const clients = [
   {
@@ -19,6 +18,22 @@ const clients = [
     feedback:
       "Propmetaverse ability to identify prime retail locations helped us expand our brand presence. They are a trusted partner in our growth.",
   },
+  {
+    since: "Since 2019",
+    name: "ABC Corporation",
+    domain: "Commercial Real Estate",
+    category: "Luxury Home Development",
+    feedback:
+      "Propmetaverse expertise in finding the perfect office space for our expanding operations was invaluable. They truly understand our business needs.",
+  },
+  {
+    since: "Since 2018",
+    name: "GreenTech Enterprises",
+    domain: "Commercial Real Estate",
+    category: "Retail Space",
+    feedback:
+      "Propmetaverse ability to identify prime retail locations helped us expand our brand presence. They are a trusted partner in our growth.",
+  } 
 ];
 
 const ClientsSection = () => {
@@ -42,14 +57,14 @@ const ClientsSection = () => {
         },
       },
       {
-        breakpoint: 1024,
+        breakpoint: 768,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 640,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -71,13 +86,13 @@ const ClientsSection = () => {
   };
 
   return (
-    <section className="w-full md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto   max-w-[1920px] mb-[93px]">
+    <section className="w-full px-2 sm:px-4 md:px-6 lg:px-12 xl:px-20 2xl:px-20 py-6 sm:py-8 md:py-10 lg:py-12 xl:py-12 2xl:py-12 overflow-hidden mx-auto max-w-[1920px] mb-10 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-[60px] 2xl:mb-[93px]">
       {/* Title and Description */}
-      <div className="mb-8 sm:mb-10 md:mb-10">
-        <h2 className="text-[24px] sm:text-[32px] md:text-[38px] font-bold text-logoBlue mb-4">
+      <div className="mb-6 sm:mb-8 md:mb-8 lg:mb-10 xl:mb-10 2xl:mb-10">
+        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-[36px] xl:text-[38px] 2xl:text-[38px] font-bold text-logoBlue mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4">
           Our Valued Clients
         </h2>
-        <p className="text-xs sm:text-sm md:text-base text-black font-medium leading-[150%] max-w-3xl">
+        <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base text-black font-medium leading-[150%] max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-3xl 2xl:max-w-3xl line-clamp-3">
           At Propmetaverse, we have had the privilege of working with a diverse
           range of clients across various industries. Here are some of the
           clients we've had the pleasure of serving.
@@ -87,83 +102,84 @@ const ClientsSection = () => {
       {/* Clients Slider */}
       <Slider ref={sliderRef} {...sliderSettings}>
         {clients.map((client, index) => (
-          <div
-            key={index}
-            className="bg-[#BAD6EB] border border-black/30 rounded-xl p-3 sm:p-4 md:p-6 lg:p-[40px] flex flex-col justify-between  "
-          >
-            <div className="mb-4">
-              <p className="text-xs sm:text-sm md:text-base text-black font-medium mb-1">
-                {client.since}
-              </p>
-              <h5 className="text-base sm:text-lg md:text-[24px] font-bold text-logoBlue mb-4 sm:mb-6 md:mb-[30px]">
-                {client.name}
-              </h5>
-              <div className="flex flex-col sm:flex-row sm:items-center divide-x sm:gap-6 md:gap-[40px] text-xs sm:text-sm md:text-base font-medium text-black mb-4 sm:mb-6">
-                <div className="pr-0 sm:pr-6 md:pr-[40px]">
-                  <p className="text-logoBlue mb-1 flex items-center gap-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="21"
-                      viewBox="0 0 20 21"
-                      fill="none"
-                    >
-                      <path
-                        d="M3.125 5.5C3.125 4.46447 3.96447 3.625 5 3.625H6.875C7.91053 3.625 8.75 4.46447 8.75 5.5V7.375C8.75 8.41053 7.91053 9.25 6.875 9.25H5C3.96447 9.25 3.125 8.41053 3.125 7.375V5.5Z"
-                        stroke="#1865A4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M3.125 13.625C3.125 12.5895 3.96447 11.75 5 11.75H6.875C7.91053 11.75 8.75 12.5895 8.75 13.625V15.5C8.75 16.5355 7.91053 17.375 6.875 17.375H5C3.96447 17.375 3.125 16.5355 3.125 15.5V13.625Z"
-                        stroke="#1865A4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M11.25 5.5C11.25 4.46447 12.0895 3.625 13.125 3.625H15C16.0355 3.625 16.875 4.46447 16.875 5.5V7.375C16.875 8.41053 16.0355 9.25 15 9.25H13.125C12.0895 9.25 11.25 8.41053 11.25 7.375V5.5Z"
-                        stroke="#1865A4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M11.25 13.625C11.25 12.5895 12.0895 11.75 13.125 11.75H15C16.0355 11.75 16.875 12.5895 16.875 13.625V15.5C16.875 16.5355 16.0355 17.375 15 17.375H13.125C12.0895 17.375 11.25 16.5355 11.25 15.5V13.625Z"
-                        stroke="#1865A4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>{" "}
-                    Domain
-                  </p>
-                  <p>{client.domain}</p>
-                </div>
-                <div>
-                  <p className="text-logoBlue mb-1 flex items-center gap-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="21"
-                      height="21"
-                      viewBox="0 0 21 21"
-                      fill="none"
-                    >
-                      <path
-                        d="M3.875 11.75L12.625 2.375L10.75 9.25H17.625L8.875 18.625L10.75 11.75H3.875Z"
-                        stroke="#1865A4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>{" "}
-                    Category
-                  </p>
-                  <p>{client.category}</p>
-                </div>
-              </div>
-
-              <div className="bg-[#BAD6EB] border border-black/30 rounded-lg p-3 sm:p-4 md:p-[24px] text-xs sm:text-sm md:text-base">
-                <p className="font-semibold text-logoBlue mb-2">
-                  What They Said 🤗
+          <div key={index} className="pr-2 sm:pr-3 md:pr-4 lg:pr-5 xl:pr-5 2xl:pr-5">
+            <div className="bg-[#BAD6EB] border border-black/30 rounded-xl p-4 sm:p-3 md:p-4 lg:p-6 xl:p-[40px] 2xl:p-[40px] flex flex-col justify-between">
+              <div className="mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4">
+                <p className="text-xs sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base text-black font-medium mb-1 sm:mb-1 md:mb-1 lg:mb-1 xl:mb-1 2xl:mb-1">
+                  {client.since}
                 </p>
-                <p className="text-black leading-[150%]">{client.feedback}</p>
+                <h5 className="text-sm sm:text-base md:text-lg lg:text-[20px] xl:text-[24px] 2xl:text-[24px] font-bold text-logoBlue mb-2 sm:mb-3 md:mb-4 lg:mb-6 xl:mb-[30px] 2xl:mb-[30px]">
+                  {client.name}
+                </h5>
+                <div className="flex flex-col sm:flex-row sm:items-center divide-x sm:gap-3 md:gap-4 lg:gap-6 xl:gap-[40px] 2xl:gap-[40px] text-xs sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base font-medium text-black mb-2 sm:mb-3 md:mb-4 lg:mb-6 xl:mb-6 2xl:mb-6">
+                  <div className="pr-0 sm:pr-3 md:pr-4 lg:pr-6 xl:pr-[40px] 2xl:pr-[40px]">
+                    <p className="text-logoBlue mb-1 flex items-center gap-1 text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 20 21"
+                        fill="none"
+                        className="size-3 sm:size-4 md:size-4 lg:size-5 xl:size-5 2xl:size-5"
+                      >
+                        <path
+                          d="M3.125 5.5C3.125 4.46447 3.96447 3.625 5 3.625H6.875C7.91053 3.625 8.75 4.46447 8.75 5.5V7.375C8.75 8.41053 7.91053 9.25 6.875 9.25H5C3.96447 9.25 3.125 8.41053 3.125 7.375V5.5Z"
+                          stroke="#1865A4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.125 13.625C3.125 12.5895 3.96447 11.75 5 11.75H6.875C7.91053 11.75 8.75 12.5895 8.75 13.625V15.5C8.75 16.5355 7.91053 17.375 6.875 17.375H5C3.96447 17.375 3.125 16.5355 3.125 15.5V13.625Z"
+                          stroke="#1865A4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M11.25 5.5C11.25 4.46447 12.0895 3.625 13.125 3.625H15C16.0355 3.625 16.875 4.46447 16.875 5.5V7.375C16.875 8.41053 16.0355 9.25 15 9.25H13.125C12.0895 9.25 11.25 8.41053 11.25 7.375V5.5Z"
+                          stroke="#1865A4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M11.25 13.625C11.25 12.5895 12.0895 11.75 13.125 11.75H15C16.0355 11.75 16.875 12.5895 16.875 13.625V15.5C16.875 16.5355 16.0355 17.375 15 17.375H13.125C12.0895 17.375 11.25 16.5355 11.25 15.5V13.625Z"
+                          stroke="#1865A4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>{" "}
+                      Domain
+                    </p>
+                    <p className="text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base">{client.domain}</p>
+                  </div>
+                  <div>
+                    <p className="text-logoBlue mb-1 flex items-center gap-1 text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 21 21"
+                        fill="none"
+                        className="size-3 sm:size-4 md:size-4 lg:size-5 xl:size-5 2xl:size-5"
+                      >
+                        <path
+                          d="M3.875 11.75L12.625 2.375L10.75 9.25H17.625L8.875 18.625L10.75 11.75H3.875Z"
+                          stroke="#1865A4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>{" "}
+                      Category
+                    </p>
+                    <p className="text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base">{client.category}</p>
+                  </div>
+                </div>
+
+                <div className="bg-[#BAD6EB] border border-black/30 rounded-lg p-2 sm:p-3 md:p-4 lg:p-6 xl:p-[24px] 2xl:p-[24px] text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base">
+                  <p className="font-semibold text-logoBlue mb-1 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2">
+                    What They Said 🤗
+                  </p>
+                  <p className="text-black leading-[150%] line-clamp-2">{client.feedback}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -171,22 +187,23 @@ const ClientsSection = () => {
       </Slider>
 
       {/* Navigation */}
-      <div className="mt-6 sm:mt-8 md:mt-10 flex justify-between items-center text-xs sm:text-sm md:text-base border-t pt-3 sm:pt-4">
+      <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-10 2xl:mt-10 flex justify-between items-center text-[10px] sm:text-xs md:text-sm lg:text-sm xl:text-base 2xl:text-base border-t pt-2 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-4 2xl:pt-4">
         <span>
           {String(currentSlide + 1).padStart(2, "0")} of{" "}
           {String(clients.length).padStart(2, "0")}
         </span>
-        <div className="flex gap-2 justify-end  items-center">
+        <div className="flex gap-1 sm:gap-2 md:gap-2 lg:gap-2 xl:gap-2 2xl:gap-2 justify-end items-center">
           <div
             onClick={handlePrev}
-            className="p-2 size-10 sm:size-[44px] rounded-full border border-gray-300 cursor-pointer"
+            className="p-1 sm:p-2 size-8 sm:size-10 md:size-[44px] lg:size-[44px] xl:size-[44px] 2xl:size-[44px] rounded-full border border-gray-300 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
+              className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6"
             >
               <path
                 fillRule="evenodd"
@@ -198,14 +215,14 @@ const ClientsSection = () => {
           </div>
           <div
             onClick={handleNext}
-            className="p-2 size-10 sm:size-[44px] rounded-full bg-logoBlue cursor-pointer"
+            className="p-1 sm:p-2 size-8 sm:size-10 md:size-[44px] lg:size-[44px] xl:size-[44px] 2xl:size-[44px] rounded-full bg-logoBlue cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
-              className="text-white"
+              className="text-white size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6"
               fill="none"
             >
               <path
@@ -223,144 +240,3 @@ const ClientsSection = () => {
 };
 
 export default ClientsSection;
-
-// import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
-
-// const clients = [
-//   {
-//     since: "Since 2019",
-//     name: "ABC Corporation",
-//     domain: "Commercial Real Estate",
-//     category: "Luxury Home Development",
-//     feedback:
-//       "Propmetaverse expertise in finding the perfect office space for our expanding operations was invaluable. They truly understand our business needs.",
-//   },
-//   {
-//     since: "Since 2018",
-//     name: "GreenTech Enterprises",
-//     domain: "Commercial Real Estate",
-//     category: "Retail Space",
-//     feedback:
-//       "Propmetaverse ability to identify prime retail locations helped us expand our brand presence. They are a trusted partner in our growth.",
-//   },
-// ];
-
-// const ClientsSection = () => {
-//   return (
-//     <section className="w-full px-4 md:px-10 lg:px-24 py-12 bg-white mb-[93px] sm:mb-[60px]">
-//       {/* Title and Description */}
-//       <div className="mb-10">
-//         <h2 className="text-[32px] md:text-[38px] font-bold text-logoBlue mb-4">
-//           Our Valued Clients
-//         </h2>
-//         <p className="text-base text-black font-medium leading-[150%] max-w-3xl">
-//           At Propmetaverse, we have had the privilege of working with a diverse
-//           range of clients across various industries. Here are some of the
-//           clients we've had the pleasure of serving.
-//         </p>
-//       </div>
-
-//       {/* Clients Cards */}
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-[40px]">
-//         {clients.map((client, index) => (
-//           <div
-//             key={index}
-//             className="bg-[#BAD6EB] border border-black/30 rounded-xl p-[40px] flex flex-col justify-between"
-//           >
-//             <div className="mb-4">
-//               <p className="text-sm sm:text-base text-black font-medium mb-1">
-//                 {client.since}
-//               </p>
-//               <h5 className="text-[22px] sm:text-[24px] font-bold text-logoBlue mb-[30px]">
-//                 {client.name}
-//               </h5>
-//               <div className="flex flex-col sm:flex-row sm:items-center divide-x  sm:gap-[40px] text-sm sm:text-base font-medium text-black mb-6">
-//                 <div className="pr-[40px]">
-//                   <p className="text-logoBlue mb-1 flex items-center gap-1">
-//                     <svg
-//                       xmlns="http://www.w3.org/2000/svg"
-//                       width="20"
-//                       height="21"
-//                       viewBox="0 0 20 21"
-//                       fill="none"
-//                     >
-//                       <path
-//                         d="M3.125 5.5C3.125 4.46447 3.96447 3.625 5 3.625H6.875C7.91053 3.625 8.75 4.46447 8.75 5.5V7.375C8.75 8.41053 7.91053 9.25 6.875 9.25H5C3.96447 9.25 3.125 8.41053 3.125 7.375V5.5Z"
-//                         stroke="#1865A4"
-//                         stroke-linecap="round"
-//                         stroke-linejoin="round"
-//                       />
-//                       <path
-//                         d="M3.125 13.625C3.125 12.5895 3.96447 11.75 5 11.75H6.875C7.91053 11.75 8.75 12.5895 8.75 13.625V15.5C8.75 16.5355 7.91053 17.375 6.875 17.375H5C3.96447 17.375 3.125 16.5355 3.125 15.5V13.625Z"
-//                         stroke="#1865A4"
-//                         stroke-linecap="round"
-//                         stroke-linejoin="round"
-//                       />
-//                       <path
-//                         d="M11.25 5.5C11.25 4.46447 12.0895 3.625 13.125 3.625H15C16.0355 3.625 16.875 4.46447 16.875 5.5V7.375C16.875 8.41053 16.0355 9.25 15 9.25H13.125C12.0895 9.25 11.25 8.41053 11.25 7.375V5.5Z"
-//                         stroke="#1865A4"
-//                         stroke-linecap="round"
-//                         stroke-linejoin="round"
-//                       />
-//                       <path
-//                         d="M11.25 13.625C11.25 12.5895 12.0895 11.75 13.125 11.75H15C16.0355 11.75 16.875 12.5895 16.875 13.625V15.5C16.875 16.5355 16.0355 17.375 15 17.375H13.125C12.0895 17.375 11.25 16.5355 11.25 15.5V13.625Z"
-//                         stroke="#1865A4"
-//                         stroke-linecap="round"
-//                         stroke-linejoin="round"
-//                       />
-//                     </svg>{" "}
-//                     Domain
-//                   </p>
-//                   <p>{client.domain}</p>
-//                 </div>
-//                 {/* <div className="hidden sm:block border-l border-black h-full"></div> */}
-//                 <div>
-//                   <p className="text-logoBlue mb-1 flex items-center gap-1">
-//                     <svg
-//                       xmlns="http://www.w3.org/2000/svg"
-//                       width="21"
-//                       height="21"
-//                       viewBox="0 0 21 21"
-//                       fill="none"
-//                     >
-//                       <path
-//                         d="M3.875 11.75L12.625 2.375L10.75 9.25H17.625L8.875 18.625L10.75 11.75H3.875Z"
-//                         stroke="#1865A4"
-//                         stroke-linecap="round"
-//                         stroke-linejoin="round"
-//                       />
-//                     </svg>{" "}
-//                     Category
-//                   </p>
-//                   <p>{client.category}</p>
-//                 </div>
-//               </div>
-
-//               <div className="bg-[#BAD6EB] border border-black/30 rounded-lg p-[24px] text-sm sm:text-base">
-//                 <p className="font-semibold text-logoBlue mb-2">
-//                   What They Said 🤗
-//                 </p>
-//                 <p className="text-black leading-[150%]">{client.feedback}</p>
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Navigation */}
-//       <div className="flex items-center justify-between mt-10 pt-6 border-t border-black/30 text-sm text-logoBlue font-medium">
-//         <span>01 of 10</span>
-//         <div className="flex items-center gap-4">
-//           <button className="w-10 h-10 rounded-full border border-black flex items-center justify-center">
-//             <FaArrowLeft />
-//           </button>
-//           <button className="w-10 h-10 rounded-full bg-logoBlue text-white flex items-center justify-center">
-//             <FaArrowRight />
-//           </button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default ClientsSection;

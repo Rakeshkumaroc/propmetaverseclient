@@ -2,8 +2,14 @@ import Like from "../assets/card/like.svg";
 import Share from "../assets/card/share.svg";
 import Compare from "../assets/card/compare.svg";
 import { useNavigate } from "react-router-dom";
-const TrendingProjectCard = ({ prop }) => {
+import SkeletonTrendingProjectCard from "./SkeletonTrendingProjectCard";
+const TrendingProjectCard = ({ prop,loading = false  }) => {
   const navigate = useNavigate();
+
+// If loading is true, render the skeleton loader
+  if (loading) {
+    return <SkeletonTrendingProjectCard />;
+  }
 
   return (
     <div
@@ -12,16 +18,13 @@ const TrendingProjectCard = ({ prop }) => {
           `/projects/${prop.name.replaceAll(" ", "-").toLowerCase()}/${prop.id}`
         );
       }}
-      className="card-container cursor-pointer bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-4 sm:p-6 md:p-[30px]"
+      className="card-container cursor-pointer bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-2  sm:p-4 md:p-6 lg:p-6 xl:p-6 2xl:p-[30px]"
     >
       {/* Image Placeholder */}
-      <div className="relative w-full h-[200px] sm:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-4">
+      <div className="relative w-full h-[150px] sm:h-[200px] md:h-[255px] lg:h-[255px] xl:h-[255px] 2xl:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4">
         <button
-          className="absolute top-4 left-4 bg-[#ACACAC] text-white"
-          style={{
-            boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-            padding: "2px 10px",
-          }}
+          className="absolute top-2 sm:top-3 md:top-4 lg:top-4 xl:top-4 2xl:top-4 left-2 sm:left-3 md:left-4 lg:left-4 xl:left-4 2xl:left-4 bg-[#ACACAC] text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm px-2 sm:px-2 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1"
+          style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
         >
           {prop.tag}
         </button>
@@ -32,18 +35,19 @@ const TrendingProjectCard = ({ prop }) => {
         />
       </div>
       <div className="flex flex-col flex-grow">
-        <div className="space-y-2 sm:space-y-3 md:space-y-[11px]">
-          <h6 className="font-semibold text-lg sm:text-xl md:text-[20px] text-[#091F5B]">
+        <div className="space-y-1 sm:space-y-2 md:space-y-3 lg:space-y-3 xl:space-y-3 2xl:space-y-[11px]">
+          <h6 className="font-semibold text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-[20px] text-[#091F5B]">
             {prop.name}
           </h6>
-          <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base">
+          <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base">
             <span className="flex items-center gap-1 mb-2 sm:mb-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="20"
+                width="12"
+                height="16"
                 viewBox="0 0 16 20"
                 fill="none"
+                className="size-4 sm:size-5 md:size-5 lg:size-5 xl:size-5 2xl:size-5"
               >
                 <path
                   d="M8 2.50002C6.4529 2.50002 4.96917 3.1146 3.87521 4.20856C2.78125 5.30253 2.16667 6.78626 2.16667 8.33335C2.16667 10.7184 3.65167 13.0192 5.28167 14.8017C6.11512 15.7097 7.02453 16.545 8 17.2984C8.14556 17.1867 8.31639 17.0506 8.5125 16.89C9.29567 16.2469 10.0328 15.5496 10.7183 14.8034C12.3483 13.0192 13.8333 10.7192 13.8333 8.33335C13.8333 6.78626 13.2188 5.30253 12.1248 4.20856C11.0308 3.1146 9.5471 2.50002 8 2.50002ZM8 19.345L7.5275 19.02L7.525 19.0184L7.52 19.0142L7.50333 19.0025L7.44083 18.9584L7.21583 18.7942C6.07572 17.9373 5.01656 16.9778 4.05167 15.9275C2.34833 14.0625 0.5 11.3634 0.5 8.33252C0.5 6.3434 1.29018 4.43574 2.6967 3.02922C4.10322 1.6227 6.01088 0.83252 8 0.83252C9.98912 0.83252 11.8968 1.6227 13.3033 3.02922C14.7098 4.43574 15.5 6.3434 15.5 8.33252C15.5 11.3634 13.6517 14.0634 11.9483 15.9259C10.9837 16.9761 9.92483 17.9356 8.785 18.7925C8.69005 18.8634 8.5942 18.9332 8.4975 19.0017L8.48 19.0134L8.475 19.0175L8.47333 19.0184L8 19.345ZM8 6.66669C7.55797 6.66669 7.13405 6.84228 6.82149 7.15484C6.50893 7.4674 6.33333 7.89133 6.33333 8.33335C6.33333 8.77538 6.50893 9.1993 6.82149 9.51186C7.13405 9.82442 7.55797 10 8 10C8.44203 10 8.86595 9.82442 9.17851 9.51186C9.49107 9.1993 9.66667 8.77538 9.66667 8.33335C9.66667 7.89133 9.49107 7.4674 9.17851 7.15484C8.86595 6.84228 8.44203 6.66669 8 6.66669ZM4.66667 8.33335C4.66667 7.4493 5.01786 6.60145 5.64298 5.97633C6.2681 5.35121 7.11594 5.00002 8 5.00002C8.88406 5.00002 9.7319 5.35121 10.357 5.97633C10.9821 6.60145 11.3333 7.4493 11.3333 8.33335C11.3333 9.21741 10.9821 10.0653 10.357 10.6904C9.7319 11.3155 8.88406 11.6667 8 11.6667C7.11594 11.6667 6.2681 11.3155 5.64298 10.6904C5.01786 10.0653 4.66667 9.21741 4.66667 8.33335Z"
@@ -57,27 +61,28 @@ const TrendingProjectCard = ({ prop }) => {
             </span>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row sm:justify-between mt-2">
-          <p className="text-sm sm:text-base">
+        <div className="flex flex-col sm:flex-row sm:justify-between mt-2 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-2 2xl:mt-2">
+          <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base">
             By: <span className="ml-2">{prop.developer}</span>
           </p>
-          <div className="flex justify-end items-center gap-4 sm:gap-7 mt-2 text-green-700">
-            <img src={Like} alt="Like" className="size-5 sm:size-6" />
-            <img src={Compare} alt="Compare" className="size-5 sm:size-6" />
-            <img src={Share} alt="Share" className="size-5 sm:size-6" />
+          <div className="flex justify-end items-center gap-2 sm:gap-4 md:gap-6 lg:gap-6 xl:gap-6 2xl:gap-7 mt-2 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-2 2xl:mt-2 text-green-700">
+            <img src={Like} alt="Like" className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6" />
+            <img src={Compare} alt="Compare" className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6" />
+            <img src={Share} alt="Share" className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6" />
           </div>
         </div>
       </div>
 
       {/* Tags */}
-      <div className="my-4 sm:my-6 md:my-[31px] flex flex-wrap gap-2 text-white text-xs sm:text-sm">
-        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+      <div className="my-2 sm:my-3 md:my-4 lg:my-5 xl:my-6 2xl:my-[31px] flex flex-wrap gap-2 sm:gap-2 md:gap-2 lg:gap-2 xl:gap-2 2xl:gap-2 text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm">
+        <span className="bg-[#091F5B] px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 20 18"
             fill="none"
+            className="size-4 sm:size-5 md:size-5 lg:size-5 xl:size-5 2xl:size-5"
           >
             <g clipPath="url(#clip0_1129_3698)">
               <path
@@ -102,13 +107,14 @@ const TrendingProjectCard = ({ prop }) => {
           </svg>
           {prop.bedrooms}-Bedroom
         </span>
-        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+        <span className="bg-[#091F5B] px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="21"
+            width="16"
+            height="16"
             viewBox="0 0 20 21"
             fill="none"
+            className="size-4 sm:size-5 md:size-5 lg:size-5 xl:size-5 2xl:size-5"
           >
             <g clipPath="url(#clip0_1129_3704)">
               <path
@@ -145,13 +151,14 @@ const TrendingProjectCard = ({ prop }) => {
           </svg>
           {prop.bathrooms}-Bathroom
         </span>
-        <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
+        <span className="bg-[#091F5B] px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="21"
+            width="16"
+            height="16"
             viewBox="0 0 20 21"
             fill="none"
+            className="size-4 sm:size-5 md:size-5 lg:size-5 xl:size-5 2xl:size-5"
           >
             <path
               d="M16.25 2.5C16.6642 2.5 17 2.83579 17 3.25C17 3.66421 16.6642 4 16.25 4H16V17H16.25C16.6642 17 17 17.3358 17 17.75C17 18.1642 16.6642 18.5 16.25 18.5H12.75C12.3358 18.5 12 18.1642 12 17.75V15.25C12 14.8358 11.6642 14.5 11.25 14.5H8.75C8.33579 14.5 8 14.8358 8 15.25V17.75C8 18.1642 7.66421 18.5 7.25 18.5H3.75C3.33579 18.5 3 18.1642 3 17.75C3 17.3358 3.33579 17 3.75 17H4V4H3.75C3.33579 4 3 3.66421 3 3.25C3 2.83579 3.33579 2.5 3.75 2.5H16.25ZM7.5 9.5C7.22386 9.5 7 9.72386 7 10V11C7 11.2761 7.22386 11.5 7.5 11.5H8.5C8.77614 11.5 9 11.2761 9 11V10C9 9.72386 8.77614 9.5 8.5 9.5H7.5ZM11.5 9.5C11.2239 9.5 11 9.72386 11 10V11C11 11.2761 11.2239 11.5 11.5 11.5H12.5C12.7761 11.5 13 11.2761 13 11V10C13 9.72386 12.7761 9.5 12.5 9.5H11.5ZM7.5 5.5C7.22386 5.5 7 5.72386 7 6V7C7 7.27614 7.22386 7.5 7.5 7.5H8.5C8.77614 7.5 9 7.27614 9 7V6C9 5.72386 8.77614 5.5 8.5 5.5H7.5ZM11.5 5.5C11.2239 5.5 11 5.72386 11 6V7C11 7.27614 11.2239 7.5 11.5 7.5H12.5C12.7761 7.5 13 7.27614 13 7V6C13 5.72386 12.7761 5.5 12.5 5.5H11.5Z"
@@ -162,13 +169,13 @@ const TrendingProjectCard = ({ prop }) => {
         </span>
       </div>
 
-      <div className="mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-between sm:items-center">
-        <div className="text-sm text-[#000] mb-2 sm:mb-0">
+      <div className="mt-2 sm:mt-3 md:mt-4 lg:mt-4 xl:mt-4 2xl:mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-between sm:items-center">
+        <div className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-sm text-[#000] mb-2 sm:mb-0">
           Starting Price
           <br />
-          <h6 className="text-base sm:text-lg">{prop.price}</h6>
+          <h6 className="text-sm ">{prop.price}</h6>
         </div>
-        <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded-md text-sm sm:text-base font-[600] transition">
+        <button className="bg-logoColor hover:bg-logoColor/90 text-white px-2 sm:px-3 md:px-4 lg:px-4 xl:px-4 2xl:px-4 py-1 sm:py-2 md:py-2 lg:py-2 xl:py-2 2xl:py-2 rounded-md text-xs  transition">
           View Property Details
         </button>
       </div>

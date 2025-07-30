@@ -76,8 +76,8 @@ const SellerSidebar = () => {
             }
           : null,
         status === "approved"
-           ? {
-              icon: <LiaMoneyCheckSolid/>,
+          ? {
+              icon: <LiaMoneyCheckSolid />,
               label: "Commission Management",
               link: "/seller-commission",
             }
@@ -192,7 +192,8 @@ const SellerSidebar = () => {
                       localStorage.removeItem("sellerId");
                       localStorage.removeItem("sellerFullName");
                       localStorage.removeItem("token");
-                      navigate("/seller-sign-in");
+                      // navigate("/seller-sign-in");
+                      window.location.href = "https://propmetaverse.com";
                     }}
                     className="flex items-center py-4 px-6 rounded-lg w-full font-medium hover:bg-black hover:text-white transition duration-500 gap-3"
                   >

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"; 
+import { useRef, useState } from "react";
 import Slider from "react-slick";
 
 const testimonials = [
@@ -8,7 +8,8 @@ const testimonials = [
       "Learn how to use our user-friendly search tools to find properties that match your criteria.",
   },
   {
-    title: "What documents do I need to sell my property through PropMetaVerse?",
+    title:
+      "What documents do I need to sell my property through PropMetaVerse?",
     message:
       "Find out about the necessary documentation for listing your property with us.",
   },
@@ -18,7 +19,8 @@ const testimonials = [
       "Discover the different ways you can get in touch with our experienced agents.",
   },
   {
-    title: "What are the benefits of using PropMetaVerse for property investment?",
+    title:
+      "What are the benefits of using PropMetaVerse for property investment?",
     message:
       "Explore the advantages of our platform, including market insights and investment opportunities.",
   },
@@ -27,7 +29,6 @@ const testimonials = [
 const Faq = () => {
   const sliderRef = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [filteredProperties, setFilteredProperties] = useState(testimonials);
   const sliderSettings = {
     dots: false,
     infinite: true,
@@ -38,21 +39,35 @@ const Faq = () => {
     afterChange: (index) => setCurrentSlide(index),
     responsive: [
       {
-        breakpoint: 1280,
+        breakpoint: 1536, // xl
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 1024,
+        breakpoint: 1280, // lg
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 1024, // md
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768, // sm
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 640, // base
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -72,12 +87,13 @@ const Faq = () => {
       sliderRef.current.slickNext();
     }
   };
+
   return (
-    <section className="w-full md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto   max-w-[1920px] mb-[93px]">
-      <h2 className="text-2xl sm:text-3xl md:text-[38px] text-logoBlue mb-2">
+    <section className="w-full py-6  sm:py-8 md:py-10 overflow-hidden lg:py-12 xl:py-12 2xl:py-12 px-4 sm:px-4 md:px-6 lg:px-12 xl:px-20 2xl:px-20 mx-auto max-w-[1920px] mb-12 sm:mb-14 md:mb-16 lg:mb-[93px] xl:mb-[93px] 2xl:mb-[93px]">
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-[38px] 2xl:text-[38px] text-logoBlue mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2">
         Frequently Asked Questions
       </h2>
-      <p className="text-sm sm:text-base mb-8 md:mb-[47px]">
+      <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base mb-4 sm:mb-6 md:mb-8 lg:mb-8 xl:mb-[47px] 2xl:mb-[47px]">
         Find answers to common questions about Propmetaverse services, property
         listings, and the real estate process. We're here to provide clarity and
         assist you every step of the way.
@@ -87,33 +103,33 @@ const Faq = () => {
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className="bg-[#BAD6EB] p-[40px] rounded-[10px] border-[1px] border-[#262626]  shadow-sm"
+            className="bg-[#BAD6EB]  p-4 sm:p-6 md:p-8 lg:p-8 xl:p-[40px] 2xl:p-[40px] rounded-[10px] border-[1px] border-[#262626] shadow-sm"
           >
-           
-          
+            <div className="flex flex-col gap-4 sm:gap-5 md:gap-6 lg:gap-6 xl:gap-[24px] 2xl:gap-[24px]">
               {/* Title */}
-              <div className="flex flex-col gap-[24px]">
-              <h3 style={{ color: "#091F5B" }} className="text-[20px]    ">
+              <h3
+                style={{ color: "#091F5B" }}
+                className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-[20px] 2xl:text-[20px] line-clamp-2"
+              >
                 {t.title}
               </h3>
 
               {/* Message */}
-              <p className="text-[#091F5B]  ">{t.message}</p>
-              </div>
-            
-          
-            
+              <p className="text-[#091F5B] text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base line-clamp-2">
+                {t.message}
+              </p>
+            </div>
           </div>
         ))}
       </Slider>
 
       {/* Footer with navigation */}
-      <div className="  sm:mt-10 flex justify-between items-center text-sm   mt-10 border-t pt-4">
+      <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-10 xl:mt-10 2xl:mt-10 flex justify-between items-center text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm border-t pt-2 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-4 2xl:pt-4">
         <span>
           {String(currentSlide + 1).padStart(2, "0")} of{" "}
           {String(testimonials.length).padStart(2, "0")}
         </span>
-        <div className="flex gap-2 justify-end  items-center">
+        <div className="flex gap-2 sm:gap-3 md:gap-3 lg:gap-3 xl:gap-3 2xl:gap-2 justify-end items-center">
           <div
             onClick={handlePrev}
             className="p-2 size-10 sm:size-[44px] rounded-full border border-gray-300 cursor-pointer"

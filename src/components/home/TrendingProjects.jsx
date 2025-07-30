@@ -1,14 +1,55 @@
 import { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Like from "../../assets/card/like.svg";
-import Share from "../../assets/card/share.svg";
-import Compare from "../../assets/card/compare.svg";
+import "slick-carousel/slick/slick-theme.css"; 
 import TrendingProjectCard from "../TrendingProjectCard";
 const baseUrl = import.meta.env.VITE_APP_URL;
+// New Skeleton Card Component for TrendingProjects.jsx
+const SkeletonTrendingProjectCard = () => (
+  <div className="card-container bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-2 md:mr-5 sm:p-4 md:p-6 lg:p-6 xl:p-6 2xl:p-[30px]">
+    {/* Image Placeholder */}
+    <div className="relative w-full h-[150px] sm:h-[200px] md:h-[255px] lg:h-[255px] xl:h-[255px] 2xl:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-2 sm:mb-3 md:mb-4 lg:mb-4 xl:mb-4 2xl:mb-4 animate-pulse">
+      <div
+        className="absolute top-2 sm:top-3 md:top-4 lg:top-4 xl:top-4 2xl:top-4 left-2 sm:left-3 md:left-4 lg:left-4 xl:left-4 2xl:left-4 bg-gray-400 h-6 w-20 rounded"
+        style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
+      ></div>
+    </div>
+    <div className="flex flex-col flex-grow">
+      <div className="space-y-1 sm:space-y-2 md:space-y-3 lg:space-y-3 xl:space-y-3 2xl:space-y-[11px]">
+        <div className="h-6 bg-gray-300 rounded w-3/4 animate-pulse"></div>
+        <div className="flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base">
+          <div className="h-4 bg-gray-300 rounded w-1/2 mb-2 sm:mb-0 animate-pulse"></div>
+          <div className="h-4 bg-gray-300 rounded w-1/3 animate-pulse"></div>
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row sm:justify-between mt-2 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-2 2xl:mt-2">
+        <div className="h-4 bg-gray-300 rounded w-1/4 animate-pulse"></div>
+        <div className="flex justify-end items-center gap-2 sm:gap-4 md:gap-6 lg:gap-6 xl:gap-6 2xl:gap-7 mt-2 sm:mt-2 md:mt-2 lg:mt-2 xl:mt-2 2xl:mt-2 text-green-700">
+          <div className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6 bg-gray-300 rounded-full animate-pulse"></div>
+          <div className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6 bg-gray-300 rounded-full animate-pulse"></div>
+          <div className="size-4 sm:size-5 md:size-6 lg:size-6 xl:size-6 2xl:size-6 bg-gray-300 rounded-full animate-pulse"></div>
+        </div>
+      </div>
+    </div>
 
-export default function TrendingProjects2() {
+    {/* Tags */}
+    <div className="my-2 sm:my-3 md:my-4 lg:my-5 xl:my-6 2xl:my-[31px] flex flex-wrap gap-2 sm:gap-2 md:gap-2 lg:gap-2 xl:gap-2 2xl:gap-2 text-white text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm 2xl:text-sm">
+      <div className="bg-gray-400 px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1 h-6 w-24 animate-pulse"></div>
+      <div className="bg-gray-400 px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1 h-6 w-28 animate-pulse"></div>
+      <div className="bg-gray-400 px-2 sm:px-3 md:px-3 lg:px-3 xl:px-3 2xl:px-3 py-1 sm:py-1 md:py-1 lg:py-1 xl:py-1 2xl:py-1 rounded-full flex items-center gap-1 h-6 w-20 animate-pulse"></div>
+    </div>
+
+    <div className="mt-2 sm:mt-3 md:mt-4 lg:mt-4 xl:mt-4 2xl:mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-between sm:items-center">
+      <div className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-sm text-[#000] mb-2 sm:mb-0">
+        <div className="h-4 bg-gray-300 rounded w-2/3 animate-pulse"></div>
+        <div className="h-5 bg-gray-300 rounded w-1/2 mt-1 animate-pulse"></div>
+      </div>
+      <div className="bg-gray-400 px-2 sm:px-3 md:px-4 lg:px-4 xl:px-4 2xl:px-4 py-1 sm:py-2 md:py-2 lg:py-2 xl:py-2 2xl:py-2 rounded-md h-9 w-36 animate-pulse"></div>
+    </div>
+  </div>
+);
+
+export default function TrendingProjects() {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +61,7 @@ export default function TrendingProjects2() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
+        setLoading(true); // Ensure loading is true when fetching starts
         const response = await fetch(`${baseUrl}/property`);
         if (!response.ok) {
           throw new Error("Failed to fetch properties");
@@ -27,7 +69,7 @@ export default function TrendingProjects2() {
         const data = await response.json();
 
         const mappedProperties = data.map((item) => ({
-          id:item._id,
+          id: item._id,
           tag: item.propertyType,
           name: item.title,
           location: `${item.city}, ${item.state}`,
@@ -41,7 +83,6 @@ export default function TrendingProjects2() {
             "https://propmetaverse.com/assets/logopng-BXERHkCM.png",
           price: `Rs. ${item.floorPlan[0]?.price.toLocaleString("en-IN")}/-`,
         }));
-        
 
         setProperties(mappedProperties);
         setFilteredProperties(mappedProperties); // Initialize with all properties
@@ -116,33 +157,67 @@ export default function TrendingProjects2() {
     }
   };
 
+  // Render skeleton loaders if loading
+  const renderContent = () => {
   if (loading) {
-    return <div>Loading...</div>;
+    // Render multiple skeleton cards for the slider
+    return (
+      <Slider ref={sliderRef} {...sliderSettings}>
+        {[...Array(3)].map((_, i) => (
+          <TrendingProjectCard key={i} loading={true} />
+        ))}
+      </Slider>
+    );
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
+  if (filteredProperties.length === 0) {
+    return (
+      <div className="text-center text-gray-600 py-10">
+        No projects found for the selected filter.
+      </div>
+    );
+  }
+
+  if (filteredProperties.length === 1) {
+    return (
+      <div className="w-full max-w-[500px] mx-auto">
+        <TrendingProjectCard prop={filteredProperties[0]} />
+      </div>
+    );
+  }
+
   return (
-    <section className="w-full md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto   max-w-[1920px] mb-[93px]">
-      <h2 className="text-2xl sm:text-3xl md:text-[38px] text-logoBlue mb-2">
+    <Slider ref={sliderRef} {...sliderSettings}>
+      {filteredProperties.map((prop, i) => (
+        <TrendingProjectCard prop={prop} key={i} />
+      ))}
+    </Slider>
+  );
+};
+
+  return (
+    <section className="w-full bg-b md:py-12 px-4 sm:px-6 overflow-hidden md:px-20 mx-auto   max-w-[1920px] mb-[93px]">
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-[38px] 2xl:text-[38px] text-logoBlue mb-2 sm:mb-2 md:mb-2 lg:mb-2 xl:mb-2 2xl:mb-2">
         Most Trending Projects
       </h2>
-      <p className="text-sm sm:text-base mb-8 md:mb-[47px]">
+      <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-base 2xl:text-base mb-4 sm:mb-6 md:mb-8 lg:mb-8 xl:mb-[47px] 2xl:mb-[47px]">
         We carefully select the finest real estate projects for you, ensuring
         top locations, trusted developers, and future-ready homes that match
         your lifestyle and investment goals.
       </p>
 
       {/* Filter Buttons */}
-      <div className="flex flex-wrap gap-2 sm:gap-4 mb-8 md:mb-[66px] justify-center md:justify-around">
+           <div className="flex flex-wrap gap-2 sm:gap-4 mb-8 md:mb-[66px] justify-start md:justify-around">
         {["Residential", "Commercial", "Plot OR Land", "Browse All"].map(
           (filter, idx) => (
             <button
               key={idx}
               onClick={() => setActiveFilter(filter)}
-              className={`font-[700] ${
+              className={`md:font-[700] font-[500] text-sm md:text-base  ${
                 filter === activeFilter
                   ? "bg-logoColor text-white shadow-md"
                   : "border-[#000] border text-logoBlue"
@@ -153,6 +228,7 @@ export default function TrendingProjects2() {
           )
         )}
       </div>
+
 
       {/* Slider */}
       <style jsx="true">{`
@@ -180,140 +256,15 @@ export default function TrendingProjects2() {
           }
         }
       `}</style>
-      {filteredProperties.length === 1 ? (
-        <div className="w-full max-w-[500px] mx-auto">
-          <div className="card-container bg-[#BAD6EB] rounded-[12px] border-[1px] border-[#091F5B] shadow-md p-4 sm:p-6 md:p-[30px]">
-            {/* Image Placeholder */}
-            <div className="relative w-full h-[200px] sm:h-[255px] bg-gray-300 rounded-md overflow-hidden mb-4">
-              <button
-                className="absolute top-4 left-4 bg-[#ACACAC] text-white"
-                style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
-              >
-                {filteredProperties[0].tag}
-              </button>
-              <img
-                src={filteredProperties[0].galleryImg}
-                alt={filteredProperties[0].name}
-                className="card-image w-full h-full"
-              />
-            </div>
-            <div className="flex flex-col flex-grow">
-              <div className="space-y-2 sm:space-y-3 md:space-y-[11px]">
-                <h6 className="font-semibold text-lg sm:text-xl md:text-[20px] text-[#091F5B]">
-                  {filteredProperties[0].name}
-                </h6>
-                <div className="flex flex-col sm:flex-row sm:justify-between text-sm sm:text-base">
-                  <span className="flex items-center gap-1 mb-2 sm:mb-0">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="20"
-                      viewBox="0 0 16 20"
-                      fill="none"
-                    >
-                      <path
-                        d="M8 2.50002C6.4529 2.50002 4.96917 3.1146 3.87521 4.20856C2.78125 5.30253 2.16667 6.78626 2.16667 8.33335C2.16667 10.7184 3.65167 13.0192 5.28167 14.8017C6.11512 15.7097 7.02453 16.545 8 17.2984C8.14556 17.1867 8.31639 17.0506 8.5125 16.89C9.29567 16.2469 10.0328 15.5496 10.7183 14.8034C12.3483 13.0192 13.8333 10.7192 13.8333 8.33335C13.8333 6.78626 13.2188 5.30253 12.1248 4.20856C11.0308 3.1146 9.5471 2.50002 8 2.50002ZM8 19.345L7.5275 19.02L7.525 19.0184L7.52 19.0142L7.50333 19.0025L7.44083 18.9584L7.21583 18.7942C6.07572 17.9373 5.01656 16.9778 4.05167 15.9275C2.34833 14.0625 0.5 11.3634 0.5 8.33252C0.5 6.3434 1.29018 4.43574 2.6967 3.02922C4.10322 1.6227 6.01088 0.83252 8 0.83252C9.98912 0.83252 11.8968 1.6227 13.3033 3.02922C14.7098 4.43574 15.5 6.3434 15.5 8.33252C15.5 11.3634 13.6517 14.0634 11.9483 15.9259C10.9837 16.9761 9.92483 17.9356 8.785 18.7925C8.69005 18.8634 8.5942 18.9332 8.4975 19.0017L8.48 19.0134L8.475 19.0175L8.47333 19.0184L8 19.345ZM8 6.66669C7.55797 6.66669 7.13405 6.84228 6.82149 7.15484C6.50893 7.4674 6.33333 7.89133 6.33333 8.33335C6.33333 8.77538 6.50893 9.1993 6.82149 9.51186C7.13405 9.82442 7.55797 10 8 10C8.44203 10 8.86595 9.82442 9.17851 9.51186C9.49107 9.1993 9.66667 8.77538 9.66667 8.33335C9.66667 7.89133 9.49107 7.4674 9.17851 7.15484C8.86595 6.84228 8.44203 6.66669 8 6.66669ZM4.66667 8.33335C4.66667 7.4493 5.01786 6.60145 5.64298 5.97633C6.2681 5.35121 7.11594 5.00002 8 5.00002C8.88406 5.00002 9.7319 5.35121 10.357 5.97633C10.9821 6.60145 11.3333 7.4493 11.3333 8.33335C11.3333 9.21741 10.9821 10.0653 10.357 10.6904C9.7319 11.3155 8.88406 11.6667 8 11.6667C7.11594 11.6667 6.2681 11.3155 5.64298 10.6904C5.01786 10.0653 4.66667 9.21741 4.66667 8.33335Z"
-                        fill="black"
-                      />
-                    </svg>
-                    {filteredProperties[0].location}
-                  </span>
-                  <span>
-                    Completion:{" "}
-                    <span className="ml-2">
-                      {filteredProperties[0].completion}
-                    </span>
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between mt-2">
-                <p className="text-sm sm:text-base">
-                  By:{" "}
-                  <span className="ml-2">
-                    {filteredProperties[0].developer}
-                  </span>
-                </p>
-                <div className="flex justify-end items-center gap-4 sm:gap-7 mt-2 text-green-700">
-                  <img src={Like} alt="Like" className="size-5 sm:size-6" />
-                  <img
-                    src={Compare}
-                    alt="Compare"
-                    className="size-5 sm:size-6"
-                  />
-                  <img src={Share} alt="Share" className="size-5 sm:size-6" />
-                </div>
-              </div>
-            </div>
-
-            {/* Tags */}
-            <div className="my-4 sm:my-6 md:my-[31px] flex flex-wrap gap-2 text-white text-xs sm:text-sm">
-              <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="18"
-                  viewBox="0 0 20 18"
-                  fill="none"
-                >
-                  {/* SVG content remains unchanged */}
-                </svg>
-                {filteredProperties[0].bedrooms}-Bedroom
-              </span>
-              <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="21"
-                  viewBox="0 0 20 21"
-                  fill="none"
-                >
-                  {/* SVG content remains unchanged */}
-                </svg>
-                {filteredProperties[0].bathrooms}-Bathroom
-              </span>
-              <span className="bg-[#091F5B] px-3 py-1 rounded-full flex items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="21"
-                  viewBox="0 0 20 21"
-                  fill="none"
-                >
-                  {/* SVG content remains unchanged */}
-                </svg>
-                {filteredProperties[0].type}
-              </span>
-            </div>
-
-            <div className="mt-4 flex flex-col flex-wrap sm:flex-row sm:justify-between sm:items-center">
-              <div className="text-sm text-[#000] mb-2 sm:mb-0">
-                Starting Price
-                <br />
-                <h6 className="text-base sm:text-lg">
-                  {filteredProperties[0].price}
-                </h6>
-              </div>
-              <button className="bg-logoColor hover:bg-logoColor/90 text-white px-4 py-2 rounded-md text-sm sm:text-base font-[600] transition">
-                View Property Details
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <Slider ref={sliderRef} {...sliderSettings}>
-          {filteredProperties.map((prop, i) => (
-            <TrendingProjectCard prop={prop} key={i} />
-          ))}
-        </Slider>
-      )}
+      {renderContent()}
 
       {/* Pagination */}
-      <div className="  sm:mt-10 flex justify-between items-center text-sm   mt-10 border-t pt-4">
+      <div className="  sm:mt-10 flex justify-between items-center text-sm   mt-10 border-t pt-4">
         <span>
           {String(currentSlide + 1).padStart(2, "0")} of{" "}
           {String(filteredProperties.length).padStart(2, "0")}
         </span>
-        <div className="flex gap-2 justify-end  items-center">
+        <div className="flex gap-2 justify-end  items-center">
           <div
             onClick={handlePrev}
             className="p-2 size-10 sm:size-[44px] rounded-full border border-gray-300 cursor-pointer"

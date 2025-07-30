@@ -33,9 +33,7 @@ font-weight: 700;
 line-height: 150%; /* 30px */
 }
 button { 
-  padding: 14px 20px; 
-  font-size: 20px; 
-  font-weight: 700;
+  padding: 14px 20px;  
   line-height: 150%; /* 30px */
   border-radius: 8px;
 }
@@ -49,8 +47,7 @@ p {
 /* Use a media query to add a break point at 800px: */
 @media screen and (max-width: 800px) {
   button { 
-  padding: 8px 16px; 
-  font-size: 16px;  
+  padding: 8px 16px;   
 }
 }
 

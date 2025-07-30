@@ -1,36 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { GoArrowUpRight } from "react-icons/go";
-import { MyContext } from "../../App";
+ 
+import { useEffect, useState } from "react";
 
-const EmiCalculator = () => {
+const EmiCalculator = ({ developer, constructionYear }) => {
   const [grossIncome, setGrossIncome] = useState(25000);
-  const [loanAmount, setLoanAmount] = useState(1000000);
   const [tenure, setTenure] = useState(30);
   const [interestRate, setInterestRate] = useState(8.75);
-  const [otherEmis, setOtherEmis] = useState(0); 
+  const [otherEmis, setOtherEmis] = useState(0);
   const [eligibility, setEligibility] = useState();
-  // const eligibility=47870
-  // if (tenure == 1) {
-  //   setEligibility(12 * emi);
-  // }
 
-  // const calculateEmi = (loanAmount, interestRate, tenure) => {
-  //   const principal = loanAmount;
-  //   const rate = interestRate / 12 / 100;
-  //   const months = tenure * 12;
-
-  //   const emi =
-  //     (principal * rate * Math.pow(1 + rate, months)) /
-  //     (Math.pow(1 + rate, months) - 1);
-  //   return emi.toFixed(2);
-  // };
-
-  // const calculateEligibility = (grossIncome, otherEmis) => {
-  //   const eligibility = grossIncome * 0.5 - otherEmis;
-  //   return eligibility;
-  // };
-
-  // const emi = calculateEmi(loanAmount, interestRate, tenure);
+  // EMI Logic calculation
   const emi =
     Math.floor(
       grossIncome < 25000
@@ -42,168 +20,117 @@ const EmiCalculator = () => {
         : grossIncome * 0.55
     ) - otherEmis;
 
-  // const eligibility = calculateEligibility(grossIncome, otherEmis);
-
   useEffect(() => {
     setEligibility(tenure * 12 * emi - (tenure * 12 * emi) / 100);
-    // setEmi
-  }, [emi, eligibility, tenure]);
-  return (
-    <div className="rounded bg-logoBlue/5 shadow-[0_10px_40px_rgba(24,26,32,.05)] p-6 py-5  w-full h-fit">
-      <h3 className="text-[20px] font-semibold leading-[30px]">
+  }, [emi, tenure]);
+
+  return ( 
+    <div className="flex-1 mb-8 sm:mb-12 md:mb-16 lg:mb-20 2xl:mb-[135px]"> 
+      <h3 className="text-xl sm:text-2xl md:text-3xl 2xl:text-[32px] mb-4 sm:mb-5 2xl:mb-[38px] font-semibold text-gray-800 text-start">
         EMI Calculator
-      </h3>
-
-      <div className="my-4">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="grossIncome"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Gross Income (Monthly)
-          </label>
-          <div className="border-gray-200 flex gap-1 font-semibold justify-between items-center text-sm border-[1px] p-1 px-2 ">
-            <span>₹</span>
-            <input
-              type="text"
-              className=" outline-none w-[60px]"
-              onChange={(e) => setGrossIncome(e.target.value)}
-              value={grossIncome.toLocaleString()}
-            />
-          </div>
-        </div>
+      </h3> 
+      <div className="border border-logoBlue text-center rounded-lg p-4 sm:p-5 2xl:p-[16px] mb-4 sm:mb-5 2xl:mb-6 shadow-sm"> {/* Added shadow-sm */}
+        {/* Responsive font size for "Total Income" label */}
+        <p className="text-gray-500 text-base sm:text-lg 2xl:text-[24px]">Total Income</p>
+        {/* Responsive font size for income value */}
+        <h2 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-semibold">
+          Rs.{grossIncome.toLocaleString("en-IN")}
+        </h2>
+        {/* Responsive font size for developer/year info */}
+        <p className="text-gray-600 text-base sm:text-lg 2xl:text-[24px]">
+          {developer} • {constructionYear}
+        </p>
+      </div> 
+      <div className="mb-8 sm:mb-10 2xl:mb-[40px] p-4 sm:p-5 2xl:p-[16px] text-center">
+        {/* Responsive font size for "Loan Amount" label */}
+        <p className="text-gray-500 mb-1 sm:mb-2 text-base sm:text-lg 2xl:text-[24px]">Loan Amount</p>
+        {/* Responsive font size for loan amount value */}
+        <h3 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-semibold mb-8 sm:mb-10 ">
+          ₹{grossIncome.toLocaleString("en-IN")}
+        </h3>
         <input
           type="range"
-          id="grossIncome"
-          min="10000" // ₹10,000
-          max="1000000" // ₹1 Cr in paise
+          min="10000"
+          max="1000000"
           value={grossIncome}
-          onChange={(e) => setGrossIncome(e.target.value)}
-          className="mt-2 w-full accent-logoColor"
+          onChange={(e) => setGrossIncome(Number(e.target.value))}
+          className="w-full accent-logoBlue h-2 rounded-lg cursor-pointer bg-gray-200" // Added styling for the range input
         />
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
-          <span>₹10k</span>
-          <span>₹10 Lakh</span>
-        </div>
       </div>
-
-      <div className="my-4">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="tenure"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Tenure (Years)
-          </label>
-          <div className="border-gray-200 flex font-semibold  justify-between items-center text-sm border-[1px] p-1 px-2 ">
-            <input
-              type="text"
-              className=" outline-none w-[20px]  "
-              onChange={(e) => setTenure(e.target.value)}
-              value={tenure}
-            />
-            <span>years</span>
-          </div>
-        </div>
+ 
+      <div className="mb-8 sm:mb-10 2xl:mb-[40px] p-4 sm:p-5 2xl:p-[16px] text-center">
+        {/* Responsive font size for "Loan Period" label */}
+        <p className="text-gray-500 mb-1 sm:mb-2 text-base sm:text-lg 2xl:text-[24px]">Loan Period</p>
+        {/* Responsive font size for loan period value */}
+        <h3 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-semibold mb-8 sm:mb-10 ">
+          {tenure} Years
+        </h3>
         <input
           type="range"
-          id="tenure"
           min="1"
           max="35"
           value={tenure}
-          onChange={(e) => setTenure(e.target.value)}
-          className="mt-2 w-full accent-logoColor"
+          onChange={(e) => setTenure(Number(e.target.value))}
+          className="w-full accent-logoBlue h-2 rounded-lg cursor-pointer bg-gray-200" // Added styling for the range input
         />
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
-          <span>1</span>
-          <span>35</span>
-        </div>
       </div>
 
-      <div className="my-4">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="interestRate"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Interest Rate (% P.A.)
-          </label>
-
-          <div className="border-gray-200 flex font-semibold  justify-between items-center text-sm border-[1px] p-1 px-2 ">
-            <input
-              type="text"
-              className=" outline-none w-[20px]  "
-              onChange={(e) => setInterestRate(e.target.value)}
-              value={interestRate}
-            />
-            <span>%</span>
-          </div>
-        </div>
+   
+      <div className="mb-8 sm:mb-10 2xl:mb-[40px] p-4 sm:p-5 2xl:p-[16px] text-center">
+        {/* Responsive font size for "Interest Rate" label */}
+        <p className="text-gray-500 mb-1 sm:mb-2 text-base sm:text-lg 2xl:text-[24px]">Interest Rate</p>
+        {/* Responsive font size for interest rate value */}
+        <h3 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-semibold mb-8 sm:mb-10 ">
+          {interestRate}%
+        </h3>
         <input
           type="range"
-          id="interestRate"
           min="0.5"
           max="15"
           step="0.1"
           value={interestRate}
-          onChange={(e) => setInterestRate(e.target.value)}
-          className="mt-2 w-full accent-logoColor"
+          onChange={(e) => setInterestRate(Number(e.target.value))}
+          className="w-full accent-logoBlue h-2 rounded-lg cursor-pointer bg-gray-200" // Added styling for the range input
         />
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
-          <span>0.5%</span>
-          <span>15%</span>
-        </div>
       </div>
 
-      <div className="my-4">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor="otherEmis"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Other EMIs (Monthly)
-          </label>
-          <div className="text-sm border-[1px] p-1 px-2 border-gray-200  font-semibold mt-2">
-            <span>₹ </span>
-            <input
-              type="text"
-              className=" outline-none w-[60px]  font-semibold "
-              onChange={(e) => setOtherEmis(e.target.value)}
-              value={otherEmis.toLocaleString()}
-            />
-          </div>
-        </div>
+ 
+      <div className="mb-8 sm:mb-10 2xl:mb-[40px] p-4 sm:p-5 2xl:p-[16px] text-center">
+        {/* Responsive font size for "Other EMIs" label */}
+        <p className="text-gray-500 mb-1 sm:mb-2 text-base sm:text-lg 2xl:text-[24px]">Other EMIs</p>
+        {/* Responsive font size for other EMIs value */}
+        <h3 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-semibold mb-8 sm:mb-10 ">
+          ₹{otherEmis.toLocaleString("en-IN")}
+        </h3>
         <input
           type="range"
-          id="otherEmis"
-          min="1"
-          max="500000" // 1 Crore in paise
+          min="0"
+          max="500000"
           value={otherEmis}
-          onChange={(e) => setOtherEmis(e.target.value)}
-          className="mt-2 w-full accent-logoColor"
+          onChange={(e) => setOtherEmis(Number(e.target.value))}
+          className="w-full accent-logoBlue h-2 rounded-lg cursor-pointer bg-gray-200" // Added styling for the range input
         />
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
-          <span>₹1</span>
-          <span>₹5 Lakh</span>
-        </div>
       </div>
-      <div className="shadow shadow-gray-300 rounded-lg p-2">
-        <p className="text-sm font-[500] flex items-center gap-5 mb-2">
-          Your Home Loan Eligibility:{" "}
-          <span className="text-[20px] font-semibold flex items-center leading-[30px] border border-gray-300 text-gray-700 bg-logoColor/10 p-1 px-3 rounded-md">
-            ₹{eligibility > 0 ? eligibility : 0}
-          </span>
-        </p>
-
-        <p className="text-sm font-[500] flex items-center gap-5">
-          Your Home Loan EMI will be / monthly:{" "}
-          <span className="text-[20px] font-semibold leading-[30px] border border-gray-300 text-gray-700 bg-logoColor/10 p-1 px-3 rounded-md">
-            {" "}
-            ₹{emi > 0 ? emi : 0}
-          </span>
-        </p>
+ 
+      <div className="bg-[#FFFCFC] rounded-xl flex flex-col gap-8 sm:gap-10 2xl:gap-[56px] p-4 sm:p-5 2xl:p-[16px] text-start shadow-md"> {/* Added shadow-md */}
+        {/* Responsive font size for "Estimated monthly installments" label */}
+        <p className="text-gray-500 text-xl sm:text-2xl md:text-3xl 2xl:text-[36px] font-[500]">Estimated monthly installments</p>
+        <div>
+          {/* Responsive font size for EMI value */}
+          <h3 style={{ color: "black" }} className="text-xl sm:text-2xl md:text-3xl 2xl:text-[40px] font-bold">
+            RS. {emi > 0 ? emi.toLocaleString("en-IN") : 0}
+          </h3>
+          {/* Responsive font size and top margin for disclaimer */}
+          <p className="text-sm sm:text-base 2xl:text-[24px] text-gray-500 mt-1 sm:mt-2">
+            Installment fees may change according to the results of the
+            verification of the physical condition of the vehicle at the branch
+            office.
+          </p>
+        </div> 
+        <button className="w-full bg-logoBlue hover:bg-logoBlue/90 text-white font-semibold py-2 sm:py-3 rounded-xl transition-colors duration-200">
+          APPLY
+        </button>
       </div>
-     
     </div>
   );
 };
