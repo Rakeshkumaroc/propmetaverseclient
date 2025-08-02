@@ -18,7 +18,7 @@ const CustomerLeadManagement = () => {
         <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0"> {/* Adjusted padding and removed fixed w-full */}
           {/* Header section with title */}
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8"> {/* Adjusted flex for responsiveness */}
-            <h1 className="text-xl sm:text-3xl font-bold">Lead Management</h1> {/* Adjust font size for mobile */}
+            <h2 className="text-xl sm:text-3xl font-bold">Lead Management</h2> {/* Adjust font size for mobile */}
           </header>
 
           {/* Search and Lead Table Section */}

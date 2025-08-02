@@ -12,9 +12,9 @@ const Hero = () => {
       <div className="flex items-center flex-wrap gap-6 justify-between py-6">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
             Hero Section
-          </h1>
+          </h2>
           <p className="text-base text-gray-600">
             We are glad to see you again!
           </p>

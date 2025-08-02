@@ -13,9 +13,9 @@ const ThankYou = () => {
       {/* Main Content */}
       <div className="pt-32 pb-20 px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 flex justify-center items-center min-h-[calc(100vh-200px)]">
         <div className="text-center max-w-2xl">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Thank You for Your Enquiry!
-          </h1>
+          </h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
             We have successfully received your tour request. Our team will reach
             out to you shortly to confirm your preferred date and provide

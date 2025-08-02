@@ -132,7 +132,7 @@ const CustomerDashboard = () => {
         <CustomerSidebar />
         <div className="px-3 md:px-10 w-full mt-4 lg:mt-12"> {/* Adjusted margin-top for mobile */}
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0"> {/* Adjusted header for stacking on small screens */}
-            <h1 className="text-2xl sm:text-3xl font-bold">Customer Dashboard</h1> {/* Adjusted font size */}
+            <h2 className="text-2xl sm:text-3xl font-bold">Customer Dashboard</h2> {/* Adjusted font size */}
             <button
               onClick={handleLogout}
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-auto" // Full width on mobile

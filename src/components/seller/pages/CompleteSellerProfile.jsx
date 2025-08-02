@@ -844,9 +844,9 @@ export default function CompleteSellerProfile() {
   return (
     <div className="max-w-2xl mx-4 md:mx-auto mt-4 md:mt-8 p-4 md:p-6 bg-white rounded-xl shadow-lg">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
           Complete Your Profile
-        </h1>
+        </h2>
         <p className="text-sm md:text-base text-gray-500 mt-1">
           Complete all 4 steps to activate your account
         </p>

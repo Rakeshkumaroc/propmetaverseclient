@@ -192,7 +192,7 @@ const Favorites = () => {
       <Navbar />
       <div className="md:py-28 mt-10 py-10 px-6 md:px-16 lg:px-40 bg-gradient-to-b from-gray-50 to-white">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Your Favorites</h1>
+          <h2 className="text-2xl font-semibold">Your Favorites</h2>
         </div>
         {favorites.length === 0 ? (
           <p className="text-gray-600">No favorite properties yet.</p>

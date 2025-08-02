@@ -10,9 +10,9 @@ const ComparisonList = () => {
       <div className=" pb-16  mt-[70px]  xl:mt-[120px] 2xl:mt-[160px]">
         <div className="py-30 mt-1 text-[#000] bg-gradient-to-r from-[#74aedd] via-[#f9f9f9] to-white">
           <div className="md:pl-[80px] md:pr-[200px]">
-            <h1 className="text-[25px] md:text-[40px] font-semibold">
+            <h2 className="text-[25px] md:text-[40px] font-semibold">
               Properties Comparison
-            </h1>
+            </h2>
             <p className="mt-4 md:text-[18px] leading-relaxed text-black font-medium">
               Compare top real estate listings side-by-side to make informed
               decisions. Evaluate price, location, property type, and more in

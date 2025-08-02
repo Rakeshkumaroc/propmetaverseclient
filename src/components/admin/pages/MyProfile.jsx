@@ -233,9 +233,9 @@ const MyProfile = () => {
     <div className="w-full max-w-7xl mx-auto bg-white rounded-xl   px-4 sm:px-6 md:px-20 py-10 mt-10 md:mt-28 relative ">
       <div className="flex items-center justify-between py-6">
           <div className="space-y-2">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
               My Profile
-            </h1>
+            </h2>
             <p className="text-base text-gray-600">
               These details are linked to your account and cannot be edited from this section. Contact support for changes.
             </p>

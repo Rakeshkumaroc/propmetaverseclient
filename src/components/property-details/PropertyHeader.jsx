@@ -226,9 +226,9 @@ const PropertyHeader = ({
           <span className="bg-logoBlue text-white text-xs font-medium px-3 py-1 rounded inline-block mb-2">
             {status}
           </span>
-          <h1 className="text-2xl md:text-4xl font-semibold text-gray-900">
+          <h2 className="text-2xl md:text-4xl font-semibold text-gray-900">
             {title}
-          </h1>
+          </h2>
         </div>
 
         <div className="mt-2 md:mt-0 flex items-end gap-3">

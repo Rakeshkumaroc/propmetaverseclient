@@ -156,7 +156,7 @@ const SearchHistory = () => {
         <CustomerSidebar />
         <main className="px-3 md:px-10 w-full mt-12">
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Search History</h1>
+            <h2 className="text-3xl font-bold text-gray-800">Search History</h2>
             {searchHistory.length > 0 && (
               <button
                 onClick={handleClearAllHistory}

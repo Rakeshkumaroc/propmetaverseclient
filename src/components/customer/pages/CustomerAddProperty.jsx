@@ -178,9 +178,9 @@ const CustomerAddProperty = ({ action }) => {
         <CustomerSidebar />
         <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0">
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold">
+            <h2 className="text-2xl sm:text-3xl font-bold">
               {action === "edit" ? "Edit Property" : "Add New Property"}
-            </h1>
+            </h2>
           </header>
           <section className="my-4 sm:my-8 bg-white shadow rounded-lg p-4 sm:p-6 lg:p-8">
             {isDummyData && (

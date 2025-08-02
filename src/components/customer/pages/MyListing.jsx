@@ -20,7 +20,7 @@ const MyListing = () => {
         <div className="flex-1 p-4 sm:p-6 lg:p-10 mt-4 lg:mt-0"> {/* Adjusted padding and removed fixed w-full */}
           {/* Header section with title and Add Property button */}
           <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4 sm:gap-0">
-            <h1 className="text-3xl font-bold">My Properties</h1>
+            <h2 className="text-3xl font-bold">My Properties</h2>
             <Link
               to="/customer/add-property"
               className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start"

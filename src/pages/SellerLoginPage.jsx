@@ -87,9 +87,9 @@ const SellerLoginPage = () => {
         <div className="w-full max-w-[1920px] grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-12 items-start">
           {/* Left Form Section */}
           <div className="w-full col-span-1 md:col-span-2 max-w-md mx-auto md:max-w-none">
-            <h1 className="text-2xl sm:text-3xl md:text-[40px] font-bold text-logoBlue mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-[40px] font-bold text-logoBlue mb-6 sm:mb-8">
               Partner Login
-            </h1>
+            </h2>
 
             <form className="space-y-4 sm:space-y-5" onSubmit={submitHandler}>
               {/* Email Field */}

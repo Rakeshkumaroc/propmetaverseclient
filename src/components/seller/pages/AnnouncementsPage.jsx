@@ -42,7 +42,7 @@ const AnnouncementPage = () => {
 
   return (
     <div className="bg-gray-100 overflow-y-auto text-black sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 lg:w-full">
-      <h1 className="text-2xl font-bold mb-6">Announcements</h1>
+      <h2 className="text-2xl font-bold mb-6">Announcements</h2>
 
       {announcements.length === 0 ? (
         <p>No announcements found.</p>

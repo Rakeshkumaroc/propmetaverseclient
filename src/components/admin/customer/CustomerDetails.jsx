@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FaHome, FaSearch } from "react-icons/fa";
+import {  FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 const baseUrl = import.meta.env.VITE_APP_URL;
 
@@ -35,9 +35,9 @@ const CustomerDetails = () => {
     return (
       <div className="bg-gray-100 overflow-y-auto text-gray-800 sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 w-full">
         <div className="w-full mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Customer not found
-          </h1>
+          </h2>
         </div>
       </div>
     );
@@ -46,9 +46,9 @@ const CustomerDetails = () => {
   return (
     <div className="bg-gray-100 overflow-y-auto text-gray-800 sm:mx-8 px-3 2xl:mx-16 mt-5 md:mt-36 w-full">
       <div className="w-full mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">
           Customer Details
-        </h1>
+        </h2>
         <div className="bg-white shadow rounded p-8">
           <div className="flex flex-col items-center sm:flex-row sm:items-start gap-8">
             <img

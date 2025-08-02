@@ -135,7 +135,7 @@ const SavedPropertiesPage = () => {
         <CustomerSidebar />
         <main className="px-3 md:px-10 w-full mt-12">
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Saved Properties</h1>
+            <h2 className="text-3xl font-bold text-gray-800">Saved Properties</h2>
             
           </header>
           <section className="bg-white shadow rounded p-6 my-8">

@@ -9,9 +9,9 @@ const Privacy = () => {
 
       <main className="py-16 px-3 md:px-10 lg:px-20 xl:px-28 2xl:px-40 md:mt-24 mt-5 bg-white">
         <div className="max-w-4xl mx-auto text-gray-800">
-          <h1 className="text-3xl md:text-4xl font-bold text-logoBlue text-center mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-logoBlue text-center mb-6">
             Privacy Policy
-          </h1>
+          </h2>
           <p className="text-sm md:text-base text-gray-600 text-center mb-8">
             Effective Date: April 28, 2025
           </p>

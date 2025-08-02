@@ -7,7 +7,7 @@ const RedirectPage = ({ title, router }) => {
   return (
     <div className="flex bg-gray-100  flex-col justify-center items-center w-full h-screen   transition-all duration-500 ease-in-out">
       <div className="login-child-div w-full max-w-md p-6 z-10 bg-white rounded-2xl relative shadow-2xl transform transition-all duration-300 ease-in-out hover:scale-105 text-center">
-        <h1 className="text-4xl font-bold mb-4 text-red-600">Access Denied</h1>
+        <h2 className="text-4xl font-bold mb-4 text-red-600">Access Denied</h2>
         <p className="mb-4  text-gray-700">
           You cannot directly open the {title} Panel.
         </p>
